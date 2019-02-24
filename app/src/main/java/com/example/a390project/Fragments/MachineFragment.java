@@ -7,11 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import com.example.a390project.DummyDatabase;
 import com.example.a390project.ListViewAdapters.MachineListViewAdapter;
-import com.example.a390project.Machine;
+import com.example.a390project.Model.Machine;
 import com.example.a390project.R;
 
 public class MachineFragment extends Fragment {
@@ -36,14 +36,7 @@ public class MachineFragment extends Fragment {
 
         //Populate the ArrayList machines
         //In further sprints, we would create a controller to fetch machines from firebase database
-        machines = new ArrayList<Machine>();
-        String [] names = {"Abdulrahim", "Antoine ", "Andrew", "Chris", "Kris"};
-        //alternate status to view background effect
-        boolean status = false;
-        for (int i = 0; i < 5; i++) {
-            machines.add(new Machine("Machine " + i, names[i],status));
-            status = !status;
-        }
+        machines = new DummyDatabase().generateDummyMachines();
 
         //After populating the machines, populate the mMachineListView
         callListViewAdapter(view,machines);
