@@ -9,11 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.example.a390project.DummyDatabase;
 import com.example.a390project.Views.Employee;
 import com.example.a390project.ListViewAdapters.EmployeeListViewAdapter;
 import com.example.a390project.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class EmployeeFragment extends Fragment {
@@ -36,21 +36,9 @@ public class EmployeeFragment extends Fragment {
         setupUI();
 
         // for testing purposes, create a list of employees with dummy values
-        employees = populateEmployees();
+        employees = new DummyDatabase().generateDummyEmployees(25);
 
         listViewAdapter();
-    }
-
-    private List<Employee> populateEmployees(){
-        List<Employee> sampleEmployee = new ArrayList<>();
-
-        for(int i = 0; i < 100; i++){
-            sampleEmployee.add(new Employee(i, "Employee " + i));
-        }
-
-
-
-        return sampleEmployee;
     }
 
     // setup the components in the layout
