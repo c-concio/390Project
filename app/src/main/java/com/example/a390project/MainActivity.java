@@ -6,6 +6,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.example.a390project.Fragments.EmployeeFragment;
 import com.example.a390project.Fragments.MachineFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,11 +22,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //Initializing viewPager
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager = findViewById(R.id.viewpager);
         viewPager.setOffscreenPageLimit(5); // <---- .setOffscreenPageLimit controls the max amount of tabs
 
         //Initializing the tablayout
-        tabLayout = (TabLayout) findViewById(R.id.tablayout);
+        tabLayout = findViewById(R.id.tablayout);
         tabLayout.setupWithViewPager(viewPager);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -62,8 +63,14 @@ public class MainActivity extends AppCompatActivity {
         //adapter.addFragment(fragment1,"FRAGMENT_1_TITLE");
         //adapter.addFragment(fragment2,"FRAGMENT_2_TITLE");
 
+        // ------------------ MACHINE FRAGMENT ------------------
         MachineFragment machineFragment = new MachineFragment();
         adapter.addFragment(machineFragment,"MACHINES");
+
+        // ------------------ EMPLOYEE FRAGMENT ------------------
+        EmployeeFragment employeeFragment = new EmployeeFragment();
+        adapter.addFragment(employeeFragment, "EMPLOYEES");
+
 
         viewPager.setAdapter(adapter);
     }

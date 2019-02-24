@@ -5,19 +5,19 @@ import java.util.ArrayList;
 public class Employee {
 
     // variables
-    private int employeeID;
+    private int accountID;
     private String employeeName;
     private ArrayList<Integer> taskIDs = new ArrayList<>(); // < --------- tasks associated to the employee
 
     // -------------------- Constructor --------------------
     Employee(int employeeID, String employeeName, ArrayList<Integer> taskIDs){
-        this.employeeID = employeeID;
+        this.accountID = employeeID;
         this.employeeName = employeeName;
         this.taskIDs = taskIDs;
     }
 
-    Employee(int employeeID, String employeeName){
-        this.employeeID = employeeID;
+    public Employee(int employeeID, String employeeName){
+        this.accountID = employeeID;
         this.employeeName = employeeName;
     }
 
@@ -33,7 +33,7 @@ public class Employee {
 
     // -------------------- Getters --------------------
 
-    public int getEmployeeID() { return employeeID; }
+    public int getEmployeeID() { return accountID; }
 
     public String getEmployeeName(){ return employeeName; }
 
