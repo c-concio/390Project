@@ -1,4 +1,4 @@
-package com.example.a390project;
+package com.example.a390project.Views;
 
 import java.util.ArrayList;
 

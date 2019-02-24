@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.a390project.ListViewAdapters.MachineListViewAdapter;
-import com.example.a390project.Machine;
+import com.example.a390project.Views.Machine;
 import com.example.a390project.R;
 
 public class MachineFragment extends Fragment {

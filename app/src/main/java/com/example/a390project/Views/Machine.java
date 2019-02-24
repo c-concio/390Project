@@ -1,4 +1,4 @@
-package com.example.a390project;
+package com.example.a390project.Views;
 
 public class Machine {
 

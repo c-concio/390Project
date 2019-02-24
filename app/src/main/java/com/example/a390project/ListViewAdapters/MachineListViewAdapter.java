@@ -9,9 +9,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.example.a390project.Machine;
+import com.example.a390project.Views.Machine;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.example.a390project.R;
