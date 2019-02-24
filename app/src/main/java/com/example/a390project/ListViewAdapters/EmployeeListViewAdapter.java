@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.example.a390project.Views.Employee;
+import com.example.a390project.Model.Employee;
 import com.example.a390project.R;
 
 import java.util.List;

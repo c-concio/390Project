@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.example.a390project.Views.Machine;
+import com.example.a390project.Model.Machine;
 
 import java.util.List;
 

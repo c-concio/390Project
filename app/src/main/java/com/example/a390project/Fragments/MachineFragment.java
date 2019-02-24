@@ -7,12 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.example.a390project.DummyDatabase;
 import com.example.a390project.ListViewAdapters.MachineListViewAdapter;
-import com.example.a390project.Views.Machine;
+import com.example.a390project.Model.Machine;
 import com.example.a390project.R;
 
 public class MachineFragment extends Fragment {

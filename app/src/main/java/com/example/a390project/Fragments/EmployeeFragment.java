@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.example.a390project.DummyDatabase;
-import com.example.a390project.Views.Employee;
+import com.example.a390project.Model.Employee;
 import com.example.a390project.ListViewAdapters.EmployeeListViewAdapter;
 import com.example.a390project.R;
 

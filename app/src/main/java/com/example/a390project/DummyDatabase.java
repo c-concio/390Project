@@ -1,7 +1,7 @@
 package com.example.a390project;
 
-import com.example.a390project.Views.Employee;
-import com.example.a390project.Views.Machine;
+import com.example.a390project.Model.Employee;
+import com.example.a390project.Model.Machine;
 
 import java.util.ArrayList;
 import java.util.List;
