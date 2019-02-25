@@ -32,8 +32,6 @@ public class MachineFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         mView = view;
-        //instantiate fragment views
-
         //Populate the ArrayList machines
         //In further sprints, we would create a controller to fetch machines from firebase database
         machines = new DummyDatabase().generateDummyMachines();

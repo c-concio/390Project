@@ -65,7 +65,7 @@ public class MachineListViewAdapter extends BaseAdapter {
         mStatus = convertView.findViewById(R.id.status_text_view);
         mRowItem = convertView.findViewById(R.id.machine_row_item);
 
-        mMachineName.setText(currentItem.getMachineName());
+        mMachineName.setText(currentItem.getMachineTitle());
         mMachineLastEmployee.setText(currentItem.getMachineLastEmployee());
         String status = currentItem.isMachineStatus() ? "On":"Off";
         mStatus.setText("Status: " + status);

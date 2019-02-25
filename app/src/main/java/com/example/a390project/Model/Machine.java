@@ -2,43 +2,46 @@ package com.example.a390project.Model;
 
 public class Machine {
 
-    //data members
-    private String machineName;
+    // -------------------- Data Members --------------------
+    private String machineTitle;
     private String machineLastEmployee;
     private boolean machineStatus;
 
-    //constructors
+    // -------------------- Constructor --------------------
     public Machine(String machineName, String machineLastEmployee, boolean machineStatus) {
-        this.machineName = machineName;
+        this.machineTitle = machineName;
         this.machineLastEmployee = machineLastEmployee;
         this.machineStatus = machineStatus;
     }
 
-    //class methods
+    // -------------------- Setters --------------------
 
-    //getters & setters
-    public String getMachineName() {
-        return machineName;
-    }
-
-    public void setMachineName(String machineName) {
-        this.machineName = machineName;
-    }
-
-    public String getMachineLastEmployee() {
-        return machineLastEmployee;
+    public void setMachineTitle(String machineTitle) {
+        this.machineTitle = machineTitle;
     }
 
     public void setMachineLastEmployee(String machineLastEmployee) {
         this.machineLastEmployee = machineLastEmployee;
     }
 
+    public void setMachineStatus(boolean machineStatus) {
+        this.machineStatus = machineStatus;
+    }
+
+    // -------------------- Getters --------------------
+
+    public String getMachineTitle() {
+        return machineTitle;
+    }
+
+    public String getMachineLastEmployee() {
+        return machineLastEmployee;
+    }
+
     public boolean isMachineStatus() {
         return machineStatus;
     }
 
-    public void setMachineStatus(boolean machineStatus) {
-        this.machineStatus = machineStatus;
-    }
+
 
 }

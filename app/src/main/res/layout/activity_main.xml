@@ -27,6 +27,26 @@
             android:layout_height="match_parent"
             android:layout_below="@+id/tablayout"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        <android.support.design.widget.CoordinatorLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_open_dialog_fragment_machine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fabSize="normal"
+                android:layout_marginTop="25dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginBottom="25dp"
+                android:layout_marginRight="25dp"
+                android:src="@drawable/plus_sign"
+                app:maxImageSize="30dp"/>
+
+        </android.support.design.widget.CoordinatorLayout>
     </RelativeLayout>
+
 
 </android.support.design.widget.CoordinatorLayout>

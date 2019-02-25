@@ -1,11 +1,14 @@
 package com.example.a390project;
 
 import android.annotation.SuppressLint;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 
+import com.example.a390project.DialogFragments.CreateMachineDialogFragment;
 import com.example.a390project.Fragments.EmployeeFragment;
 import com.example.a390project.Fragments.MachineFragment;
 
@@ -15,11 +18,22 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     //This is our viewPager
     private ViewPager viewPager;
+    //views
+    FloatingActionButton mFabOpenDialogFragmentMachine;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //instantiate fragment views
+        mFabOpenDialogFragmentMachine = findViewById(R.id.fab_open_dialog_fragment_machine);
+        mFabOpenDialogFragmentMachine.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startCreateMachineDialogFragment();
+            }
+        });
 
         //Initializing viewPager
         viewPager = findViewById(R.id.viewpager);
@@ -38,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-
+                animateFab(position);
             }
 
             @Override
@@ -73,5 +87,23 @@ public class MainActivity extends AppCompatActivity {
 
 
         viewPager.setAdapter(adapter);
+    }
+
+    private void startCreateMachineDialogFragment() {
+        CreateMachineDialogFragment dialog = new CreateMachineDialogFragment();
+        dialog.show(getSupportFragmentManager(), "Create Group");
+    }
+    private void animateFab(int position) {
+        switch (position) {
+            case 0:
+                mFabOpenDialogFragmentMachine.show();
+                break;
+            case 1:
+                mFabOpenDialogFragmentMachine.hide();
+                break;
+
+            default:
+                break;
+        }
     }
 }
