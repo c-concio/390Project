@@ -1,6 +1,7 @@
 package com.example.a390project.ListViewAdapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.example.a390project.MachineActivity;
 import com.example.a390project.Model.Machine;
 
 import java.util.List;
@@ -60,7 +62,7 @@ public class MachineListViewAdapter extends BaseAdapter {
         final Machine currentItem = (Machine) getItem(position);
 
         //set views of row item
-        mMachineName = convertView.findViewById(R.id.machine_name_text_view);
+        mMachineName = convertView.findViewById(R.id.machine_title_text_view_row);
         mMachineLastEmployee = convertView.findViewById(R.id.employee_name_text_view);
         mStatus = convertView.findViewById(R.id.status_text_view);
         mRowItem = convertView.findViewById(R.id.machine_row_item);
@@ -76,6 +78,26 @@ public class MachineListViewAdapter extends BaseAdapter {
         else
             mRowItem.setBackgroundColor(Color.parseColor("#DBFFDC"));
 
+        //onClick opens Machine Activity
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String machineID = currentItem.getMachineID();
+                String machineTitle = currentItem.getMachineTitle();
+                Boolean machineStatus = currentItem.isMachineStatus();
+                startMachineActivity(machineID, machineTitle, machineStatus);
+            }
+        });
+
         return convertView;
+    }
+    //Controller will only need to send machineID from MachineListViewAdapter to machineActivity,
+    // which will get the entire Machine Object from Firebase
+    private void startMachineActivity(String machineID, String machineTitle, boolean machineStatus) {
+        Intent intent = new Intent(context, MachineActivity.class);
+        intent.putExtra("machine_ID", machineID);
+        intent.putExtra("machine_title", machineTitle);
+        intent.putExtra("machine_status", machineStatus);
+        context.startActivity(intent);
     }
 }

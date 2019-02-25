@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Machine ID"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:gravity="center_horizontal"/>
+    <TextView
+        android:id="@+id/machine_id_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ID"
+        android:textSize="18dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:gravity="center_horizontal"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Machine Title"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:gravity="center_horizontal"/>
+    <TextView
+        android:id="@+id/machine_title_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Title"
+        android:textSize="18dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:gravity="center_horizontal"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Machine Status"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:gravity="center_horizontal"/>
+    <TextView
+        android:id="@+id/machine_status_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Status"
+        android:textSize="18dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:gravity="center_horizontal"
+        />
+    <Switch
+        android:id="@+id/machine_notifications_acitivty"
+        android:layout_marginTop="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Notifications"
+        android:textSize="20dp"
+        android:layout_gravity="center_horizontal"/>
+
+</LinearLayout>

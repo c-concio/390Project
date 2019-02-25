@@ -26,7 +26,7 @@ public class DummyDatabase {
         //alternate status to view background effect
         boolean status = false;
         for (int i = 0; i < 5; i++) {
-            machines.add(new Machine("Machine " + i, names[i],status));
+            machines.add(new Machine(Machine.generateRandomChars(28),"Machine " + i, names[i],status));
             status = !status;
         }
 
