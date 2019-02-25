@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.a390project.DatabaseHelper;
 import com.example.a390project.R;
 
 public class CreateMachineDialogFragment extends DialogFragment {
@@ -20,6 +21,7 @@ public class CreateMachineDialogFragment extends DialogFragment {
     //views
     private AppCompatEditText mTtitle;
     private FloatingActionButton mFabCreate;
+    private DatabaseHelper machine_db;// database helper class
 
     //variables
     String machineTitle;
@@ -31,6 +33,7 @@ public class CreateMachineDialogFragment extends DialogFragment {
 
         mTtitle = view.findViewById(R.id.machine_title_edit_text);
         mFabCreate = view.findViewById(R.id.fab_create_machine);
+        machine_db = new DatabaseHelper();//database helper class helps connect to fire base
 
         mFabCreate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -38,13 +41,14 @@ public class CreateMachineDialogFragment extends DialogFragment {
                 //check if editText is empty or not
                 machineTitle = mTtitle.getText().toString().trim();
                 if (!machineTitle.isEmpty()) {
-                    //implement add machine controller
+                    machine_db.add_machine(machineTitle);// add machine to farebase using add_machine function of databse helper
                     Log.d(TAG, machineTitle + " created!");
                     Toast.makeText(getContext(), machineTitle + " created!", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     Toast.makeText(getContext(), "Invalid Machine Title...", Toast.LENGTH_SHORT).show();
                 }
+                getDialog().dismiss();
             }
         });
         return view;
