@@ -2,7 +2,8 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="10dp">
 
     <TextView
         android:layout_width="match_parent"
@@ -12,7 +13,7 @@
         android:textSize="20dp"
         android:layout_marginTop="10dp"
         android:textColor="@color/colorPrimaryDark"
-        android:gravity="center_horizontal"/>
+        android:gravity="left" />
     <TextView
         android:id="@+id/machine_id_activity"
         android:layout_width="match_parent"
@@ -21,7 +22,7 @@
         android:textSize="18dp"
         android:layout_marginBottom="10dp"
         android:textColor="@color/colorPrimaryDark"
-        android:gravity="center_horizontal"/>
+        android:gravity="left"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -30,7 +31,7 @@
         android:textStyle="bold"
         android:textSize="20dp"
         android:textColor="@color/colorPrimaryDark"
-        android:gravity="center_horizontal"/>
+        android:gravity="left"/>
     <TextView
         android:id="@+id/machine_title_activity"
         android:layout_width="match_parent"
@@ -39,7 +40,7 @@
         android:textSize="18dp"
         android:layout_marginBottom="10dp"
         android:textColor="@color/colorPrimaryDark"
-        android:gravity="center_horizontal"/>
+        android:gravity="left"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -48,7 +49,7 @@
         android:textStyle="bold"
         android:textSize="20dp"
         android:textColor="@color/colorPrimaryDark"
-        android:gravity="center_horizontal"/>
+        android:gravity="left"/>
     <TextView
         android:id="@+id/machine_status_activity"
         android:layout_width="match_parent"
@@ -57,7 +58,7 @@
         android:textSize="18dp"
         android:layout_marginBottom="10dp"
         android:textColor="@color/colorPrimaryDark"
-        android:gravity="center_horizontal"
+        android:gravity="left"
         />
     <Switch
         android:id="@+id/machine_notifications_acitivty"
