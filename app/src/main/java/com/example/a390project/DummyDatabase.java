@@ -1,10 +1,15 @@
 package com.example.a390project;
 
 import com.example.a390project.Model.Employee;
+import com.example.a390project.Model.EmployeeTasks;
 import com.example.a390project.Model.Machine;
 
 import java.util.ArrayList;
 import java.util.List;
+
+// this class is used to generate dummy variables to input
+// to the UI instead of hardcoding them in their activity/fragment
+
 
 public class DummyDatabase {
 
@@ -19,7 +24,7 @@ public class DummyDatabase {
     }
 
     public List<Machine> generateDummyMachines(){
-        List<Machine> machines = new ArrayList();
+        List<Machine> machines = new ArrayList<>();
 
         String [] names = {"Abdulrahim", "Antoine ", "Andrew", "Chris", "Kris"};
 
@@ -33,6 +38,15 @@ public class DummyDatabase {
         return machines;
     }
 
+    protected List<EmployeeTasks> generateTasks(int size){
+
+        List<EmployeeTasks> tasks = new ArrayList<>();
+        for(int i = 0; i < size;i++){
+            tasks.add(new EmployeeTasks(i, "Task " + i));
+        }
+
+        return tasks;
+    }
 
 
 }

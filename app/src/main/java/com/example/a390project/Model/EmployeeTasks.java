@@ -7,22 +7,20 @@ public class EmployeeTasks{
     private static final String TAG = "EmployeeTasks";
 
     private ArrayList<Integer> employeeIDs = new ArrayList<>(); // <----- List of employees working on the task
+    private int projectID; // <---------------- ID of project that the task belongs to
     private int taskID;
     private String taskTitle;
-    private String taskDescription;
 
     // -------------------- Constructor --------------------
-    EmployeeTasks(int taskID, String taskTitle, String taskDescription, ArrayList<Integer> employeeIDs){
+    EmployeeTasks(int taskID, String taskTitle, ArrayList<Integer> employeeIDs){
         this.taskID = taskID;
         this.taskTitle = taskTitle;
-        this.taskDescription = taskDescription;
         this.employeeIDs = employeeIDs;
     }
 
-    EmployeeTasks(int taskID, String taskTitle, String taskDescription){
+    public EmployeeTasks(int taskID, String taskTitle){
         this.taskID = taskID;
         this.taskTitle = taskTitle;
-        this.taskDescription = taskDescription;
     }
 
     // -------------------- Setters --------------------
@@ -35,9 +33,7 @@ public class EmployeeTasks{
         this.taskTitle = taskTitle;
     }
 
-    public void setTaskDescription(String taskDescription){
-        this.taskDescription = taskDescription;
-    }
+    public void setProjectID(int projectID) { this.projectID = projectID; }
 
     // -------------------- Getters --------------------
 
@@ -45,10 +41,9 @@ public class EmployeeTasks{
 
     public String getTaskTitle(){return taskTitle;}
 
-    public String getTaskDescription(){return taskDescription;}
-
     public ArrayList<Integer> getEmployeeIDs(){return employeeIDs;}
 
+    public int getProjectID() { return projectID; }
 
 
 }
