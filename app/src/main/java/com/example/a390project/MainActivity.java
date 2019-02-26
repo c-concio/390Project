@@ -12,6 +12,7 @@ import com.example.a390project.DialogFragments.CreateEmployeeDialogFragment;
 import com.example.a390project.DialogFragments.CreateMachineDialogFragment;
 import com.example.a390project.Fragments.EmployeeFragment;
 import com.example.a390project.Fragments.MachineFragment;
+import com.example.a390project.Fragments.ProjectFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -94,6 +95,10 @@ public class MainActivity extends AppCompatActivity {
         // ------------------ EMPLOYEE FRAGMENT ------------------
         EmployeeFragment employeeFragment = new EmployeeFragment();
         adapter.addFragment(employeeFragment, "EMPLOYEES");
+
+        // ------------------ PROJECT FRAGMENT -------------------
+        ProjectFragment projectFragment = new ProjectFragment();
+        adapter.addFragment(projectFragment,"Projects");
 
 
         viewPager.setAdapter(adapter);
