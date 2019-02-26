@@ -17,17 +17,18 @@ public class DummyDatabase {
     private int employeeID = 0;
 
     public List<Employee> generateDummyEmployees(int size){
+        //employee.add(new Employee(0, "ant", "Test123"));
         for (int i = 1; i <= size; i++){
             employeeID++;
-            employee.add(new Employee(employeeID, "Employee Name " + employeeID));
+            employee.add(new Employee(employeeID, "Employee Name " + employeeID, "Test123"));
         }
 
         return employee;
     }
 
-    public void addEmployee(String username){
+    public void addEmployee(String username, String password){
         employeeID++;
-        employee.add(new Employee(employeeID, username));
+        employee.add(new Employee(employeeID, username, password));
     }
 
     public List<Employee> getEmployees(){

@@ -42,7 +42,7 @@ public class CreateEmployeeDialogFragment extends DialogFragment {
                 // add employee into database
                 if(!username.isEmpty() && !password.isEmpty()){
                     DummyDatabase dd = new DummyDatabase();
-                    dd.addEmployee(username);
+                    dd.addEmployee(username,password);
 
                     Toast toast = Toast.makeText(view.getContext(), "Employee account added", Toast.LENGTH_SHORT);
                     toast.show();
