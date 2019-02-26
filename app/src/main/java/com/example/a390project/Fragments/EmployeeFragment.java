@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.a390project.DialogFragments.CreateEmployeeDialogFragment;
 import com.example.a390project.DummyDatabase;
 import com.example.a390project.EmployeeActivity;
 import com.example.a390project.Model.Employee;
@@ -26,6 +27,7 @@ public class EmployeeFragment extends Fragment {
     private View view;
     private List<Employee> employees;
     ListView employeeListView;
+    DummyDatabase db = new DummyDatabase();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -39,11 +41,9 @@ public class EmployeeFragment extends Fragment {
         setupUI();
 
         // for testing purposes, create a list of employees with dummy values
-        employees = new DummyDatabase().generateDummyEmployees(25);
+        employees = db.generateDummyEmployees(25);
 
         listViewAdapter();
-
-
     }
 
     // setup the components in the layout
@@ -72,7 +72,6 @@ public class EmployeeFragment extends Fragment {
 
         Log.d(TAG, "listViewAdapter: adapter");
     }
-
 
 
 }

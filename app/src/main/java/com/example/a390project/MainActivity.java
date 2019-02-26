@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.a390project.DialogFragments.CreateEmployeeDialogFragment;
 import com.example.a390project.DialogFragments.CreateMachineDialogFragment;
 import com.example.a390project.Fragments.EmployeeFragment;
 import com.example.a390project.Fragments.MachineFragment;
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     //views
     FloatingActionButton mFabOpenDialogFragmentMachine;
+    FloatingActionButton mFabOpenDialogFragmentEmployee;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +34,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startCreateMachineDialogFragment();
+            }
+        });
+
+        mFabOpenDialogFragmentEmployee = findViewById(R.id.fab_open_dialog_fragment_employee);
+        mFabOpenDialogFragmentEmployee.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                startCreateEmployeeDialogFragment();
             }
         });
 
@@ -93,13 +103,21 @@ public class MainActivity extends AppCompatActivity {
         CreateMachineDialogFragment dialog = new CreateMachineDialogFragment();
         dialog.show(getSupportFragmentManager(), "Create Group");
     }
+
+    private void startCreateEmployeeDialogFragment(){
+        CreateEmployeeDialogFragment dialog = new CreateEmployeeDialogFragment();
+        dialog.show(getSupportFragmentManager(), "Create Group");
+    }
+
     private void animateFab(int position) {
         switch (position) {
             case 0:
                 mFabOpenDialogFragmentMachine.show();
+                mFabOpenDialogFragmentEmployee.hide();
                 break;
             case 1:
                 mFabOpenDialogFragmentMachine.hide();
+                mFabOpenDialogFragmentEmployee.show();
                 break;
 
             default:

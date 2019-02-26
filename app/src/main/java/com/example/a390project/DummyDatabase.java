@@ -13,13 +13,24 @@ import java.util.List;
 
 public class DummyDatabase {
 
-    public List<Employee> generateDummyEmployees(int size){
-        List<Employee> employee = new ArrayList<>();
+    private List<Employee> employee = new ArrayList<>();
+    private int employeeID = 0;
 
+    public List<Employee> generateDummyEmployees(int size){
         for (int i = 1; i <= size; i++){
-            employee.add(new Employee(i, "Employee Name " + i));
+            employeeID++;
+            employee.add(new Employee(employeeID, "Employee Name " + employeeID));
         }
 
+        return employee;
+    }
+
+    public void addEmployee(String username){
+        employeeID++;
+        employee.add(new Employee(employeeID, username));
+    }
+
+    public List<Employee> getEmployees(){
         return employee;
     }
 
@@ -47,6 +58,8 @@ public class DummyDatabase {
 
         return tasks;
     }
+
+
 
 
 }
