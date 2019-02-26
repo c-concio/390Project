@@ -1,19 +1,26 @@
 package com.example.a390project;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.a390project.DialogFragments.CreateEmployeeDialogFragment;
 import com.example.a390project.DialogFragments.CreateMachineDialogFragment;
 import com.example.a390project.Fragments.EmployeeFragment;
 import com.example.a390project.Fragments.MachineFragment;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final String TAG = "MainActivity";
 
     //This is our tablayout
     private TabLayout tabLayout;
@@ -22,12 +29,37 @@ public class MainActivity extends AppCompatActivity {
     //views
     FloatingActionButton mFabOpenDialogFragmentMachine;
     FloatingActionButton mFabOpenDialogFragmentEmployee;
+    //firebase auth
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        //firebase authentication
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        updateUI(currentUser);
+    }
+
+    private void updateUI(FirebaseUser currentUser) {
+        if (currentUser == null) {
+            Log.d(TAG,"No user logged in or registered");
+            Intent intent = new Intent(this, LogInActivity.class);
+            startActivity(intent);
+        }
+        else {
+            prepareActivity();
+            Toast.makeText(this,"Welcome back",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void prepareActivity() {
         //instantiate fragment views
         mFabOpenDialogFragmentMachine = findViewById(R.id.fab_open_dialog_fragment_machine);
         mFabOpenDialogFragmentMachine.setOnClickListener(new View.OnClickListener() {
