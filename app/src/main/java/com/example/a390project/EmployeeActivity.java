@@ -3,7 +3,10 @@ package com.example.a390project;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -14,7 +17,7 @@ import com.example.a390project.Model.EmployeeTasks;
 
 import java.util.List;
 
-public class EmployeeActivity extends AppCompatActivity {
+public class EmployeeActivity extends AppCompatActivity{
 
     // activity components
     ListView assignedTasksListView;
@@ -30,6 +33,11 @@ public class EmployeeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_employee);
 
+        // provide up navigation
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+
         // setup the components
         setupUI();
 
@@ -39,11 +47,14 @@ public class EmployeeActivity extends AppCompatActivity {
         assignedTasks = db.generateTasks(employeeID - 1);
         completedTasks = db.generateTasks(employeeID + 2);
 
+
+        // setup the adapters and make the height of the list views dynamic
         assignedTasksListViewAdapter();
         completedTasksListViewAdapter();
 
         ListUtils.setDynamicHeight(assignedTasksListView);
         ListUtils.setDynamicHeight(completedTasksListView);
+
     }
 
     private void setupUI(){
@@ -67,7 +78,7 @@ public class EmployeeActivity extends AppCompatActivity {
 
     // create a list utility class to dynamically change the height of the listView
     // reference: https://stackoverflow.com/questions/17693578/android-how-to-display-2-listviews-in-one-activity-one-after-the-other
-    public static class ListUtils{
+    private static class ListUtils{
         private static void setDynamicHeight(ListView listView){
             ListAdapter listAdapter = listView.getAdapter();
             if (listAdapter == null){
@@ -89,4 +100,14 @@ public class EmployeeActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                this.finish();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
