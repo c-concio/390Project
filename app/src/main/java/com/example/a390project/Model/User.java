@@ -53,6 +53,14 @@ public class User {
         this.id = id;
     }
 
+    public boolean isManager() {
+        return isManager;
+    }
+
+    public void setManager(boolean manager) {
+        isManager = manager;
+    }
+
 
 
 
