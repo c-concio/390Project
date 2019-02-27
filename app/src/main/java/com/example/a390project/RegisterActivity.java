@@ -66,7 +66,7 @@ public class RegisterActivity extends AppCompatActivity {
         mRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(checkInputs(mEmail.getText().toString(), mFullName.getText().toString(), mPassword.getText().toString()))
+                if(checkInputs(mEmail.getText().toString().trim(), mFullName.getText().toString().trim(), mPassword.getText().toString()))
                     registerFirebaseUser();
             }
         });
