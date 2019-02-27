@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <android.support.constraint.ConstraintLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".LogInActivity">
+
 
         <TextView
             android:id="@+id/title"
@@ -18,7 +21,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:gravity="center"
-            android:text="Log In"
+            android:text="Register"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="20dp"
             android:layout_marginTop="100dp"
@@ -27,16 +30,28 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
+            android:id="@+id/name_edit_text_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Full Name"
+            android:inputType="textPersonName"
+            android:layout_marginTop="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title" />
+
+        <EditText
             android:id="@+id/email_edit_text_register"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="8dp"
             android:ems="10"
             android:hint="Email"
             android:inputType="textEmailAddress"
-            app:layout_constraintEnd_toEndOf="@+id/title"
-            app:layout_constraintStart_toStartOf="@+id/title"
-            app:layout_constraintTop_toBottomOf="@+id/title" />
+            app:layout_constraintEnd_toEndOf="@+id/name_edit_text_register"
+            app:layout_constraintStart_toStartOf="@+id/name_edit_text_register"
+            app:layout_constraintTop_toBottomOf="@+id/name_edit_text_register" />
 
         <EditText
             android:id="@+id/password_edit_text_register"
@@ -50,38 +65,43 @@
             app:layout_constraintStart_toStartOf="@+id/email_edit_text_register"
             app:layout_constraintTop_toBottomOf="@+id/email_edit_text_register" />
 
-        <Button
-            android:id="@+id/LogInButton"
+        <Switch
+            android:id="@+id/manager_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:text="Log In"
+            android:layout_marginTop="8dp"
+            android:text="Manager"
+            app:layout_constraintEnd_toEndOf="@+id/password_edit_text_register"
+            app:layout_constraintStart_toStartOf="@+id/password_edit_text_register"
+            app:layout_constraintTop_toBottomOf="@+id/password_edit_text_register" />
+
+        <Button
+            android:id="@+id/register_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="45dp"
+            android:text="Register"
             app:layout_constraintEnd_toEndOf="@+id/password_edit_text_register"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="@+id/password_edit_text_register"
             app:layout_constraintTop_toBottomOf="@+id/password_edit_text_register" />
 
-        <TextView
-            android:id="@+id/link_signup_text_view"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/manager_secret_button"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:gravity="center"
-            android:text="No account yet? Create one"
-            android:textColor="#007bff"
-            android:textSize="16dp"
-            android:layout_marginTop="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/LogInButton" />
+            app:layout_constraintTop_toTopOf="parent" />
+
     </android.support.constraint.ConstraintLayout>
     <ProgressBar
-        android:id="@+id/progress_bar_log_in"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"/>
+    android:id="@+id/progress_bar_register"
+    android:layout_width="150dp"
+    android:layout_height="150dp"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"/>
 </RelativeLayout>

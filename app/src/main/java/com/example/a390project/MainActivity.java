@@ -15,6 +15,7 @@ import com.example.a390project.DialogFragments.CreateEmployeeDialogFragment;
 import com.example.a390project.DialogFragments.CreateMachineDialogFragment;
 import com.example.a390project.Fragments.EmployeeFragment;
 import com.example.a390project.Fragments.MachineFragment;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         //firebase authentication
+        FirebaseApp.initializeApp(this);
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         updateUI(currentUser);

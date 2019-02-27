@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.a390project.DatabaseHelper;
+import com.example.a390project.FirebaseHelper;
 import com.example.a390project.R;
 
 public class CreateMachineDialogFragment extends DialogFragment {
@@ -21,7 +21,7 @@ public class CreateMachineDialogFragment extends DialogFragment {
     //views
     private AppCompatEditText mTtitle;
     private FloatingActionButton mFabCreate;
-    private DatabaseHelper machine_db;// database helper class
+    private FirebaseHelper machine_db;// database helper class
 
     //variables
     String machineTitle;
@@ -33,7 +33,7 @@ public class CreateMachineDialogFragment extends DialogFragment {
 
         mTtitle = view.findViewById(R.id.machine_title_edit_text);
         mFabCreate = view.findViewById(R.id.fab_create_machine);
-        machine_db = new DatabaseHelper();//database helper class helps connect to fire base
+        machine_db = new FirebaseHelper();//database helper class helps connect to fire base
 
         mFabCreate.setOnClickListener(new View.OnClickListener() {
             @Override
