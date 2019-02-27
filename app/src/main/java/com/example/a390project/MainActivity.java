@@ -11,13 +11,19 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.a390project.DialogFragments.CreateControlDeviceDialogFragment;
 import com.example.a390project.DialogFragments.CreateEmployeeDialogFragment;
 import com.example.a390project.DialogFragments.CreateMachineDialogFragment;
+import com.example.a390project.Fragments.ControlDeviceFragment;
 import com.example.a390project.Fragments.EmployeeFragment;
 import com.example.a390project.Fragments.MachineFragment;
+import com.example.a390project.Model.ControlDevice;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     //views
     FloatingActionButton mFabOpenDialogFragmentMachine;
     FloatingActionButton mFabOpenDialogFragmentEmployee;
+    FloatingActionButton mFabOpenDialogFragmentControlDevice;
     //firebase auth
     private FirebaseAuth mAuth;
 
@@ -76,6 +83,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 startCreateEmployeeDialogFragment();
+            }
+        });
+        mFabOpenDialogFragmentControlDevice = findViewById(R.id.fab_open_dialog_fragment_control_device);
+        mFabOpenDialogFragmentControlDevice.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                startCreateControlDeviceDialogFragment();
             }
         });
 
@@ -129,6 +143,10 @@ public class MainActivity extends AppCompatActivity {
         EmployeeFragment employeeFragment = new EmployeeFragment();
         adapter.addFragment(employeeFragment, "EMPLOYEES");
 
+        // ------------------ CONTROL DEVICE FRAGMENT ------------------
+        ControlDeviceFragment controlDeviceFragment = new ControlDeviceFragment();
+        adapter.addFragment(controlDeviceFragment, "DEVICES");
+
 
         viewPager.setAdapter(adapter);
     }
@@ -143,19 +161,31 @@ public class MainActivity extends AppCompatActivity {
         dialog.show(getSupportFragmentManager(), "Create Group");
     }
 
+    private void startCreateControlDeviceDialogFragment(){
+        CreateControlDeviceDialogFragment dialog = new CreateControlDeviceDialogFragment();
+        dialog.show(getSupportFragmentManager(), "Create Group");
+    }
+
     private void animateFab(int position) {
         switch (position) {
             case 0:
                 mFabOpenDialogFragmentMachine.show();
                 mFabOpenDialogFragmentEmployee.hide();
+                mFabOpenDialogFragmentControlDevice.hide();
                 break;
             case 1:
                 mFabOpenDialogFragmentMachine.hide();
                 mFabOpenDialogFragmentEmployee.show();
+                mFabOpenDialogFragmentControlDevice.hide();
                 break;
+            case 2:
+                mFabOpenDialogFragmentMachine.hide();
+                mFabOpenDialogFragmentEmployee.hide();
+                mFabOpenDialogFragmentControlDevice.show();
 
             default:
                 break;
         }
     }
+
 }

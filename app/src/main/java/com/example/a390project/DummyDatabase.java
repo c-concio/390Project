@@ -1,5 +1,6 @@
 package com.example.a390project;
 
+import com.example.a390project.Model.ControlDevice;
 import com.example.a390project.Model.Employee;
 import com.example.a390project.Model.EmployeeTasks;
 import com.example.a390project.Model.Machine;
@@ -15,6 +16,9 @@ public class DummyDatabase {
 
     private List<Employee> employee = new ArrayList<>();
     private int employeeID = 0;
+
+    private List<ControlDevice> cDevice = new ArrayList<>();
+    private int cDeviceID = 0;
 
     public List<Employee> generateDummyEmployees(int size){
         //employee.add(new Employee(0, "ant", "Test123"));
@@ -58,6 +62,22 @@ public class DummyDatabase {
         }
 
         return tasks;
+    }
+
+    public List<ControlDevice> generateDummyControlDevice(){
+
+
+        for(int i=0; i<2; i++){
+            cDeviceID++;
+            cDevice.add(new ControlDevice(cDeviceID, "Switch " + i, false));
+
+        }
+        return cDevice;
+    }
+
+    public void addControlDevice(String name){
+        cDeviceID++;
+        cDevice.add(new ControlDevice(cDeviceID, name, false));
     }
 
 
