@@ -22,6 +22,7 @@
         <activity android:name=".LogInActivity" />
         <activity android:name=".EmployeeActivity" />
         <activity android:name=".MachineActivity" />
+        <activity android:name=".ProjectActivity" />
     </application>
 
 </manifest>

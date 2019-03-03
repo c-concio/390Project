@@ -17,6 +17,7 @@ import com.example.a390project.DialogFragments.CreateMachineDialogFragment;
 import com.example.a390project.Fragments.ControlDeviceFragment;
 import com.example.a390project.Fragments.EmployeeFragment;
 import com.example.a390project.Fragments.MachineFragment;
+import com.example.a390project.Fragments.ProjectFragment;
 import com.example.a390project.Model.ControlDevice;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -146,6 +147,10 @@ public class MainActivity extends AppCompatActivity {
         // ------------------ CONTROL DEVICE FRAGMENT ------------------
         ControlDeviceFragment controlDeviceFragment = new ControlDeviceFragment();
         adapter.addFragment(controlDeviceFragment, "DEVICES");
+
+        // ------------------ PROJECT FRAGMENT ------------------------
+        ProjectFragment projectFragment = new ProjectFragment();
+        adapter.addFragment(projectFragment, "PROJECTS");
 
 
         viewPager.setAdapter(adapter);

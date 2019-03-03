@@ -4,6 +4,7 @@ import com.example.a390project.Model.ControlDevice;
 import com.example.a390project.Model.Employee;
 import com.example.a390project.Model.EmployeeTasks;
 import com.example.a390project.Model.Machine;
+import com.example.a390project.Model.Project;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,8 @@ public class DummyDatabase {
     private List<ControlDevice> cDevice = new ArrayList<>();
     private int cDeviceID = 0;
 
+    private int Projectid;
+
     public List<Employee> generateDummyEmployees(int size){
         //employee.add(new Employee(0, "ant", "Test123"));
         for (int i = 1; i <= size; i++){
@@ -33,6 +36,15 @@ public class DummyDatabase {
     public void addEmployee(String username, String password){
         employeeID++;
         employee.add(new Employee(employeeID, username, password));
+    }
+    public List<Project> generateDummyProjects(int size){
+        List<Project> projects = new ArrayList<>();
+        for (int i = 1; i <= size; i++){
+            Projectid++;
+            projects.add(new Project(Integer.toString(Projectid), "Project ", "Client ", "PO ", "due date"));
+        }
+
+        return projects;
     }
 
     public List<Employee> getEmployees(){
