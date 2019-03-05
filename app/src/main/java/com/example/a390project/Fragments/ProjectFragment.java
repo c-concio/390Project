@@ -48,14 +48,11 @@ public class ProjectFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                Intent intent = new Intent(view.getContext(), ProjectActivity.class);
+                intent.putExtra("projectID", Projects.get(position).getID());
+                intent.putExtra("projectTitle", Projects.get(position).getID());
+                startActivity(intent);
 
-                try {
-                    Intent intent = new Intent(view.getContext(), ProjectActivity.class);
-                    intent.putExtra("projectID", Projects.get(position).getID());
-                    startActivity(intent);
-                }catch (Exception e){
-                    Log.d("exepf","exception " + e);
-                }
             }
         });
         SetListView();
