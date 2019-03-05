@@ -35,7 +35,7 @@ public class ProjectFragment extends Fragment {
     }
     private void callListViewAdapter(View view, List<Project> projects){
         ProjectListViewAdapter adapter = new ProjectListViewAdapter(view.getContext(), projects);
-        ListView itemsListView  = (ListView) view.findViewById(R.id.project_list_view);
+        ListView itemsListView  = view.findViewById(R.id.project_list_view);
         itemsListView.setAdapter(adapter);
     }
 }
