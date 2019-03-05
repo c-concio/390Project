@@ -1,6 +1,7 @@
 package com.example.a390project.ListViewAdapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.a390project.Model.Project;
+import com.example.a390project.ProjectActivity;
 import com.example.a390project.R;
 
 import java.util.List;
@@ -50,6 +52,19 @@ public class ProjectListViewAdapter extends BaseAdapter {
 
         ProjectTitle.setText(Projects.get(position).getTitle()+"\n");
         PO.setText(Projects.get(position).getPO() + "\n");
+
+        // get current item to be displayed
+        final Project currentItem = (Project) getItem(position);
+
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ProjectActivity.class);
+                intent.putExtra("projectID", currentItem.getID());
+                intent.putExtra("projectTitle", currentItem.getTitle());
+                context.startActivity(intent);
+            }
+        });
 
         return convertView;
     }

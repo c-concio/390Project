@@ -100,6 +100,8 @@ public class EmployeeActivity extends AppCompatActivity{
         }
     }
 
+    //up navigation
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

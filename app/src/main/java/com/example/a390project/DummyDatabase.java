@@ -15,6 +15,8 @@ import java.util.List;
 
 public class DummyDatabase {
 
+    //variables
+
     private List<Employee> employee = new ArrayList<>();
     private int employeeID = 0;
 
@@ -22,6 +24,8 @@ public class DummyDatabase {
     private int cDeviceID = 0;
 
     private int Projectid;
+
+    //methods
 
     public List<Employee> generateDummyEmployees(int size){
         //employee.add(new Employee(0, "ant", "Test123"));
@@ -33,18 +37,9 @@ public class DummyDatabase {
         return employee;
     }
 
-    public void addEmployee(String username, String password){
+    public void addEmployee(String username, String password) {
         employeeID++;
         employee.add(new Employee(employeeID, username, password));
-    }
-    public List<Project> generateDummyProjects(int size){
-        List<Project> projects = new ArrayList<>();
-        for (int i = 1; i <= size; i++){
-            Projectid++;
-            projects.add(new Project(Integer.toString(Projectid), "Project ", "Client ", "PO ", "due date"));
-        }
-
-        return projects;
     }
 
     public List<Employee> getEmployees(){
@@ -90,6 +85,16 @@ public class DummyDatabase {
     public void addControlDevice(String name){
         cDeviceID++;
         cDevice.add(new ControlDevice(cDeviceID, name, false));
+    }
+
+    public List<Project> generateDummyProjects(int size){
+        List<Project> projects = new ArrayList<>();
+        for (int i = 1; i <= size; i++){
+            Projectid++;
+            projects.add(new Project(Integer.toString(Projectid), "Project ", "Client ", "PO ", "due date"));
+        }
+        
+        return projects;
     }
 
 
