@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.a390project.Model.Employee;
+import com.example.a390project.Model.User;
 import com.example.a390project.R;
 
 import java.util.List;
@@ -17,24 +18,24 @@ public class EmployeeListViewAdapter extends BaseAdapter {
 
     private static final String TAG = "EmployeeListViewAdapter";
     private Context context;
-    private List<Employee> employees;
+    private List<String> names;
 
     // Employee layout components
     private TextView employeeName;
 
-    public EmployeeListViewAdapter(Context context, List<Employee> employees){
+    public EmployeeListViewAdapter(Context context, List<String> names){
         this.context = context;
-        this.employees = employees;
+        this.names = names;
     }
 
     @Override
     public int getCount() {
-        return employees.size();
+        return names.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return employees.get(position);
+        return names.get(position);
     }
 
     @Override
@@ -55,7 +56,7 @@ public class EmployeeListViewAdapter extends BaseAdapter {
 
         setupUI(convertView);
 
-        employeeName.setText(employees.get(position).getEmployeeName());
+        employeeName.setText(names.get(position));
 
 
         return convertView;
