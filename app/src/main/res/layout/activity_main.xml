@@ -68,6 +68,7 @@
                 android:src="@drawable/plus_sign"
                 app:fabSize="normal"
                 app:maxImageSize="30dp" />
+
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fab_open_dialog_fragment_project"
                 android:layout_width="wrap_content"

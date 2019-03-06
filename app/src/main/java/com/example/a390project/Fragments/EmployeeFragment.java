@@ -15,6 +15,7 @@ import android.widget.ListView;
 import com.example.a390project.DialogFragments.CreateEmployeeDialogFragment;
 import com.example.a390project.DummyDatabase;
 import com.example.a390project.EmployeeActivity;
+import com.example.a390project.FirebaseHelper;
 import com.example.a390project.Model.Employee;
 import com.example.a390project.ListViewAdapters.EmployeeListViewAdapter;
 import com.example.a390project.Model.User;
@@ -29,7 +30,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
-// Todo: Search button, populate with users, authenticate only manager can view
+// Todo: Search button, authenticate only manager can view
 // Todo: Fix up employee floating button
 
 public class EmployeeFragment extends Fragment {
@@ -41,10 +42,8 @@ public class EmployeeFragment extends Fragment {
     DummyDatabase db = new DummyDatabase();
     private List<Employee> employees;
     private String currentUserId;
+    private FirebaseHelper firebaseHelper;
 
-    // variables needed to access firebase
-    DatabaseReference dbRef;
-    ChildEventListener childEventListener;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -58,17 +57,16 @@ public class EmployeeFragment extends Fragment {
         setupUI();
 
         // get the users from firebase
-        getUsers();
+        firebaseHelper.getEmployees(view);
 
     }
 
     // setup the components in the layout
     private void setupUI(){
+        firebaseHelper = new FirebaseHelper();
+
         // find the views
         employeeListView = view.findViewById(R.id.employeesListView);
-
-        // get the database reference of the users in firebase
-        dbRef = FirebaseDatabase.getInstance().getReference("users");
 
         Log.d(TAG, "setupUI: Current user's id = " + FirebaseAuth.getInstance().getCurrentUser().getUid());
 
@@ -81,84 +79,12 @@ public class EmployeeFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 // go to the employee's activity
-                //Todo: put the user id into the activity
                 Intent intent = new Intent(view.getContext(), EmployeeActivity.class);
                 intent.putExtra("employeeID", employees.get(position).getAccountID());
                 startActivity(intent);
             }
         });
     }
-
-    public void getUsers(){
-        employees = new ArrayList<>();
-        childEventListener = new ChildEventListener(){
-
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                getEmployees(dataSnapshot);
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d(TAG, "onChildChanged: ");
-                updateUsers(dataSnapshot);
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                Log.d(TAG, "onChildRemoved: ");
-                updateUsers(dataSnapshot);
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d(TAG, "onChildMoved: ");
-                updateUsers(dataSnapshot);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-
-        };
-        dbRef.addChildEventListener(childEventListener);
-    }
-
-    public void getEmployees(DataSnapshot dataSnapshot){
-
-        Log.d(TAG, "updateUsers: dataSnapshot return: " + dataSnapshot.getValue());
-        Employee newEmployee = dataSnapshot.getValue(Employee.class);
-        if (newEmployee != null) {
-            newEmployee.setAccountID(dataSnapshot.getKey());
-            Log.d(TAG, "updateUsers: account id: " + newEmployee.getAccountID());
-        }
-
-        // if the user being examined is the current user, Employee is not added to the listView
-        if (!newEmployee.getAccountID().equals(currentUserId)){
-            employees.add(newEmployee);
-        }
-
-        // update listView once a user has changed or added
-        listViewAdapter();
-    }
-
-    public void updateUsers(DataSnapshot dataSnapshot){
-        String employeeId = dataSnapshot.getKey();
-        if(!employeeId.equals(currentUserId)) {
-            Log.d(TAG, "updateUsers: employeeId = " + employeeId);
-            for (int i = 0; i < employees.size(); i++) {
-                Log.d(TAG, "updateUsers: employee name =" + employees.get(i).getAccountID());
-                if (employeeId.equals(employees.get(i).getAccountID())) {
-                    employees.set(i, dataSnapshot.getValue(Employee.class));
-                    employees.get(i).setAccountID(employeeId);
-                    Log.d(TAG, "updateUsers: updated name: " + employees.get(i).getName());
-                }
-            }
-            listViewAdapter();
-        }
-    }
-
 
     // setup the adapter for the employees list view
     private void listViewAdapter(){
@@ -178,6 +104,6 @@ public class EmployeeFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        dbRef.removeEventListener(childEventListener);
+        firebaseHelper.detatchEmployeeChildEventListener();
     }
 }

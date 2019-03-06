@@ -1,11 +1,15 @@
 package com.example.a390project;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.a390project.ListViewAdapters.EmployeeListViewAdapter;
 import com.example.a390project.ListViewAdapters.MachineListViewAdapter;
 import com.example.a390project.Model.Employee;
 import com.example.a390project.Model.EmployeeTasks;
@@ -15,6 +19,7 @@ import com.example.a390project.Model.Paintbooth;
 import com.example.a390project.Model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +38,17 @@ public class FirebaseHelper {
     private DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
     private String uId;
     private List<Machine> machines;
+
+    // ------------------------------------------- Employee variables -------------------------------------------
+    private List<Employee> employees;
+    private String currentUserId;
+    private View employeeFragmentView;
+    private DatabaseReference dbRefEmployees;
+
+    // childEventListener to get Employees
+    private ChildEventListener childEventListener;
+
+    private static final String TAG = "FirebaseHelper";
 
     public FirebaseHelper() {
         rootRef = FirebaseDatabase.getInstance().getReference();
@@ -99,4 +115,114 @@ public class FirebaseHelper {
         ListView itemsListView  = (ListView) view.findViewById(R.id.machine_list_view);
         itemsListView.setAdapter(adapter);
     }
+
+    // --------------------------------------- Firebase employees functions ------------------------------------------
+
+    public void getEmployees(View view){
+        employees = new ArrayList<>();
+        currentUserId = FirebaseAuth.getInstance().getUid();
+        employeeFragmentView = view;
+
+        dbRefEmployees = FirebaseDatabase.getInstance().getReference("users");
+
+        childEventListener = new ChildEventListener(){
+
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                getEmployees(dataSnapshot);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.d(TAG, "onChildChanged: ");
+                updateEmployees(dataSnapshot);
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onChildRemoved: ");
+                updateEmployees(dataSnapshot);
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Log.d(TAG, "onChildMoved: ");
+                updateEmployees(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+        };
+        dbRefEmployees.addChildEventListener(childEventListener);
+    }
+
+    private void getEmployees(DataSnapshot dataSnapshot){
+
+        Log.d(TAG, "updateUsers: dataSnapshot return: " + dataSnapshot.getValue());
+        Employee newEmployee = dataSnapshot.getValue(Employee.class);
+        if (newEmployee != null) {
+            newEmployee.setAccountID(dataSnapshot.getKey());
+            Log.d(TAG, "updateUsers: account id: " + newEmployee.getAccountID());
+        }
+
+        // if the user being examined is the current user, Employee is not added to the listView
+        if (!newEmployee.getAccountID().equals(currentUserId)){
+            employees.add(newEmployee);
+        }
+
+        // update listView once a user has changed or added
+        listViewAdapter();
+    }
+
+    private void updateEmployees(DataSnapshot dataSnapshot){
+        String employeeId = dataSnapshot.getKey();
+        if(!employeeId.equals(currentUserId)) {
+            Log.d(TAG, "updateUsers: employeeId = " + employeeId);
+            for (int i = 0; i < employees.size(); i++) {
+                Log.d(TAG, "updateUsers: employee name =" + employees.get(i).getAccountID());
+                if (employeeId.equals(employees.get(i).getAccountID())) {
+                    employees.set(i, dataSnapshot.getValue(Employee.class));
+                    employees.get(i).setAccountID(employeeId);
+                    Log.d(TAG, "updateUsers: updated name: " + employees.get(i).getName());
+                }
+            }
+            listViewAdapter();
+        }
+    }
+
+    private void listViewAdapter(){
+        //Log.d(TAG, "updateUsers: updated name: " + employees.get(3));
+
+        Log.d(TAG, "listViewAdapter: employees size = " + employees.size());
+        Log.d(TAG, "listViewAdapter: --------------------------------------");
+        for(Employee currentEmployee : employees){
+            Log.d(TAG, "listViewAdapter: employee name = " + currentEmployee.getName());
+        }
+        Log.d(TAG, "listViewAdapter: --------------------------------------");
+
+        ListView employeeListView = employeeFragmentView.findViewById(R.id.employeesListView);
+        EmployeeListViewAdapter employeeAdapter = new EmployeeListViewAdapter(employeeFragmentView.getContext(), employees);
+        employeeListView.setAdapter(employeeAdapter);
+
+        // setup what happens when a list view item is clicked
+        employeeListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                // go to the employee's activity
+                Intent intent = new Intent(view.getContext(), EmployeeActivity.class);
+                intent.putExtra("employeeID", employees.get(position).getAccountID());
+                employeeFragmentView.getContext().startActivity(intent);
+            }
+        });
+    }
+
+    public void detatchEmployeeChildEventListener(){
+        dbRefEmployees.removeEventListener(childEventListener);
+    }
+
 }
