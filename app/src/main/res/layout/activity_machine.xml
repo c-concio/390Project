@@ -8,25 +8,6 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Machine ID"
-        android:textStyle="bold"
-        android:textSize="20dp"
-        android:layout_marginTop="10dp"
-        android:textColor="@color/colorPrimaryDark"
-        android:gravity="left" />
-    <TextView
-        android:id="@+id/machine_id_activity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="ID"
-        android:textSize="18dp"
-        android:layout_marginBottom="10dp"
-        android:textColor="@color/colorPrimaryDark"
-        android:gravity="left"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:text="Machine Title"
         android:textStyle="bold"
         android:textSize="20dp"

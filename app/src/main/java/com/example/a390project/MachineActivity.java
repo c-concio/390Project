@@ -21,7 +21,6 @@ public class MachineActivity extends AppCompatActivity {
 
     //views
     private TextView mMachineTitle;
-    private TextView mMachineID;
     private TextView mMachineStatus;
     private Switch mMachineNotifications;
 
@@ -36,15 +35,13 @@ public class MachineActivity extends AppCompatActivity {
 
         //Controller will only need to send machineID from MachineListViewAdapter to machineActivity,
         // which will get the entire Machine Object from Firebase
-        String machineID = getIntent().getStringExtra("machine_ID");
         String machineTitle = getIntent().getStringExtra("machine_title");
         boolean machineStatus = getIntent().getBooleanExtra("machine_status",false);
-        Log.d(TAG, "Machine Fetched: " + machineID + " " + machineTitle + " " + machineStatus);
+        Log.d(TAG, "Machine Fetched: " + machineTitle + " " + machineStatus);
 
-        Machine machine = new Machine (machineID, machineTitle, "-", machineStatus);
+        Machine machine = new Machine (machineTitle, machineStatus);
 
         mMachineTitle.setText(machine.getMachineTitle());
-        mMachineID.setText(machine.getMachineID());
         mMachineStatus.setText(machine.isMachineStatus() ? "On":"Off");
 
         //create controller to enable/disable notifications
@@ -66,7 +63,6 @@ public class MachineActivity extends AppCompatActivity {
 
     private void prepareViews() {
         mMachineTitle = findViewById(R.id.machine_title_activity);
-        mMachineID = findViewById(R.id.machine_id_activity);
         mMachineStatus = findViewById(R.id.machine_status_activity);
         mMachineNotifications = findViewById(R.id.machine_notifications_acitivty);
     }

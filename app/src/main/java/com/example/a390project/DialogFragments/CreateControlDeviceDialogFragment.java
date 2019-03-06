@@ -47,11 +47,6 @@ public class CreateControlDeviceDialogFragment extends DialogFragment {
         return view;
     }
 
-
-    public void onDestroyView(){
-        super.onDestroyView();
-    }
-
     private void setupUI(View view){
         control_device_edit_text = view.findViewById(R.id.control_device_edit_text);
         control_device_add_button = view.findViewById(R.id.control_device_add_button);

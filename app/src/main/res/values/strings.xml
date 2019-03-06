@@ -3,4 +3,9 @@
     <string name="employee_name">Employee Name</string>
     <string name="assigned_tasks">Assigned Tasks</string>
     <string name="completed_tasks">Completed Tasks</string>
+
+    <string-array name="machine_type">
+        <item>Oven</item>
+        <item>PaintBooth</item>
+    </string-array>
 </resources>

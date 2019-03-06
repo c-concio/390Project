@@ -32,6 +32,26 @@
             android:singleLine="true"/>
     </android.support.design.widget.TextInputLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18dp"
+            android:text="Machine Type"
+            android:padding="10dp"/>
+        <Spinner
+            android:id="@+id/machine_type_spinner"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="left">
+        </Spinner>
+    </LinearLayout>
+
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -82,10 +82,9 @@ public class MachineListViewAdapter extends BaseAdapter {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String machineID = currentItem.getMachineID();
                 String machineTitle = currentItem.getMachineTitle();
                 Boolean machineStatus = currentItem.isMachineStatus();
-                startMachineActivity(machineID, machineTitle, machineStatus);
+                startMachineActivity(machineTitle, machineStatus);
             }
         });
 
@@ -93,9 +92,8 @@ public class MachineListViewAdapter extends BaseAdapter {
     }
     //Controller will only need to send machineID from MachineListViewAdapter to machineActivity,
     // which will get the entire Machine Object from Firebase
-    private void startMachineActivity(String machineID, String machineTitle, boolean machineStatus) {
+    private void startMachineActivity(String machineTitle, boolean machineStatus) {
         Intent intent = new Intent(context, MachineActivity.class);
-        intent.putExtra("machine_ID", machineID);
         intent.putExtra("machine_title", machineTitle);
         intent.putExtra("machine_status", machineStatus);
         context.startActivity(intent);

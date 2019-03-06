@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.example.a390project.DialogFragments.CreateControlDeviceDialogFragment;
 import com.example.a390project.DialogFragments.CreateEmployeeDialogFragment;
 import com.example.a390project.DialogFragments.CreateMachineDialogFragment;
+import com.example.a390project.DialogFragments.CreateProjectDialogFragment;
 import com.example.a390project.Fragments.ControlDeviceFragment;
 import com.example.a390project.Fragments.EmployeeFragment;
 import com.example.a390project.Fragments.MachineFragment;
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "MainActivity";
 
-    //This is our tablayout
+    //This is our tab-layout
     private TabLayout tabLayout;
     //This is our viewPager
     private ViewPager viewPager;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton mFabOpenDialogFragmentMachine;
     FloatingActionButton mFabOpenDialogFragmentEmployee;
     FloatingActionButton mFabOpenDialogFragmentControlDevice;
+    FloatingActionButton mFabOpenDialogFragmentProject;
     //firebase auth
     private FirebaseAuth mAuth;
 
@@ -71,14 +73,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void prepareActivity() {
         //instantiate fragment views
-        mFabOpenDialogFragmentMachine = findViewById(R.id.fab_open_dialog_fragment_machine);
-        mFabOpenDialogFragmentMachine.setOnClickListener(new View.OnClickListener() {
+        mFabOpenDialogFragmentProject = findViewById(R.id.fab_open_dialog_fragment_project);
+        mFabOpenDialogFragmentProject.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v) {
-                startCreateMachineDialogFragment();
+            public void onClick(View v){
+                startCreateProjectDialogFragment();
             }
         });
-
         mFabOpenDialogFragmentEmployee = findViewById(R.id.fab_open_dialog_fragment_employee);
         mFabOpenDialogFragmentEmployee.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -93,10 +94,17 @@ public class MainActivity extends AppCompatActivity {
                 startCreateControlDeviceDialogFragment();
             }
         });
+        mFabOpenDialogFragmentMachine = findViewById(R.id.fab_open_dialog_fragment_machine);
+        mFabOpenDialogFragmentMachine.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startCreateMachineDialogFragment();
+            }
+        });
 
         //Initializing viewPager
         viewPager = findViewById(R.id.viewpager);
-        viewPager.setOffscreenPageLimit(5); // <---- .setOffscreenPageLimit controls the max amount of tabs
+        viewPager.setOffscreenPageLimit(4); // <---- .setOffscreenPageLimit controls the max amount of tabs
 
         //Initializing the tablayout
         tabLayout = findViewById(R.id.tablayout);
@@ -136,9 +144,9 @@ public class MainActivity extends AppCompatActivity {
         //adapter.addFragment(fragment1,"FRAGMENT_1_TITLE");
         //adapter.addFragment(fragment2,"FRAGMENT_2_TITLE");
 
-        // ------------------ MACHINE FRAGMENT ------------------
-        MachineFragment machineFragment = new MachineFragment();
-        adapter.addFragment(machineFragment,"MACHINES");
+        // ------------------ PROJECT FRAGMENT ------------------------
+        ProjectFragment projectFragment = new ProjectFragment();
+        adapter.addFragment(projectFragment, "PROJECTS");
 
         // ------------------ EMPLOYEE FRAGMENT ------------------
         EmployeeFragment employeeFragment = new EmployeeFragment();
@@ -148,46 +156,58 @@ public class MainActivity extends AppCompatActivity {
         ControlDeviceFragment controlDeviceFragment = new ControlDeviceFragment();
         adapter.addFragment(controlDeviceFragment, "DEVICES");
 
-        // ------------------ PROJECT FRAGMENT ------------------------
-        ProjectFragment projectFragment = new ProjectFragment();
-        adapter.addFragment(projectFragment, "PROJECTS");
+        // ------------------ MACHINE FRAGMENT ------------------
+        MachineFragment machineFragment = new MachineFragment();
+        adapter.addFragment(machineFragment,"MACHINES");
 
 
         viewPager.setAdapter(adapter);
     }
 
-    private void startCreateMachineDialogFragment() {
-        CreateMachineDialogFragment dialog = new CreateMachineDialogFragment();
-        dialog.show(getSupportFragmentManager(), "Create Group");
+    private void startCreateProjectDialogFragment(){
+        CreateProjectDialogFragment dialog = new CreateProjectDialogFragment();
+        dialog.show(getSupportFragmentManager(), "Create Project");
     }
 
     private void startCreateEmployeeDialogFragment(){
         CreateEmployeeDialogFragment dialog = new CreateEmployeeDialogFragment();
-        dialog.show(getSupportFragmentManager(), "Create Group");
+        dialog.show(getSupportFragmentManager(), "Create Employee");
     }
 
     private void startCreateControlDeviceDialogFragment(){
         CreateControlDeviceDialogFragment dialog = new CreateControlDeviceDialogFragment();
-        dialog.show(getSupportFragmentManager(), "Create Group");
+        dialog.show(getSupportFragmentManager(), "Create Controllable Device");
+    }
+
+    private void startCreateMachineDialogFragment() {
+        CreateMachineDialogFragment dialog = new CreateMachineDialogFragment();
+        dialog.show(getSupportFragmentManager(), "Create Machine");
     }
 
     private void animateFab(int position) {
         switch (position) {
             case 0:
-                mFabOpenDialogFragmentMachine.show();
+                mFabOpenDialogFragmentProject.show();
                 mFabOpenDialogFragmentEmployee.hide();
                 mFabOpenDialogFragmentControlDevice.hide();
+                mFabOpenDialogFragmentMachine.hide();
                 break;
             case 1:
-                mFabOpenDialogFragmentMachine.hide();
                 mFabOpenDialogFragmentEmployee.show();
+                mFabOpenDialogFragmentProject.hide();
                 mFabOpenDialogFragmentControlDevice.hide();
+                mFabOpenDialogFragmentMachine.hide();
                 break;
             case 2:
-                mFabOpenDialogFragmentMachine.hide();
-                mFabOpenDialogFragmentEmployee.hide();
                 mFabOpenDialogFragmentControlDevice.show();
-
+                mFabOpenDialogFragmentProject.hide();
+                mFabOpenDialogFragmentEmployee.hide();
+                mFabOpenDialogFragmentMachine.hide();
+            case 3:
+                mFabOpenDialogFragmentMachine.show();
+                mFabOpenDialogFragmentProject.hide();
+                mFabOpenDialogFragmentEmployee.hide();
+                mFabOpenDialogFragmentControlDevice.hide();
             default:
                 break;
         }

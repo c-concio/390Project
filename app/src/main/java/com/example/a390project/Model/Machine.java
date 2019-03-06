@@ -4,19 +4,29 @@ import java.util.Random;
 
 public class Machine {
 
-    // -------------------- Data Members --------------------
-    private String machineID; // <-------- will be used to identify each machine in our database
-    private String machineTitle;
+    // -------------------- Data Members (common to both Oven & Paint Booth) --------------------
+    private String machineTitle; //<-------- will be used to identify each machine in our database (ideally should of had machineID)
     private String machineLastEmployee;
     private boolean machineStatus;
+    private float temperature;
+    private String machineType;
 
     // -------------------- Constructor --------------------
-    public Machine(String machineID, String machineTitle, String machineLastEmployee, boolean machineStatus) {
-        this.machineID = machineID;
+    //used to create a new machine into db
+    public Machine(String machineTitle, String machineLastEmployee, boolean machineStatus, float temperature, String machineType) {
         this.machineTitle = machineTitle;
         this.machineLastEmployee = machineLastEmployee;
         this.machineStatus = machineStatus;
+        this.temperature = temperature;
+        this.machineType = machineType;
     }
+    //used in MachineActivity
+    public Machine(String machineTitle, boolean machineStatus) {
+        this.machineTitle = machineTitle;
+        this.machineStatus = machineStatus;
+    }
+
+    public Machine() {};
 
     // ------------------- Methods ----------------------
 
@@ -32,25 +42,7 @@ public class Machine {
         return sb.toString();
     }
 
-    // -------------------- Setters --------------------
-
-    public void setMachineTitle(String machineTitle) {
-        this.machineTitle = machineTitle;
-    }
-
-    public void setMachineLastEmployee(String machineLastEmployee) {
-        this.machineLastEmployee = machineLastEmployee;
-    }
-
-    public void setMachineStatus(boolean machineStatus) {
-        this.machineStatus = machineStatus;
-    }
-
-    public void setMachineID(String machineID) {
-        this.machineID = machineID;
-    }
-
-    // -------------------- Getters --------------------
+    // -------------------- Getters & Setters --------------------
 
     public String getMachineTitle() {
         return machineTitle;
@@ -64,7 +56,31 @@ public class Machine {
         return machineStatus;
     }
 
-    public String getMachineID() {
-        return machineID;
+    public float getTemperature() {
+        return temperature;
+    }
+
+    public void setMachineTitle(String machineTitle) {
+        this.machineTitle = machineTitle;
+    }
+
+    public void setMachineLastEmployee(String machineLastEmployee) {
+        this.machineLastEmployee = machineLastEmployee;
+    }
+
+    public void setMachineStatus(boolean machineStatus) {
+        this.machineStatus = machineStatus;
+    }
+
+    public void setTemperature(float temperature) {
+        this.temperature = temperature;
+    }
+
+    public String getMachineType() {
+        return machineType;
+    }
+
+    public void setMachineType(String machineType) {
+        this.machineType = machineType;
     }
 }

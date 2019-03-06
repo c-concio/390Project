@@ -10,8 +10,6 @@
         android:layout_height="wrap_content"
         android:hint="Device Name" />
 
-
-
     <Button
         android:id="@+id/control_device_add_button"
         android:layout_width="match_parent"

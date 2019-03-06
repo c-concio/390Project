@@ -46,20 +46,20 @@ public class DummyDatabase {
         return employee;
     }
 
-    public List<Machine> generateDummyMachines(){
-        List<Machine> machines = new ArrayList<>();
-
-        String [] names = {"Abdulrahim", "Antoine ", "Andrew", "Chris", "Kris"};
-
-        //alternate status to view background effect
-        boolean status = false;
-        for (int i = 0; i < 5; i++) {
-            machines.add(new Machine(Machine.generateRandomChars(28),"Machine " + i, names[i],status));
-            status = !status;
-        }
-
-        return machines;
-    }
+//    public List<Machine> generateDummyMachines(){
+//        List<Machine> machines = new ArrayList<>();
+//
+//        String [] names = {"Abdulrahim", "Antoine ", "Andrew", "Chris", "Kris"};
+//
+//        //alternate status to view background effect
+//        boolean status = false;
+//        for (int i = 0; i < 5; i++) {
+//            machines.add(new Machine("Machine " + i, names[i],status));
+//            status = !status;
+//        }
+//
+//        return machines;
+//    }
 
     protected List<EmployeeTasks> generateTasks(int size){
 
