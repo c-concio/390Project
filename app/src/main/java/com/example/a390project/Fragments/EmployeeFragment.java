@@ -19,6 +19,7 @@ import com.example.a390project.Model.Employee;
 import com.example.a390project.ListViewAdapters.EmployeeListViewAdapter;
 import com.example.a390project.Model.User;
 import com.example.a390project.R;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,10 +37,10 @@ public class EmployeeFragment extends Fragment {
     private static final String TAG = "EmployeeFragment";
 
     private View view;
-    private List<String> names = new ArrayList<>();
     ListView employeeListView;
     DummyDatabase db = new DummyDatabase();
     private List<Employee> employees;
+    private String currentUserId;
 
     // variables needed to access firebase
     DatabaseReference dbRef;
@@ -69,6 +70,10 @@ public class EmployeeFragment extends Fragment {
         // get the database reference of the users in firebase
         dbRef = FirebaseDatabase.getInstance().getReference("users");
 
+        Log.d(TAG, "setupUI: Current user's id = " + FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         // setup what happens when a list view item is clicked
         employeeListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
@@ -77,23 +82,20 @@ public class EmployeeFragment extends Fragment {
 
                 // go to the employee's activity
                 //Todo: put the user id into the activity
-                /*Intent intent = new Intent(view.getContext(), EmployeeActivity.class);
-                intent.putExtra("employeeID", users.get(position).getEmployeeID());
-                startActivity(intent);*/
+                Intent intent = new Intent(view.getContext(), EmployeeActivity.class);
+                intent.putExtra("employeeID", employees.get(position).getAccountID());
+                startActivity(intent);
             }
         });
     }
 
-    //Todo: populate the users list
     public void getUsers(){
-
-        names = new ArrayList<>();
         employees = new ArrayList<>();
         childEventListener = new ChildEventListener(){
 
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                getNames(dataSnapshot);
+                getEmployees(dataSnapshot);
             }
 
             @Override
@@ -123,8 +125,7 @@ public class EmployeeFragment extends Fragment {
         dbRef.addChildEventListener(childEventListener);
     }
 
-    public void getNames(DataSnapshot dataSnapshot){
-        names.add(dataSnapshot.child("name").getValue(String.class));
+    public void getEmployees(DataSnapshot dataSnapshot){
 
         Log.d(TAG, "updateUsers: dataSnapshot return: " + dataSnapshot.getValue());
         Employee newEmployee = dataSnapshot.getValue(Employee.class);
@@ -132,7 +133,11 @@ public class EmployeeFragment extends Fragment {
             newEmployee.setAccountID(dataSnapshot.getKey());
             Log.d(TAG, "updateUsers: account id: " + newEmployee.getAccountID());
         }
-        employees.add(newEmployee);
+
+        // if the user being examined is the current user, Employee is not added to the listView
+        if (!newEmployee.getAccountID().equals(currentUserId)){
+            employees.add(newEmployee);
+        }
 
         // update listView once a user has changed or added
         listViewAdapter();
@@ -140,16 +145,18 @@ public class EmployeeFragment extends Fragment {
 
     public void updateUsers(DataSnapshot dataSnapshot){
         String employeeId = dataSnapshot.getKey();
-        Log.d(TAG, "updateUsers: employeeId = " + employeeId);
-        for(int i = 0; i < employees.size(); i++){
-            Log.d(TAG, "updateUsers: employee name =" + employees.get(i).getAccountID());
-            if (employeeId.equals(employees.get(i).getAccountID())){
-                employees.set(i, dataSnapshot.getValue(Employee.class));
-                employees.get(i).setAccountID(employeeId);
-                Log.d(TAG, "updateUsers: updated name: " + employees.get(i).getName());
+        if(!employeeId.equals(currentUserId)) {
+            Log.d(TAG, "updateUsers: employeeId = " + employeeId);
+            for (int i = 0; i < employees.size(); i++) {
+                Log.d(TAG, "updateUsers: employee name =" + employees.get(i).getAccountID());
+                if (employeeId.equals(employees.get(i).getAccountID())) {
+                    employees.set(i, dataSnapshot.getValue(Employee.class));
+                    employees.get(i).setAccountID(employeeId);
+                    Log.d(TAG, "updateUsers: updated name: " + employees.get(i).getName());
+                }
             }
+            listViewAdapter();
         }
-        listViewAdapter();
     }
 
 
@@ -157,13 +164,14 @@ public class EmployeeFragment extends Fragment {
     private void listViewAdapter(){
         //Log.d(TAG, "updateUsers: updated name: " + employees.get(3));
 
+        Log.d(TAG, "listViewAdapter: employees size = " + employees.size());
         Log.d(TAG, "listViewAdapter: --------------------------------------");
         for(Employee currentEmployee : employees){
             Log.d(TAG, "listViewAdapter: employee name = " + currentEmployee.getName());
         }
         Log.d(TAG, "listViewAdapter: --------------------------------------");
 
-        EmployeeListViewAdapter employeeAdapter = new EmployeeListViewAdapter(view.getContext(), names);
+        EmployeeListViewAdapter employeeAdapter = new EmployeeListViewAdapter(view.getContext(), employees);
         employeeListView.setAdapter(employeeAdapter);
     }
 

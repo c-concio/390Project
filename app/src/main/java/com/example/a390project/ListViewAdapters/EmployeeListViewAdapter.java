@@ -18,24 +18,24 @@ public class EmployeeListViewAdapter extends BaseAdapter {
 
     private static final String TAG = "EmployeeListViewAdapter";
     private Context context;
-    private List<String> names;
+    private List<Employee> employees;
 
     // Employee layout components
     private TextView employeeName;
 
-    public EmployeeListViewAdapter(Context context, List<String> names){
+    public EmployeeListViewAdapter(Context context, List<Employee> employees){
         this.context = context;
-        this.names = names;
+        this.employees = employees;
     }
 
     @Override
     public int getCount() {
-        return names.size();
+        return employees.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return names.get(position);
+        return employees.get(position);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class EmployeeListViewAdapter extends BaseAdapter {
 
         setupUI(convertView);
 
-        employeeName.setText(names.get(position));
+        employeeName.setText(employees.get(position).getName());
 
 
         return convertView;
