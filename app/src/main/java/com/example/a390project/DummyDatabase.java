@@ -31,7 +31,7 @@ public class DummyDatabase {
         //employee.add(new Employee(0, "ant", "Test123"));
         for (int i = 1; i <= size; i++){
             employeeID++;
-            employee.add(new Employee(employeeID, "Employee Name " + employeeID, "Test123"));
+            //employee.add(new Employee(employeeID, "Employee Name " + employeeID, "Test123"));
         }
 
         return employee;
@@ -39,7 +39,7 @@ public class DummyDatabase {
 
     public void addEmployee(String username, String password) {
         employeeID++;
-        employee.add(new Employee(employeeID, username, password));
+        //employee.add(new Employee(employeeID, username, password));
     }
 
     public List<Employee> getEmployees(){

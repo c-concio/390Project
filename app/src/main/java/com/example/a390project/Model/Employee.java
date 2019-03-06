@@ -5,51 +5,43 @@ import java.util.ArrayList;
 public class Employee {
 
     // variables
-    private int accountID;
-    private String employeeName;
-    private String employeePassword;
-    private ArrayList<Integer> taskIDs = new ArrayList<>(); // < --------- tasks associated to the employee
+    private String accountID;
+    private String name;
+    private Boolean manager;
+    private String email;
+    private String timeCreated;
 
-    // -------------------- Constructor --------------------
-    Employee(int employeeID, String employeeName,String employeepassword, ArrayList<Integer> taskIDs){
-        this.accountID = employeeID;
-        this.employeeName = employeeName;
-        this.employeePassword = employeepassword;
-        this.taskIDs = taskIDs;
+    Employee(){}
+
+    public String getAccountID() {
+        return accountID;
     }
 
-
-
-    public Employee(int employeeID, String employeeName, String employeepassword){
-        this.accountID = employeeID;
-        this.employeeName = employeeName;
-        this.employeePassword = employeepassword;
+    public void setAccountID(String accountID) {
+        this.accountID = accountID;
     }
 
-    // -------------------- Setters --------------------
-    public String getEmployeePassword() {
-        return employeePassword;
+    public String getName() {
+        return name;
     }
 
-    public void setEmployeePassword(String employeePassword) {
-        this.employeePassword = employeePassword;
-    }
-    public void setEmployeeName(String employeeName){
-        this.employeeName = employeeName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void addTask(int taskID){
-        taskIDs.add(taskID);
+    public Boolean getManager() {
+        return manager;
     }
 
-    // -------------------- Getters --------------------
+    public void setManager(Boolean manager) {
+        this.manager = manager;
+    }
 
-    public int getEmployeeID() { return accountID; }
+    public String getEmail() {
+        return email;
+    }
 
-    public String getEmployeeName(){ return employeeName; }
-
-    public ArrayList<Integer> getTaskIDs() { return taskIDs; }
-
-
-
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
