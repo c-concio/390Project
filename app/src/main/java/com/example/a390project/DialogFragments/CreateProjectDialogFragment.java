@@ -79,9 +79,14 @@ public class CreateProjectDialogFragment extends DialogFragment implements DateP
                 String client = mClient.getText().toString().trim();
 
                 if (!po.isEmpty() && !client.isEmpty() && !title.isEmpty() && !mStartText.equals("-") && !mDueText.equals("-")) {
-                    FirebaseHelper firebaseHelper = new FirebaseHelper();
-                    firebaseHelper.createProject(po, title, client, startDate, dueDate);
-                    getDialog().dismiss();
+                    if (startDate < dueDate) {
+                        FirebaseHelper firebaseHelper = new FirebaseHelper();
+                        firebaseHelper.createProject(po, title, client, startDate, dueDate);
+                        getDialog().dismiss();
+                    }
+                    else {
+                        Toast.makeText(getActivity(), "Due-date cannot be before Start-date", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 else {
                     Toast.makeText(getActivity(), "Invalid Inputs", Toast.LENGTH_SHORT).show();
