@@ -13,12 +13,14 @@ import android.widget.ProgressBar;
 import com.example.a390project.ListViewAdapters.EmployeeListViewAdapter;
 import com.example.a390project.ListViewAdapters.MachineListViewAdapter;
 import com.example.a390project.ListViewAdapters.ProjectListViewAdapter;
+import com.example.a390project.ListViewAdapters.TaskListViewAdapter;
 import com.example.a390project.Model.Employee;
 import com.example.a390project.Model.EmployeeTasks;
 import com.example.a390project.Model.Machine;
 import com.example.a390project.Model.Oven;
 import com.example.a390project.Model.Paintbooth;
 import com.example.a390project.Model.Project;
+import com.example.a390project.Model.Task;
 import com.example.a390project.Model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -62,6 +64,13 @@ public class FirebaseHelper {
     // ------------------------------------------- Project variables -------------------------------------------
 
     private List<Project> projects;
+
+    // ------------------------------------------- Task variables -------------------------------------------
+    private List<String> taskID;
+    private List<Task> tasks;
+
+    // -------------------------------------------------------------------------------------------------------------
+
 
     /*
    ------------------------------------------FirebaseHelper User creation functions-----------------------------------
@@ -268,6 +277,43 @@ public class FirebaseHelper {
     private void callProjectListViewAdapter(View view, Activity activity){
         ProjectListViewAdapter adapter = new ProjectListViewAdapter(activity, projects);
         ListView itemsListView  = view.findViewById(R.id.project_list_view);
+        itemsListView.setAdapter(adapter);
+    }
+
+    public void populateTasks(String projectPO, final Activity activity) {
+        rootRef.child("projects").child(projectPO).child("tasks").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds:dataSnapshot.getChildren()) {
+                    taskID.add(ds.getKey());
+                }
+                rootRef.child("tasks").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        //populate all the tasks based on identified taskID's, which is based on projectPO
+                        for (DataSnapshot ds:dataSnapshot.getChildren()) {
+                            tasks.add(new Task());
+                        }
+                        callTaskListViewAdapter(activity, tasks);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void callTaskListViewAdapter(Activity activity, List<Task> tasks) {
+        TaskListViewAdapter adapter = new TaskListViewAdapter(activity,tasks);
+        ListView itemsListView  = activity.findViewById(R.id.task_list_view);
         itemsListView.setAdapter(adapter);
     }
 }

@@ -19,7 +19,7 @@ import com.example.a390project.R;
 
 public class MachineListViewAdapter extends BaseAdapter {
 
-    private String TAG = "CustomGroupListAdapter";
+    private String TAG = "MachineListAdapter";
     private Context context; //context
     private List<Machine> items; //data source of the list adapter
 
