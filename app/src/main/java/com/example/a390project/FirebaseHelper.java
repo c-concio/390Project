@@ -284,6 +284,7 @@ public class FirebaseHelper {
         rootRef.child("projects").child(projectPO).child("tasks").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                taskID = new ArrayList<String>();
                 for (DataSnapshot ds:dataSnapshot.getChildren()) {
                     taskID.add(ds.getKey());
                 }
@@ -291,6 +292,7 @@ public class FirebaseHelper {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         //populate all the tasks based on identified taskID's, which is based on projectPO
+                        tasks = new ArrayList<Task>();
                         for (DataSnapshot ds:dataSnapshot.getChildren()) {
                             tasks.add(new Task());
                         }
