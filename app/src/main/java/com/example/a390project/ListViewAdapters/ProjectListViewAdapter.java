@@ -12,29 +12,34 @@ import com.example.a390project.Model.Project;
 import com.example.a390project.ProjectActivity;
 import com.example.a390project.R;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class ProjectListViewAdapter extends BaseAdapter {
 
     private Context context;
-    private List<Project> Projects;
+    private List<Project> projects;
 
-    private TextView ProjectTitle;
-    private TextView PO;
+    //views
+    private TextView mClient;
+    private TextView mTitle;
+    private TextView mPO;
+    private TextView mStartDate;
+    private TextView mDueDate;
 
-    public ProjectListViewAdapter(Context cont, List<Project> projects){
-        context=cont;
-        Projects=projects;
+    public ProjectListViewAdapter(Context context, List<Project> projects){
+        this.context = context;
+        this.projects = projects;
     }
 
     @Override
     public int getCount() {
-        return Projects.size();
+        return projects.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return Projects.get(position);
+        return projects.get(position);
     }
 
     @Override
@@ -47,25 +52,41 @@ public class ProjectListViewAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.row_item_project, parent, false);
         }
-        ProjectTitle = convertView.findViewById(R.id.ProjectTitleTV);
-        PO = convertView.findViewById(R.id.POTV);
-
-        ProjectTitle.setText(Projects.get(position).getTitle()+"\n");
-        PO.setText(Projects.get(position).getPO() + "\n");
 
         // get current item to be displayed
         final Project currentItem = (Project) getItem(position);
 
+        mClient = convertView.findViewById(R.id.project_client);
+        mTitle = convertView.findViewById(R.id.project_title);
+        mPO = convertView.findViewById(R.id.project_PO);
+        mStartDate = convertView.findViewById(R.id.project_startDate);
+        mDueDate = convertView.findViewById(R.id.project_dueDate);
+
+        mClient.setText(currentItem.getClient());
+        mTitle.setText(currentItem.getTitle());
+        mPO.setText(currentItem.getPo());
+        mStartDate.setText(getDate(currentItem.getStartDate()));
+        mDueDate.setText(getDate(currentItem.getDueDate()));
+
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, ProjectActivity.class);
-                intent.putExtra("projectID", currentItem.getID());
-                intent.putExtra("projectTitle", currentItem.getTitle());
-                context.startActivity(intent);
+                startProjectActivity(currentItem.getPo());
+
             }
         });
 
         return convertView;
+    }
+
+    private void startProjectActivity(String po) {
+        Intent intent = new Intent(context, ProjectActivity.class);
+        intent.putExtra("projectPO", po);
+        context.startActivity(intent);
+    }
+
+    private String getDate(long time) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        return formatter.format(time);
     }
 }

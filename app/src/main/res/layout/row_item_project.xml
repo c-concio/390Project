@@ -4,27 +4,92 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:padding="5dp">
 
     <TextView
-        android:id="@+id/ProjectTitleTV"
+        android:id="@+id/project_client"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:text="TextView"
+        android:text="Client"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="22dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/POTV"
+        android:id="@+id/project_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:text="TextView"
+        android:text="Project Title"
+        android:textColor="@color/colorPrimary"
+        android:textSize="18dp"
+        app:layout_constraintStart_toStartOf="@+id/project_client"
+        app:layout_constraintTop_toBottomOf="@+id/project_client" />
+
+    <TextView
+        android:id="@+id/project_PO"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PO"
+        android:textSize="16dp"
+        app:layout_constraintStart_toStartOf="@+id/project_title"
+        app:layout_constraintTop_toBottomOf="@+id/project_title" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/project_PO"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/project_client">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Start: "
+                android:textColor="@color/colorPrimary"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/project_startDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="startDate"
+                android:textSize="16dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="7dp"
+                android:text="Due: "
+                android:textColor="@color/colorPrimary"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/project_dueDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="dueDate"
+                android:textSize="16dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+
 </android.support.constraint.ConstraintLayout>

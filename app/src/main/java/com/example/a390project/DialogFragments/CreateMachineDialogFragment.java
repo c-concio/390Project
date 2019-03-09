@@ -16,7 +16,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.a390project.FirebaseHelper;
-import com.example.a390project.Model.Machine;
 import com.example.a390project.Model.Oven;
 import com.example.a390project.Model.Paintbooth;
 import com.example.a390project.R;
@@ -69,11 +68,11 @@ public class CreateMachineDialogFragment extends DialogFragment {
                 machineTitle = mTtitle.getText().toString().trim();
                 if (!machineTitle.isEmpty()) {
                     if (machineType.equals("Oven")) {
-                        firebaseHelper.add_machine(new Oven(machineTitle,"None",false,0,machineType,
+                        firebaseHelper.createMachine(new Oven(machineTitle,"None",false,0,machineType,
                                 0, 0));
                     }
                     else if (machineType.equals("PaintBooth")) {
-                        firebaseHelper.add_machine(new Paintbooth(machineTitle, "None", false, 0, machineType,
+                        firebaseHelper.createMachine(new Paintbooth(machineTitle, "None", false, 0, machineType,
                                 0));
                     }
                     Log.d(TAG, machineTitle + " created!");

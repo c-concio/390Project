@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="20dp"
+    android:layout_margin="10dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create Project"
+        android:textColor="@android:color/black"
+        android:textSize="22dp"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="8dp"/>
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/project_client_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Client"
+            android:inputType="text"
+            android:padding="10dp"
+            android:layout_marginTop="30dp"
+            android:nextFocusDown="@id/project_title_edit_text"
+            android:singleLine="true"/>
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/project_title_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Project Title"
+            android:inputType="text"
+            android:padding="10dp"
+            android:layout_marginTop="30dp"
+            android:nextFocusDown="@id/project_PO_edit_text"
+            android:singleLine="true"/>
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/project_PO_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Purchase Order - PO"
+            android:inputType="text"
+            android:padding="10dp"
+            android:layout_marginTop="30dp"
+            android:singleLine="true"/>
+    </android.support.design.widget.TextInputLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp">
+        <TextView
+            android:id="@+id/startdate_textview"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:text="-"
+            android:gravity="center_horizontal"/>
+        <TextView
+            android:id="@+id/duedate_project_textview"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:text="-"
+            android:gravity="center_horizontal"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal">
+        <Button
+            android:id="@+id/startdate_project_dialog_fragment"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:text="Start Date"/>
+        <Button
+            android:id="@+id/duedate_project_dialog_fragment"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:text="Due Date"/>
+    </LinearLayout>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_create_project"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center"
+            app:fabSize="normal"
+            android:src="@drawable/plus_sign"
+            app:maxImageSize="30dp"/>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+
+
+</LinearLayout>

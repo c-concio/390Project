@@ -8,14 +8,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.example.a390project.ListViewAdapters.EmployeeListViewAdapter;
 import com.example.a390project.ListViewAdapters.MachineListViewAdapter;
+import com.example.a390project.ListViewAdapters.ProjectListViewAdapter;
 import com.example.a390project.Model.Employee;
 import com.example.a390project.Model.EmployeeTasks;
 import com.example.a390project.Model.Machine;
 import com.example.a390project.Model.Oven;
 import com.example.a390project.Model.Paintbooth;
+import com.example.a390project.Model.Project;
 import com.example.a390project.Model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -35,8 +38,17 @@ import static java.lang.Integer.parseInt;
 
 public class FirebaseHelper {
 
+    // ------------------------------------------- FirebaseHelper variables -------------------------------------------
+    private static final String TAG = "FirebaseHelper";
     private DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
     private String uId;
+
+    public FirebaseHelper() {
+        rootRef = FirebaseDatabase.getInstance().getReference();
+        uId = FirebaseAuth.getInstance().getUid();
+    }
+
+    // ------------------------------------------- Machine variables -------------------------------------------
     private List<Machine> machines;
 
     // ------------------------------------------- Employee variables -------------------------------------------
@@ -44,16 +56,12 @@ public class FirebaseHelper {
     private String currentUserId;
     private View employeeFragmentView;
     private DatabaseReference dbRefEmployees;
-
     // childEventListener to get Employees
     private ChildEventListener childEventListener;
 
-    private static final String TAG = "FirebaseHelper";
+    // ------------------------------------------- Project variables -------------------------------------------
 
-    public FirebaseHelper() {
-        rootRef = FirebaseDatabase.getInstance().getReference();
-        uId = FirebaseAuth.getInstance().getUid();
-    }
+    private List<Project> projects;
 
     /*
    ------------------------------------------FirebaseHelper User creation functions-----------------------------------
@@ -68,7 +76,7 @@ public class FirebaseHelper {
    ------------------------------------------FirebaseHelper Machine functions-----------------------------------
     */
 
-    public void add_machine(Machine machine){
+    public void createMachine(Machine machine){
         rootRef.child("machines").child(machine.getMachineTitle()).setValue(machine);
     }
 
@@ -97,7 +105,7 @@ public class FirebaseHelper {
                                 humidity));
                     }
                 }
-                callListViewAdapter(view,activity);
+                callMachineListViewAdapter(view,activity);
             }
 
             @Override
@@ -107,7 +115,7 @@ public class FirebaseHelper {
         });
     }
 
-    private void callListViewAdapter(View view, Activity activity) {
+    private void callMachineListViewAdapter(View view, Activity activity) {
         // instantiate the custom list adapter
         MachineListViewAdapter adapter = new MachineListViewAdapter(activity, machines);
 
@@ -225,4 +233,41 @@ public class FirebaseHelper {
         dbRefEmployees.removeEventListener(childEventListener);
     }
 
+    /*
+    ------------------------------ Firebase Project Methods --------------------------------------------------------
+     */
+
+    public void createProject(String po, String title, String client, long startDate, long dueDate) {
+        rootRef.child("projects").child(po).setValue(new Project(po, title, client, startDate, dueDate));
+    }
+
+    public void populateProjects(final View view, final Activity activity, final ProgressBar mProgressbar) {
+        rootRef.child("projects").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                projects = new ArrayList<>();
+                for (DataSnapshot ds:dataSnapshot.getChildren()) {
+                    String po = ds.getKey();
+                    String title = ds.child("title").getValue(String.class);
+                    String client = ds.child("client").getValue(String.class);
+                    long startDate = ds.child("startDate").getValue(long.class);
+                    long dueDate = ds.child("dueDate").getValue(long.class);
+                    projects.add(new Project(po, title, client, startDate, dueDate));
+                }
+                callProjectListViewAdapter(view, activity);
+                mProgressbar.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void callProjectListViewAdapter(View view, Activity activity){
+        ProjectListViewAdapter adapter = new ProjectListViewAdapter(activity, projects);
+        ListView itemsListView  = view.findViewById(R.id.project_list_view);
+        itemsListView.setAdapter(adapter);
+    }
 }

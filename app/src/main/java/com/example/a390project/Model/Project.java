@@ -1,97 +1,60 @@
 package com.example.a390project.Model;
 
 public class Project {
-    String ID;
-    String Title;
-    String PO;
-    String ManagerID;
-    String Client;
-    String ManagerComment;
-    String DueDate;
-    String TimeTaken;
-    String EmployeeComment;
+    String po;
+    String title;
+    String client;
+    long startDate;
+    long dueDate;
 
-    public Project(String id, String title, String client, String po, String due){
-        ID = id;
-        Title = title;
-        Client = client;
-        PO = po;
-        DueDate = due;
-        ManagerID = "";
-        ManagerComment = "";
-        TimeTaken = "";
-        EmployeeComment = "";
+    //constructor used by FirebaseHelper method 'createProject(String PO, String title, String client, long startDate, long dueDate)'
+    public Project(String po, String title, String client, long startDate, long dueDate){
+        this.po = po;
+        this.title = title;
+        this.client = client;
+        this.startDate = startDate;
+        this.dueDate = dueDate;
     }
 
-    public String getID() {
-        return ID;
+    public String getPo() {
+        return po;
     }
 
-    public void setID(String ID) {
-        this.ID = ID;
+    public void setPo(String po) {
+        this.po = po;
     }
 
     public String getTitle() {
-        return Title;
+        return title;
     }
 
     public void setTitle(String title) {
-        Title = title;
-    }
-
-    public String getManagerID() {
-        return ManagerID;
-    }
-
-    public void setManagerID(String managerID) {
-        ManagerID = managerID;
-    }
-
-    public String getManagerComment() {
-        return ManagerComment;
-    }
-
-    public void setManagerComment(String managerComment) {
-        ManagerComment = managerComment;
-    }
-
-    public String getPO() {
-        return PO;
-    }
-
-    public void setPO(String PO) {
-        this.PO = PO;
+        this.title = title;
     }
 
     public String getClient() {
-        return Client;
+        return client;
     }
 
     public void setClient(String client) {
-        Client = client;
+        this.client = client;
     }
 
-    public String getDueDate() {
-        return DueDate;
+    public long getStartDate() {
+        return startDate;
     }
 
-    public void setDueDate(String dueDate) {
-        DueDate = dueDate;
+    public void setStartDate(long startDate) {
+        this.startDate = startDate;
     }
 
-    public String getTimeTaken() {
-        return TimeTaken;
+    public long getDueDate() {
+        return dueDate;
     }
 
-    public void setTimeTaken(String timeTaken) {
-        TimeTaken = timeTaken;
+    public void setDueDate(long dueDate) {
+        this.dueDate = dueDate;
     }
 
-    public String getEmployeeComment() {
-        return EmployeeComment;
-    }
 
-    public void setEmployeeComment(String employeeComment) {
-        EmployeeComment = employeeComment;
-    }
 }

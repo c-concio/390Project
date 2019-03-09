@@ -6,18 +6,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.example.a390project.DummyDatabase;
+import com.example.a390project.FirebaseHelper;
 import com.example.a390project.ListViewAdapters.ProjectListViewAdapter;
 import com.example.a390project.Model.Project;
 import com.example.a390project.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectFragment extends Fragment {
 
     private String TAG = "ProjectFragment";
-    private List<Project> projects;
+    private ProgressBar mProgressbar;
 
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState) {
@@ -26,16 +29,12 @@ public class ProjectFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        DummyDatabase db = new DummyDatabase();
-        projects = db.generateDummyProjects(10);
 
-        callListViewAdapter(view, projects);
+        mProgressbar = view.findViewById(R.id.progress_bar_projects);
 
-
-    }
-    private void callListViewAdapter(View view, List<Project> projects){
-        ProjectListViewAdapter adapter = new ProjectListViewAdapter(view.getContext(), projects);
-        ListView itemsListView  = view.findViewById(R.id.project_list_view);
-        itemsListView.setAdapter(adapter);
+        FirebaseHelper firebaseHelper = new FirebaseHelper();
+        //populate all projects from firebase to listview
+        mProgressbar.setVisibility(View.VISIBLE);
+        firebaseHelper.populateProjects(view, getActivity(), mProgressbar);
     }
 }

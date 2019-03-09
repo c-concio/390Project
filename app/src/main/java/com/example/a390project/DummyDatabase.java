@@ -87,15 +87,15 @@ public class DummyDatabase {
         cDevice.add(new ControlDevice(cDeviceID, name, false));
     }
 
-    public List<Project> generateDummyProjects(int size){
-        List<Project> projects = new ArrayList<>();
-        for (int i = 1; i <= size; i++){
-            Projectid++;
-            projects.add(new Project(Integer.toString(Projectid), "Project ", "Client ", "PO ", "due date"));
-        }
-        
-        return projects;
-    }
+//    public List<Project> generateDummyProjects(int size){
+//        List<Project> projects = new ArrayList<>();
+//        for (int i = 1; i <= size; i++){
+//            Projectid++;
+//            projects.add(new Project(Integer.toString(Projectid), "Project ", "Client ", "PO ", "due date"));
+//        }
+//
+//        return projects;
+//    }
 
 
 
