@@ -9,9 +9,7 @@
     <ListView
         android:id="@+id/project_list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="0dp" />
+        android:layout_height="match_parent"/>
     <ProgressBar
         android:id="@+id/progress_bar_projects"
         android:layout_width="150dp"
