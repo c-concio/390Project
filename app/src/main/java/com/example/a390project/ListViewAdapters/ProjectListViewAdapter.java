@@ -71,7 +71,7 @@ public class ProjectListViewAdapter extends BaseAdapter {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startProjectActivity(currentItem.getPo());
+                startProjectActivity(currentItem.getPo(), currentItem.getTitle());
 
             }
         });
@@ -79,9 +79,10 @@ public class ProjectListViewAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private void startProjectActivity(String po) {
+    private void startProjectActivity(String po, String pt) {
         Intent intent = new Intent(context, ProjectActivity.class);
         intent.putExtra("projectPO", po);
+        intent.putExtra("projectTitle", pt);
         context.startActivity(intent);
     }
 
