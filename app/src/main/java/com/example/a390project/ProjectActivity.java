@@ -71,4 +71,8 @@ public class ProjectActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    public String getProjectPO() {
+        return projectPO;
+    }
 }

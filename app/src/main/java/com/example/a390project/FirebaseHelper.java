@@ -33,6 +33,7 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -66,7 +67,7 @@ public class FirebaseHelper {
     private List<Project> projects;
 
     // ------------------------------------------- Task variables -------------------------------------------
-    private List<String> taskID;
+    private List<String> taskIDs;
     private List<Task> tasks;
 
     // -------------------------------------------------------------------------------------------------------------
@@ -280,21 +281,44 @@ public class FirebaseHelper {
         itemsListView.setAdapter(adapter);
     }
 
+    /*
+    ------------------------------ Firebase Project Methods --------------------------------------------------------
+     */
+
+    public void createTask(String taskType, String taskDescription, String projectPO) {
+        Calendar cal = Calendar.getInstance();
+        long timeCreated = cal.getTimeInMillis();
+        String taskID = Task.generateRandomChars();
+
+        //add task in 'tasks'
+        rootRef.child("tasks").child(taskID).setValue(new Task(projectPO,taskType,taskDescription,timeCreated));
+
+        //add task in 'projects'>'tasks'
+        rootRef.child("projects").child(projectPO).child("tasks").child(taskID).setValue(true);
+
+    }
+
     public void populateTasks(String projectPO, final Activity activity) {
         rootRef.child("projects").child(projectPO).child("tasks").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                taskID = new ArrayList<String>();
+                taskIDs = new ArrayList<String>();
                 for (DataSnapshot ds:dataSnapshot.getChildren()) {
-                    taskID.add(ds.getKey());
+                    taskIDs.add(ds.getKey());
                 }
                 rootRef.child("tasks").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        //populate all the tasks based on identified taskID's, which is based on projectPO
+                        //populate all the tasks from 'rootRef'>'tasks'
                         tasks = new ArrayList<Task>();
-                        for (DataSnapshot ds:dataSnapshot.getChildren()) {
-                            tasks.add(new Task());
+                        for (String taskID:taskIDs) {
+                            if (dataSnapshot.hasChild(taskID)) {
+                                String projectPO = dataSnapshot.child(taskID).child("projectPO").getValue(String.class);
+                                String taskType = dataSnapshot.child(taskID).child("taskType").getValue(String.class);
+                                String description = dataSnapshot.child(taskID).child("description").getValue(String.class);
+                                long createdTime = dataSnapshot.child(taskID).child("createdTime").getValue(long.class);
+                                tasks.add(new Task(projectPO, taskType, description, createdTime));
+                            }
                         }
                         callTaskListViewAdapter(activity, tasks);
                     }

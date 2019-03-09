@@ -8,4 +8,13 @@
         <item>Oven</item>
         <item>PaintBooth</item>
     </string-array>
+
+    <string-array name="task_type">
+        <item>Inspection</item>
+        <item>Pre-Painting</item>
+        <item>Painting</item>
+        <item>Baking</item>
+        <item>Packaging</item>
+        <item>Final-Inspection</item>
+    </string-array>
 </resources>

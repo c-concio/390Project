@@ -8,7 +8,7 @@
     android:padding="10dp">
 
     <TextView
-        android:id="@+id/project_client"
+        android:id="@+id/task_type_row_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Client"
@@ -18,14 +18,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/project_title"
+        android:id="@+id/task_description_row_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Project Title"
         android:textColor="@color/colorPrimary"
         android:textSize="18dp"
-        app:layout_constraintStart_toStartOf="@+id/project_client"
-        app:layout_constraintTop_toBottomOf="@+id/project_client" />
+        app:layout_constraintStart_toStartOf="@+id/task_type_row_item"
+        app:layout_constraintTop_toBottomOf="@+id/task_type_row_item" />
 
     <TextView
         android:id="@+id/project_PO"
@@ -33,8 +33,8 @@
         android:layout_height="wrap_content"
         android:text="PO"
         android:textSize="16dp"
-        app:layout_constraintStart_toStartOf="@+id/project_title"
-        app:layout_constraintTop_toBottomOf="@+id/project_title" />
+        app:layout_constraintStart_toStartOf="@+id/task_description_row_item"
+        app:layout_constraintTop_toBottomOf="@+id/task_description_row_item" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -43,7 +43,7 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="@+id/project_PO"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/project_client">
+        app:layout_constraintTop_toTopOf="@+id/task_type_row_item">
 
         <LinearLayout
             android:layout_width="wrap_content"
