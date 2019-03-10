@@ -99,6 +99,9 @@ public class TaskListViewAdapter extends BaseAdapter {
                 }
                 else if(taskType.equals("Packaging")) {
                     Intent intent = new Intent(context, TaskPackagingActivity.class);
+                    // send the taskPackagingActivity the projectPO
+                    intent.putExtra("packagingTaskID", currentItem.getTaskID());
+
                     context.startActivity(intent);
                 }
             }

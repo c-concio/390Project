@@ -8,7 +8,8 @@
         android:id="@+id/EmployeeNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="18dp"
+        android:layout_margin="10dp"
         android:text="@string/employee_name"
-        android:textSize="18sp" />
+        android:textColor="@color/colorPrimary"
+        android:textSize="22sp" />
 </LinearLayout>

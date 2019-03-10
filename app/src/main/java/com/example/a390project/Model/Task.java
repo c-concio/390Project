@@ -7,11 +7,15 @@ public class Task {
     private String taskType;
     private String description;
     private String employeeComment;
+    private String taskID;
     private long createdTime;
     private long startTime;
     private long endTime;
 
-    public Task(String projectPO, String taskType, String description, long createdTime) {
+    public Task(){};
+
+    public Task(String taskID, String projectPO, String taskType, String description, long createdTime) {
+        this.taskID = taskID;
         this.projectPO = projectPO;
         this.taskType = taskType;
         this.description = description;
@@ -62,5 +66,14 @@ public class Task {
     public void setCreatedTime(long createdTime) {
         this.createdTime = createdTime;
     }
+
+    public String getTaskID() {
+        return taskID;
+    }
+
+    public void setTaskID(String taskID) {
+        this.taskID = taskID;
+    }
+
 
 }

@@ -56,7 +56,7 @@ public class ProjectActivity extends AppCompatActivity {
         // provide up navigation
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setTitle(getIntent().getStringExtra("ProjectTitle"));
+        getSupportActionBar().setTitle(getIntent().getStringExtra("projectTitle"));
     }
 
     //up navigation
