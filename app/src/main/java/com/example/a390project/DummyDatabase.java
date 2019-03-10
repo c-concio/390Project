@@ -71,21 +71,7 @@ public class DummyDatabase {
         return tasks;
     }
 
-    public List<ControlDevice> generateDummyControlDevice(){
 
-
-        for(int i=0; i<2; i++){
-            cDeviceID++;
-            cDevice.add(new ControlDevice(cDeviceID, "Switch " + i, false));
-
-        }
-        return cDevice;
-    }
-
-    public void addControlDevice(String name){
-        cDeviceID++;
-        cDevice.add(new ControlDevice(cDeviceID, name, false));
-    }
 
 //    public List<Project> generateDummyProjects(int size){
 //        List<Project> projects = new ArrayList<>();

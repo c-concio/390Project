@@ -2,21 +2,15 @@ package com.example.a390project.Model;
 
 public class ControlDevice {
 
-    private int cDeviceID;
     private String cDeviceTitle;
     private boolean cDeviceStatus;
 
-    public ControlDevice(int cDeviceID, String cDeviceTitle, boolean cDeviceStatus){
-        this.cDeviceID = cDeviceID;
+    public ControlDevice(String cDeviceTitle, boolean cDeviceStatus){
         this.cDeviceTitle = cDeviceTitle;
         this.cDeviceStatus = cDeviceStatus;
     }
 
     // -------------------- Setters --------------------
-
-    public void setcDeviceID(int cDeviceID) {
-        this.cDeviceID = cDeviceID;
-    }
 
     public void setcDeviceTitle(String cDeviceTitle) {
         this.cDeviceTitle = cDeviceTitle;
@@ -28,10 +22,6 @@ public class ControlDevice {
 
 
     // -------------------- Getters --------------------
-
-    public int getcDeviceID() {
-        return cDeviceID;
-    }
 
     public String getcDeviceTitle() {
         return cDeviceTitle;

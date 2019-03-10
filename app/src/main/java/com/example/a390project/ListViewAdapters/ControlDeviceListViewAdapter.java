@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -45,7 +46,7 @@ public class ControlDeviceListViewAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         Log.d(TAG, "getView: gotView");
 
@@ -56,13 +57,28 @@ public class ControlDeviceListViewAdapter extends BaseAdapter {
         setupUI(convertView);
 
         textControlDevice.setText(cDevice.get(position).getcDeviceTitle());
-        if(cDevice.get(position).iscDeviceStatus() == true){
-            switchControlDevice.setChecked(true);
-        }
-        else{
-            switchControlDevice.setChecked(false);
-        }
+
+
+
+        switchControlDevice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean on = ((Switch) v).isChecked();
+                if(on){
+                    switchControlDevice.setChecked(true);
+                    cDevice.get(position).setcDeviceStatus(true);
+                }
+                else{
+                    switchControlDevice.setChecked(false);
+                    cDevice.get(position).setcDeviceStatus(false);
+                }
+            }
+
+
+        });
+
         return convertView;
+
     }
 
     private void setupUI(View view){

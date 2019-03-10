@@ -10,17 +10,21 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.a390project.DummyDatabase;
+import com.example.a390project.FirebaseHelper;
+import com.example.a390project.Model.ControlDevice;
 import com.example.a390project.R;
 
 public class CreateControlDeviceDialogFragment extends DialogFragment {
 
-    EditText control_device_edit_text;
-    Button control_device_add_button;
+    private EditText control_device_edit_text;
+    private Button control_device_add_button;
+    private FirebaseHelper firebaseHelper;
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         final View view = inflater.inflate(R.layout.create_control_device_dialog_fragment, container, false);
         setupUI(view);
+        firebaseHelper = new FirebaseHelper();
 
         control_device_add_button.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -30,16 +34,11 @@ public class CreateControlDeviceDialogFragment extends DialogFragment {
                 if(name.isEmpty()){
                     control_device_edit_text.setError("Please enter a device name");
                 }
-
                 if(!name.isEmpty()){
-                    DummyDatabase dd = new DummyDatabase();
-                    dd.addControlDevice(name);
-
-
+                    firebaseHelper.createControlDevice(new ControlDevice(name, false));
                     Toast toast = Toast.makeText(view.getContext(), "Device added", Toast.LENGTH_SHORT);
                     toast.show();
                     getDialog().dismiss();
-
                 }
             }
         });

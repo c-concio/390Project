@@ -204,11 +204,13 @@ public class MainActivity extends AppCompatActivity {
                 mFabOpenDialogFragmentProject.hide();
                 mFabOpenDialogFragmentEmployee.hide();
                 mFabOpenDialogFragmentMachine.hide();
+                break;
             case 3:
                 mFabOpenDialogFragmentMachine.show();
                 mFabOpenDialogFragmentProject.hide();
                 mFabOpenDialogFragmentEmployee.hide();
                 mFabOpenDialogFragmentControlDevice.hide();
+                break;
             default:
                 break;
         }

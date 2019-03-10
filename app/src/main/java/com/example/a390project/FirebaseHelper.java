@@ -10,10 +10,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.example.a390project.ListViewAdapters.ControlDeviceListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeListViewAdapter;
 import com.example.a390project.ListViewAdapters.MachineListViewAdapter;
 import com.example.a390project.ListViewAdapters.ProjectListViewAdapter;
 import com.example.a390project.ListViewAdapters.TaskListViewAdapter;
+import com.example.a390project.Model.ControlDevice;
 import com.example.a390project.Model.Employee;
 import com.example.a390project.Model.EmployeeTasks;
 import com.example.a390project.Model.Machine;
@@ -69,6 +71,10 @@ public class FirebaseHelper {
     // ------------------------------------------- Task variables -------------------------------------------
     private List<String> taskIDs;
     private List<Task> tasks;
+
+    // ------------------------------------------- Control Device variables -------------------------------------------
+
+    private List<ControlDevice> cDevices;
 
     // -------------------------------------------------------------------------------------------------------------
 
@@ -342,4 +348,45 @@ public class FirebaseHelper {
         ListView itemsListView  = activity.findViewById(R.id.task_list_view);
         itemsListView.setAdapter(adapter);
     }
+
+    //------------------------------ Firebase Control Device Methods --------------------------------------------------------
+
+    public void createControlDevice(ControlDevice cDevice){
+        rootRef.child("cDevices").child(cDevice.getcDeviceTitle()).setValue(cDevice);
+    }
+
+    public void populateControlDevices(final View view, final Activity activity){
+        rootRef.child("cDevices").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                cDevices = new ArrayList<ControlDevice>();
+                for(DataSnapshot ds:dataSnapshot.getChildren()){
+                    String cDeviceTitle = ds.child("cDeviceTitle").getValue(String.class);
+                    boolean cDeviceStatus = ds.child("cDeviceStatus").getValue(boolean.class);
+
+                    cDevices.add(new ControlDevice(cDeviceTitle, cDeviceStatus));
+                }
+
+                callControlDeviceListViewAdapter(view, activity);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void callControlDeviceListViewAdapter(View view, Activity activity){
+        ControlDeviceListViewAdapter adapter = new ControlDeviceListViewAdapter(activity, cDevices);
+        ListView itemsListView = (ListView) view.findViewById(R.id.control_device_list_view);
+        itemsListView.setAdapter(adapter);
+    }
+
+
+
 }
+
+
+
