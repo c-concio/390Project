@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
     //views
     FloatingActionButton mFabOpenDialogFragmentMachine;
-    FloatingActionButton mFabOpenDialogFragmentEmployee;
     FloatingActionButton mFabOpenDialogFragmentControlDevice;
     FloatingActionButton mFabOpenDialogFragmentProject;
     //firebase auth
@@ -79,13 +78,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 startCreateProjectDialogFragment();
-            }
-        });
-        mFabOpenDialogFragmentEmployee = findViewById(R.id.fab_open_dialog_fragment_employee);
-        mFabOpenDialogFragmentEmployee.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                startCreateEmployeeDialogFragment();
             }
         });
         mFabOpenDialogFragmentControlDevice = findViewById(R.id.fab_open_dialog_fragment_control_device);
@@ -189,12 +181,10 @@ public class MainActivity extends AppCompatActivity {
         switch (position) {
             case 0:
                 mFabOpenDialogFragmentProject.show();
-                mFabOpenDialogFragmentEmployee.hide();
                 mFabOpenDialogFragmentControlDevice.hide();
                 mFabOpenDialogFragmentMachine.hide();
                 break;
             case 1:
-                mFabOpenDialogFragmentEmployee.show();
                 mFabOpenDialogFragmentProject.hide();
                 mFabOpenDialogFragmentControlDevice.hide();
                 mFabOpenDialogFragmentMachine.hide();
@@ -202,13 +192,11 @@ public class MainActivity extends AppCompatActivity {
             case 2:
                 mFabOpenDialogFragmentControlDevice.show();
                 mFabOpenDialogFragmentProject.hide();
-                mFabOpenDialogFragmentEmployee.hide();
                 mFabOpenDialogFragmentMachine.hide();
                 break;
             case 3:
                 mFabOpenDialogFragmentMachine.show();
                 mFabOpenDialogFragmentProject.hide();
-                mFabOpenDialogFragmentEmployee.hide();
                 mFabOpenDialogFragmentControlDevice.hide();
                 break;
             default:
