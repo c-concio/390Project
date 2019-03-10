@@ -10,7 +10,9 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.example.a390project.FirebaseHelper;
 import com.example.a390project.Model.ControlDevice;
+import com.example.a390project.Model.Task;
 import com.example.a390project.R;
 
 import java.util.List;
@@ -55,26 +57,23 @@ public class ControlDeviceListViewAdapter extends BaseAdapter {
         }
 
         setupUI(convertView);
+        final FirebaseHelper firebaseHelper = new FirebaseHelper();
+        final ControlDevice currentItem = (ControlDevice) getItem(position);
+        textControlDevice.setText(currentItem.getcDeviceTitle());
 
-        textControlDevice.setText(cDevice.get(position).getcDeviceTitle());
+        //sets the switch based on status stored on firebase for all the control devices
+        firebaseHelper.setStatusOfSwitch(currentItem.getcDeviceTitle(), switchControlDevice);
 
-
-
-        switchControlDevice.setOnClickListener(new View.OnClickListener() {
+        //Upon clicking the switch, change the status on firebase
+        switchControlDevice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                boolean on = ((Switch) v).isChecked();
-                if(on){
-                    switchControlDevice.setChecked(true);
-                    cDevice.get(position).setcDeviceStatus(true);
-                }
-                else{
-                    switchControlDevice.setChecked(false);
-                    cDevice.get(position).setcDeviceStatus(false);
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    firebaseHelper.changeDeviceStatus(currentItem.getcDeviceTitle(), true);
+                } else {
+                    firebaseHelper.changeDeviceStatus(currentItem.getcDeviceTitle(), false);
                 }
             }
-
-
         });
 
         return convertView;

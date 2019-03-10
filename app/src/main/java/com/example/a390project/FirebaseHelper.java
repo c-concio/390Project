@@ -8,11 +8,11 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.a390project.ListViewAdapters.ControlDeviceListViewAdapter;
@@ -22,7 +22,6 @@ import com.example.a390project.ListViewAdapters.ProjectListViewAdapter;
 import com.example.a390project.ListViewAdapters.TaskListViewAdapter;
 import com.example.a390project.Model.ControlDevice;
 import com.example.a390project.Model.Employee;
-import com.example.a390project.Model.EmployeeTasks;
 import com.example.a390project.Model.Machine;
 import com.example.a390project.Model.Oven;
 import com.example.a390project.Model.Paintbooth;
@@ -52,6 +51,8 @@ public class FirebaseHelper {
     private static final String TAG = "FirebaseHelper";
     private DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
     private String uId;
+    private boolean check;
+    private boolean setStatusOfSwitchControlDevice = true;
 
     public FirebaseHelper() {
         rootRef = FirebaseDatabase.getInstance().getReference();
@@ -435,15 +436,16 @@ public class FirebaseHelper {
         rootRef.child("cDevices").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!check) {
                 cDevices = new ArrayList<ControlDevice>();
                 for(DataSnapshot ds:dataSnapshot.getChildren()){
                     String cDeviceTitle = ds.child("cDeviceTitle").getValue(String.class);
                     boolean cDeviceStatus = ds.child("cDeviceStatus").getValue(boolean.class);
-
                     cDevices.add(new ControlDevice(cDeviceTitle, cDeviceStatus));
                 }
-
                 callControlDeviceListViewAdapter(view, activity);
+                check = true;
+                }
             }
 
             @Override
@@ -460,8 +462,27 @@ public class FirebaseHelper {
         itemsListView.setAdapter(adapter);
     }
 
+    public void setStatusOfSwitch(String cDeviceTitle, final Switch switchControlDevice) {
+        rootRef.child("cDevices").child(cDeviceTitle).child("cDeviceStatus").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(setStatusOfSwitchControlDevice) {
+                    switchControlDevice.setChecked(dataSnapshot.getValue(boolean.class));
+                    setStatusOfSwitchControlDevice = false;
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
+            }
+        });
+    }
+
+    public void changeDeviceStatus(String cDeviceTitle, boolean state) {
+        rootRef.child("cDevices").child(cDeviceTitle).child("cDeviceStatus").setValue(state);
+        Log.d(TAG, cDeviceTitle + " IS NOW " + state);
+    }
 }
 
 
