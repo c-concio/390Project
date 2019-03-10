@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class TaskPackagingActivity extends AppCompatActivity {
 
@@ -16,8 +17,8 @@ public class TaskPackagingActivity extends AppCompatActivity {
     EditText employeeCommentEditText;
     Button startTimeButton;
     Button endTimeButton;
-    ListView materialUsedListView;
     FirebaseHelper firebaseHelper;
+    TextView hoursTextView;
 
     String packagingTaskID;
 
@@ -32,6 +33,8 @@ public class TaskPackagingActivity extends AppCompatActivity {
         super.onStart();
 
         setupUI();
+
+        firebaseHelper.setTaskPackagingActivityListener(packagingTaskID, this);
     }
 
     private void setupUI(){
@@ -41,10 +44,16 @@ public class TaskPackagingActivity extends AppCompatActivity {
         employeeCommentEditText = findViewById(R.id.employeeCommentEditText);
         startTimeButton = findViewById(R.id.startTimeButton);
         endTimeButton = findViewById(R.id.endTimeButton);
-        materialUsedListView = findViewById(R.id.materialUsedListView);
+        hoursTextView = findViewById(R.id.hoursTextView);
 
         startTimeButton.setOnClickListener(startTimeOnClickListener);
         endTimeButton.setOnClickListener(endTimeOnClickListener);
+
+        descriptionEditText.setFocusable(false);
+        dateEditText.setFocusable(false);
+        employeeCommentEditText.setFocusable(false);
+        hoursTextView.setVisibility(View.GONE);
+
 
         // setup the firebaseHelper
         firebaseHelper = new FirebaseHelper();

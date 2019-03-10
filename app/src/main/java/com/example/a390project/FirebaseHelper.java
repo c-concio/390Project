@@ -8,8 +8,12 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.a390project.ListViewAdapters.ControlDeviceListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeListViewAdapter;
@@ -375,6 +379,45 @@ public class FirebaseHelper {
             }
         });
 
+    }
+
+    public void setTaskPackagingActivityListener(String taskID, final Activity activity){
+        rootRef.child("tasks").child(taskID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Task currentTask = dataSnapshot.getValue(Task.class);
+
+                EditText descriptionEditText = activity.findViewById(R.id.descriptionEditText);
+                EditText dateEditText = activity.findViewById(R.id.dateEditText);
+                EditText employeeCommentEditText = activity.findViewById(R.id.employeeCommentEditText);
+
+                descriptionEditText.setText(currentTask.getDescription());
+                dateEditText.setText(String.valueOf(currentTask.getDate()));
+
+                employeeCommentEditText.setText(currentTask.getEmployeeComment());
+
+                // get the material used
+                LinearLayout materialUsedLinearLayout = activity.findViewById(R.id.materialUsedLinearLayout);
+                materialUsedLinearLayout.removeAllViews();
+                if (!dataSnapshot.child("materialUsed").hasChildren()) {
+                    TextView text = new TextView(activity);
+                    text.setText("No material chosen yet");
+                    materialUsedLinearLayout.addView(text);
+                }
+                else {
+                    for (DataSnapshot postSnapshot : dataSnapshot.child("materialUsed").getChildren()) {
+                        TextView text = new TextView(activity);
+                        text.setText(postSnapshot.getValue(String.class));
+                        materialUsedLinearLayout.addView(text);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     //------------------------------ Firebase Control Device Methods --------------------------------------------------------

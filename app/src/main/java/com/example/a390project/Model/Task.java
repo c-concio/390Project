@@ -1,5 +1,6 @@
 package com.example.a390project.Model;
 
+import java.util.Date;
 import java.util.Random;
 
 public class Task {
@@ -11,8 +12,9 @@ public class Task {
     private long createdTime;
     private long startTime;
     private long endTime;
+    private long date;
 
-    public Task(){};
+    public Task(){}
 
     public Task(String taskID, String projectPO, String taskType, String description, long createdTime) {
         this.taskID = taskID;
@@ -75,5 +77,19 @@ public class Task {
         this.taskID = taskID;
     }
 
+    public long getDate() {
+        return date;
+    }
 
+    public void setDate(long date) {
+        this.date = date;
+    }
+
+    public String getEmployeeComment() {
+        return employeeComment;
+    }
+
+    public void setEmployeeComment(String employeeComment) {
+        this.employeeComment = employeeComment;
+    }
 }
