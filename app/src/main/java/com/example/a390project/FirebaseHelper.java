@@ -77,6 +77,7 @@ public class FirebaseHelper {
     private List<String> taskIDs;
     private List<Task> tasks;
     private ValueEventListener packagingValueEventListener;
+    private ValueEventListener inspectionValueEventListener;
 
     // ------------------------------------------- Control Device variables -------------------------------------------
 
@@ -302,6 +303,7 @@ public class FirebaseHelper {
         long timeCreated = cal.getTimeInMillis();
         String taskID = Task.generateRandomChars();
 
+
         //add task in 'tasks'
         rootRef.child("tasks").child(taskID).setValue(new Task(taskID, projectPO,taskType,taskDescription,timeCreated));
 
@@ -421,9 +423,40 @@ public class FirebaseHelper {
         });
     }
 
-    public void detatchTaskPackagingActivityListener(String taskID){
+    public void detachTaskPackagingActivityListener(String taskID){
         rootRef.child("tasks").child(taskID).removeEventListener(packagingValueEventListener);
     }
+
+    //------------------------------ Inspection Task Methods --------------------------------------------------------
+
+    public void setTaskInspectionActivityListener(String taskID, final Activity activity){
+        rootRef.child("tasks").child(taskID).addValueEventListener(inspectionValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Task currentTask = dataSnapshot.getValue(Task.class);
+
+                EditText partCountedEditText = activity.findViewById(R.id.partCountedEditText);
+                EditText partAcceptedEditText = activity.findViewById(R.id.partAcceptedEditText);
+                EditText partRejectedEditText = activity.findViewById(R.id.partRejectedEditText);
+
+
+                partCountedEditText.setText(Integer.toString(currentTask.getPartCounted()));
+                partAcceptedEditText.setText(Integer.toString(currentTask.getPartAccepted()));
+                partRejectedEditText.setText(Integer.toString(currentTask.getPartRejected()));
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void detachTaskInspectionActivityListener(String taskID){
+        rootRef.child("tasks").child(taskID).removeEventListener(inspectionValueEventListener);
+    }
+
 
     //------------------------------ Firebase Control Device Methods --------------------------------------------------------
 

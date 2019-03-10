@@ -6,4 +6,90 @@
     android:layout_height="match_parent"
     tools:context=".TaskInspectionActivity">
 
+    <TextView
+        android:id="@+id/partCountedTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="24dp"
+        android:textSize="18dp"
+        android:text="Parts Counted:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/partAcceptedTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="24dp"
+        android:text="Parts Accepted:"
+        android:textSize="18dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/partCountedTextView" />
+
+    <TextView
+        android:id="@+id/partRejectedTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="24dp"
+        android:text="Parts Rejected:"
+        android:textSize="18dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/partAcceptedTextView" />
+
+    <EditText
+        android:id="@+id/partCountedEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="@+id/partCountedTextView"
+        app:layout_constraintStart_toEndOf="@+id/partCountedTextView"
+        app:layout_constraintTop_toTopOf="@+id/partCountedTextView" />
+
+    <EditText
+        android:id="@+id/partAcceptedEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="@+id/partAcceptedTextView"
+        app:layout_constraintStart_toEndOf="@+id/partAcceptedTextView"
+        app:layout_constraintTop_toTopOf="@+id/partAcceptedTextView" />
+
+    <EditText
+        android:id="@+id/partRejectedEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginLeft="4dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="@+id/partRejectedTextView"
+        app:layout_constraintStart_toEndOf="@+id/partRejectedTextView"
+        app:layout_constraintTop_toTopOf="@+id/partRejectedTextView" />
+
+    <Button
+        android:id="@+id/completeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Complete Inspection"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/partRejectedEditText" />
 </android.support.constraint.ConstraintLayout>

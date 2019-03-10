@@ -88,6 +88,6 @@ public class TaskPackagingActivity extends AppCompatActivity {
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        firebaseHelper.detatchTaskPackagingActivityListener(packagingTaskID);
+        firebaseHelper.detachTaskPackagingActivityListener(packagingTaskID);
     }
 }

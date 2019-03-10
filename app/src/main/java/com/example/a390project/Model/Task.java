@@ -13,6 +13,10 @@ public class Task {
     private long startTime;
     private long endTime;
     private long date;
+    private int partCounted = 0;
+    private int partAccepted = 0;
+    private int partRejected = 0;
+
 
     public Task(){}
 
@@ -23,6 +27,7 @@ public class Task {
         this.description = description;
         this.createdTime = createdTime;
     }
+
 
     public static String generateRandomChars() {
         int length = 16;
@@ -91,5 +96,29 @@ public class Task {
 
     public void setEmployeeComment(String employeeComment) {
         this.employeeComment = employeeComment;
+    }
+
+    public int getPartCounted() {
+        return partCounted;
+    }
+
+    public void setPartCounted(int partCounted) {
+        this.partCounted = partCounted;
+    }
+
+    public int getPartAccepted() {
+        return partAccepted;
+    }
+
+    public void setPartAccepted(int partAccepted) {
+        this.partAccepted = partAccepted;
+    }
+
+    public int getPartRejected() {
+        return partRejected;
+    }
+
+    public void setPartRejected(int partRejected) {
+        this.partRejected = partRejected;
     }
 }
