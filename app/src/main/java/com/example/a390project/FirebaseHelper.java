@@ -1,6 +1,7 @@
 package com.example.a390project;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -192,7 +193,7 @@ public class FirebaseHelper {
         }
 
         // update listView once a user has changed or added
-        listViewAdapter();
+        callEmployeeListViewAdapter();
     }
 
     private void updateEmployees(DataSnapshot dataSnapshot){
@@ -207,11 +208,11 @@ public class FirebaseHelper {
                     Log.d(TAG, "updateUsers: updated name: " + employees.get(i).getName());
                 }
             }
-            listViewAdapter();
+            callEmployeeListViewAdapter();
         }
     }
 
-    private void listViewAdapter(){
+    private void callEmployeeListViewAdapter(){
         //Log.d(TAG, "updateUsers: updated name: " + employees.get(3));
 
         Log.d(TAG, "listViewAdapter: employees size = " + employees.size());
@@ -291,7 +292,7 @@ public class FirebaseHelper {
         String taskID = Task.generateRandomChars();
 
         //add task in 'tasks'
-        rootRef.child("tasks").child(taskID).setValue(new Task(projectPO,taskType,taskDescription,timeCreated));
+        rootRef.child("tasks").child(taskID).setValue(new Task(taskID, projectPO,taskType,taskDescription,timeCreated));
 
         //add task in 'projects'>'tasks'
         rootRef.child("projects").child(projectPO).child("tasks").child(taskID).setValue(true);
@@ -317,7 +318,7 @@ public class FirebaseHelper {
                                 String taskType = dataSnapshot.child(taskID).child("taskType").getValue(String.class);
                                 String description = dataSnapshot.child(taskID).child("description").getValue(String.class);
                                 long createdTime = dataSnapshot.child(taskID).child("createdTime").getValue(long.class);
-                                tasks.add(new Task(projectPO, taskType, description, createdTime));
+                                tasks.add(new Task(taskID, projectPO, taskType, description, createdTime));
                             }
                         }
                         callTaskListViewAdapter(activity, tasks);
@@ -342,4 +343,32 @@ public class FirebaseHelper {
         ListView itemsListView  = activity.findViewById(R.id.task_list_view);
         itemsListView.setAdapter(adapter);
     }
+
+    // --------------------------------------- Packaging Task Methods ---------------------------------------
+
+    void setStartTime(String taskId){
+        rootRef.child("tasks").child(taskId).child("startTime").setValue(ServerValue.TIMESTAMP);
+    }
+
+    void setEndTime(String taskId){
+        rootRef.child("tasks").child(taskId).child("endTime").setValue(ServerValue.TIMESTAMP);
+    }
+
+    public void goToTaskPackagingActivity(String packagingTaskID, final Context context){
+
+        rootRef.child("tasks").child(packagingTaskID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Task newTask = new Task();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
 }
