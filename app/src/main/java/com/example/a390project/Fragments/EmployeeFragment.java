@@ -86,20 +86,6 @@ public class EmployeeFragment extends Fragment {
         });
     }
 
-    // setup the adapter for the employees list view
-    private void listViewAdapter(){
-        //Log.d(TAG, "updateUsers: updated name: " + employees.get(3));
-
-        Log.d(TAG, "listViewAdapter: employees size = " + employees.size());
-        Log.d(TAG, "listViewAdapter: --------------------------------------");
-        for(Employee currentEmployee : employees){
-            Log.d(TAG, "listViewAdapter: employee name = " + currentEmployee.getName());
-        }
-        Log.d(TAG, "listViewAdapter: --------------------------------------");
-
-        EmployeeListViewAdapter employeeAdapter = new EmployeeListViewAdapter(view.getContext(), employees);
-        employeeListView.setAdapter(employeeAdapter);
-    }
 
     @Override
     public void onStop() {

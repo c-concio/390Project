@@ -198,9 +198,9 @@ public class FirebaseHelper {
         }
 
         // if the user being examined is the current user, Employee is not added to the listView
-        if (!newEmployee.getAccountID().equals(currentUserId)){
+        //if (!newEmployee.getAccountID().equals(currentUserId)){
             employees.add(newEmployee);
-        }
+        //}
 
         // update listView once a user has changed or added
         callEmployeeListViewAdapter();
