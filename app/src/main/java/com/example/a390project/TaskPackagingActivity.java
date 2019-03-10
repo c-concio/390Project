@@ -9,6 +9,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+// Todo: navigate up
+
 public class TaskPackagingActivity extends AppCompatActivity {
 
     // activity widgets
@@ -82,4 +84,10 @@ public class TaskPackagingActivity extends AppCompatActivity {
             startTimeButton.setEnabled(true);*/
         }
     };
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        firebaseHelper.detatchTaskPackagingActivityListener(packagingTaskID);
+    }
 }

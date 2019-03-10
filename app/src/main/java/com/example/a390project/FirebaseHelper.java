@@ -76,6 +76,7 @@ public class FirebaseHelper {
     // ------------------------------------------- Task variables -------------------------------------------
     private List<String> taskIDs;
     private List<Task> tasks;
+    private ValueEventListener packagingValueEventListener;
 
     // ------------------------------------------- Control Device variables -------------------------------------------
 
@@ -382,7 +383,7 @@ public class FirebaseHelper {
     }
 
     public void setTaskPackagingActivityListener(String taskID, final Activity activity){
-        rootRef.child("tasks").child(taskID).addValueEventListener(new ValueEventListener() {
+        rootRef.child("tasks").child(taskID).addValueEventListener(packagingValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Task currentTask = dataSnapshot.getValue(Task.class);
@@ -418,6 +419,10 @@ public class FirebaseHelper {
 
             }
         });
+    }
+
+    public void detatchTaskPackagingActivityListener(String taskID){
+        rootRef.child("tasks").child(taskID).removeEventListener(packagingValueEventListener);
     }
 
     //------------------------------ Firebase Control Device Methods --------------------------------------------------------
