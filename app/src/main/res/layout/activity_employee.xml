@@ -13,33 +13,33 @@
             android:id="@+id/assignedTasksTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="15dp"
-            android:paddingTop="15dp"
-            android:paddingRight="15dp"
+            android:padding="10dp"
             android:text="@string/assigned_tasks"
-            android:textSize="18sp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <ListView
             android:id="@+id/assignedTasksListView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:padding="10dp" />
 
         <TextView
             android:id="@+id/completedTasksTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="15dp"
-            android:paddingTop="15dp"
-            android:paddingRight="15dp"
+            android:padding="10dp"
             android:text="@string/completed_tasks"
-            android:textSize="18sp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <ListView
             android:id="@+id/completedTasksListView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:padding="10dp" />
     </LinearLayout>
 
 </ScrollView>

@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.example.a390project.ListViewAdapters.ControlDeviceListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeListViewAdapter;
+import com.example.a390project.ListViewAdapters.EmployeeTasksListViewAdapter;
 import com.example.a390project.ListViewAdapters.MachineListViewAdapter;
 import com.example.a390project.ListViewAdapters.PrepaintTaskListViewAdapter;
 import com.example.a390project.ListViewAdapters.ProjectListViewAdapter;
@@ -265,6 +266,107 @@ public class FirebaseHelper {
 
     public void detatchEmployeeChildEventListener(){
         dbRefEmployees.removeEventListener(childEventListener);
+    }
+
+    void setAssignedTasksValueListener(String userID, final Activity activity){
+
+
+        rootRef.child("users").child(userID).child("assignedTasks").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                final List<String> assignedTasksIDs = new ArrayList<>();
+                for(DataSnapshot postSnapshot : dataSnapshot.getChildren()){
+                    assignedTasksIDs.add(postSnapshot.getKey());
+                }
+
+                rootRef.child("tasks").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        List<Task> assignedTasks = new ArrayList<>();
+                        for (String taskID : assignedTasksIDs) {
+                            if (dataSnapshot.hasChild(taskID)) {
+                                Task newTask = dataSnapshot.child(taskID).getValue(Task.class);
+                                newTask.setTaskID(taskID);
+                                assignedTasks.add(newTask);
+                                Log.d(TAG, "onDataChange: Project PO" + newTask.getProjectPO());
+                            }
+                        }
+                        callAssignedTasksListViewAdapter(activity, assignedTasks);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void callAssignedTasksListViewAdapter(Activity activity, List<Task> assignedTasks){
+
+        EmployeeTasksListViewAdapter adapter = new EmployeeTasksListViewAdapter(activity, assignedTasks);
+        ListView assignedTasksListView = activity.findViewById(R.id.assignedTasksListView);
+        assignedTasksListView.setAdapter(adapter);
+
+    }
+
+    void setCompletedTasksValueEventListener(String userID, final Activity activity){
+
+
+        rootRef.child("users").child(userID).child("completedTasks").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                final List<String> completedTasksIDs = new ArrayList<>();
+                for(DataSnapshot postSnapshot : dataSnapshot.getChildren()){
+                    completedTasksIDs.add(postSnapshot.getKey());
+                }
+
+                rootRef.child("tasks").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        List<Task> completedTasks = new ArrayList<>();
+                        for (String taskID : completedTasksIDs) {
+                            if (dataSnapshot.hasChild(taskID)) {
+                                Task newTask = dataSnapshot.child(taskID).getValue(Task.class);
+                                newTask.setTaskID(taskID);
+                                completedTasks.add(newTask);
+                                Log.d(TAG, "onDataChange: completed task: " + newTask.getProjectPO());
+                                Log.d(TAG, "onDataChange: " + newTask.getTaskID());
+                            }
+                        }
+                        callCompletedTasksListViewAdapter(activity, completedTasks);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void callCompletedTasksListViewAdapter(Activity activity, List<Task> completedTasks){
+
+        EmployeeTasksListViewAdapter adapter = new EmployeeTasksListViewAdapter(activity, completedTasks);
+        ListView completedTasksListView = activity.findViewById(R.id.completedTasksListView);
+        completedTasksListView.setAdapter(adapter);
+
     }
 
     /*

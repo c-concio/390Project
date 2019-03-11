@@ -29,7 +29,7 @@ public class TaskInspectionActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        setActionBar();
+        setActionBar("Inspection");
         setupUI();
         firebaseHelper.setTaskInspectionActivityListener(inspectionTaskID, this);
     }
@@ -54,10 +54,11 @@ public class TaskInspectionActivity extends AppCompatActivity {
     }
 
     //custom heading and back button
-    public void setActionBar() {
+    public void setActionBar(String heading) {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
+        actionBar.setTitle(heading);
         actionBar.show();
     }
     @Override

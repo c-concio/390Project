@@ -9,12 +9,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.example.a390project.ListViewAdapters.EmployeeTasksListViewAdapter;
 import com.example.a390project.Model.EmployeeTasks;
+import com.example.a390project.Model.Task;
 
+import java.util.ArrayList;
 import java.util.List;
 
 // Todo: Create Assigned tasks in Firebase
@@ -29,9 +32,11 @@ public class EmployeeActivity extends AppCompatActivity{
     ListView completedTasksListView;
 
     // variables
-    List<EmployeeTasks> assignedTasks;
-    List<EmployeeTasks> completedTasks;
-    int employeeID;
+    List<Task> assignedTasks = new ArrayList<>();
+    List<Task> completedTasks = new ArrayList<>();
+    String employeeID;
+
+    FirebaseHelper firebaseHelper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,19 +51,15 @@ public class EmployeeActivity extends AppCompatActivity{
         // setup the components
         setupUI();
 
-        // dummy tasks
-        DummyDatabase db = new DummyDatabase();
-
-        assignedTasks = db.generateTasks(employeeID - 1);
-        completedTasks = db.generateTasks(employeeID + 2);
-
-
         // setup the adapters and make the height of the list views dynamic
         assignedTasksListViewAdapter();
         completedTasksListViewAdapter();
 
         ListUtils.setDynamicHeight(assignedTasksListView);
         ListUtils.setDynamicHeight(completedTasksListView);
+
+        firebaseHelper.setAssignedTasksValueListener(employeeID, this);
+        firebaseHelper.setCompletedTasksValueEventListener(employeeID, this);
 
     }
 
@@ -68,7 +69,10 @@ public class EmployeeActivity extends AppCompatActivity{
 
         // get intent to get extra
         Intent intent = getIntent();
-        employeeID = intent.getIntExtra("employeeID", -1);
+        employeeID = intent.getStringExtra("employeeID");
+
+        firebaseHelper = new FirebaseHelper();
+
     }
 
     private void assignedTasksListViewAdapter(){

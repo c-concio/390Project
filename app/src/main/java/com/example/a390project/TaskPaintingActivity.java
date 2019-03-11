@@ -1,8 +1,10 @@
 package com.example.a390project;
 
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatEditText;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -63,6 +65,26 @@ public class TaskPaintingActivity extends AppCompatActivity {
             }
         });
 
-
+        setActionBar("Painting");
     }
+
+    //custom heading and back button
+    public void setActionBar(String heading) {
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setTitle(heading);
+        actionBar.show();
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                this.finish();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 }
