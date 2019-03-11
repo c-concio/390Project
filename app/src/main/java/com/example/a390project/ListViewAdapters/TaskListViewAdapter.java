@@ -100,6 +100,7 @@ public class TaskListViewAdapter extends BaseAdapter {
                 }
                 else if(taskType.equals("Baking")) {
                     Intent intent = new Intent(context, TaskBakingActivity.class);
+                    intent.putExtra("bakingTaskID", currentItem.getTaskID());
                     context.startActivity(intent);
                 }
                 else if(taskType.equals("Packaging")) {

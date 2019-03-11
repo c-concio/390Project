@@ -1,9 +1,12 @@
 package com.example.a390project;
 
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -34,6 +37,8 @@ public class TaskPackagingActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        setActionBar("Packaging");
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         setupUI();
 
@@ -52,9 +57,9 @@ public class TaskPackagingActivity extends AppCompatActivity {
         startTimeButton.setOnClickListener(startTimeOnClickListener);
         endTimeButton.setOnClickListener(endTimeOnClickListener);
 
-        descriptionEditText.setFocusable(false);
+        /*descriptionEditText.setFocusable(false);
         dateEditText.setFocusable(false);
-        employeeCommentEditText.setFocusable(false);
+        employeeCommentEditText.setFocusable(false);*/
         hoursTextView.setVisibility(View.GONE);
 
 
@@ -90,5 +95,24 @@ public class TaskPackagingActivity extends AppCompatActivity {
     protected void onDestroy(){
         super.onDestroy();
         firebaseHelper.detachTaskPackagingActivityListener(packagingTaskID);
+    }
+
+    //custom heading and back button
+    public void setActionBar(String heading) {
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setTitle(heading);
+        actionBar.show();
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                this.finish();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

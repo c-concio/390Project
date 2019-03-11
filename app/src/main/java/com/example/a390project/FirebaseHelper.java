@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -455,7 +456,6 @@ public class FirebaseHelper {
                 partCountedEditText.setText(Integer.toString(currentTask.getPartCounted()));
                 partAcceptedEditText.setText(Integer.toString(currentTask.getPartAccepted()));
                 partRejectedEditText.setText(Integer.toString(currentTask.getPartRejected()));
-
             }
 
             @Override
@@ -588,6 +588,38 @@ public class FirebaseHelper {
         PrepaintTaskListViewAdapter adapter = new PrepaintTaskListViewAdapter(activity, prepaintSubTasks);
         ListView prepaintTasksListView = activity.findViewById(R.id.prepaintTaskListView);
         prepaintTasksListView.setAdapter(adapter);
+    }
+
+    // ------------------------------------------------ Firebase Baking Methods ------------------------------------------------
+
+    public void setBakingValueEventListener(String taskID, final Activity activity){
+        rootRef.child("tasks").child(taskID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                TextView paintCodeTextView;
+                TextView bakeTimeTextView;
+                EditText descriptionEditText;
+                EditText employeeCommentEditText;
+
+                paintCodeTextView = activity.findViewById(R.id.paintCodeTextView);
+                bakeTimeTextView = activity.findViewById(R.id.bakeTimeTextView);
+                descriptionEditText = activity.findViewById(R.id.descriptionEditText);
+                employeeCommentEditText = activity.findViewById(R.id.employeeCommentEditText);
+
+                Task newTask = dataSnapshot.getValue(Task.class);
+
+                paintCodeTextView.setText(newTask.getPaintCode());
+                bakeTimeTextView.setText(Long.toString(newTask.getBakeTime()));
+                descriptionEditText.setText(newTask.getDescription());
+                employeeCommentEditText.setText(newTask.getEmployeeComment());
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 }

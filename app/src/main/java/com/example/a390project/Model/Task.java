@@ -21,6 +21,10 @@ public class Task {
     // prepaint variables
     private String prepaintName;
 
+    // baking variables
+    private String paintCode;
+    private long bakeTime;
+
     public Task(){}
 
     public Task(String taskID, String projectPO, String taskType, String description, long createdTime) {
@@ -131,5 +135,21 @@ public class Task {
 
     public void setPartRejected(int partRejected) {
         this.partRejected = partRejected;
+    }
+
+    public String getPaintCode() {
+        return paintCode;
+    }
+
+    public void setPaintCode(String paintCode) {
+        this.paintCode = paintCode;
+    }
+
+    public long getBakeTime() {
+        return bakeTime;
+    }
+
+    public void setBakeTime(long bakeTime) {
+        this.bakeTime = bakeTime;
     }
 }
