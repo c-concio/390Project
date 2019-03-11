@@ -20,6 +20,7 @@ import com.example.a390project.Fragments.EmployeeFragment;
 import com.example.a390project.Fragments.MachineFragment;
 import com.example.a390project.Fragments.ProjectFragment;
 import com.example.a390project.Model.ControlDevice;
+import com.example.a390project.Model.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -202,6 +203,12 @@ public class MainActivity extends AppCompatActivity {
             default:
                 break;
         }
+    }
+
+    // testing purposes
+    private void generateSubTask(){
+        String taskId = new Task().generateRandomChars();
+        new FirebaseHelper().createAPrepaintTaskID(taskId);
     }
 
 }

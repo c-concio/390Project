@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,6 +63,7 @@ public class TaskListViewAdapter extends BaseAdapter {
                     inflate(R.layout.row_item_task, parent, false);
         }
 
+        Log.d(TAG, "getView: in get view");
         // get current item to be displayed
         final Task currentItem = (Task) getItem(position);
 
@@ -89,6 +91,7 @@ public class TaskListViewAdapter extends BaseAdapter {
                 }
                 else if(taskType.equals("Pre-Painting")) {
                     Intent intent = new Intent(context, TaskPrePaintingActivity.class);
+                    intent.putExtra("prepaintTaskID", currentItem.getTaskID());
                     context.startActivity(intent);
                 }
                 else if(taskType.equals("Painting")) {

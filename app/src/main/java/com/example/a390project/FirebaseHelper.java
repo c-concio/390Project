@@ -3,6 +3,7 @@ package com.example.a390project;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import com.example.a390project.ListViewAdapters.ControlDeviceListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeListViewAdapter;
 import com.example.a390project.ListViewAdapters.MachineListViewAdapter;
+import com.example.a390project.ListViewAdapters.PrepaintTaskListViewAdapter;
 import com.example.a390project.ListViewAdapters.ProjectListViewAdapter;
 import com.example.a390project.ListViewAdapters.TaskListViewAdapter;
 import com.example.a390project.Model.ControlDevice;
@@ -38,6 +40,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -80,9 +83,14 @@ public class FirebaseHelper {
     private ValueEventListener packagingValueEventListener;
     private ValueEventListener inspectionValueEventListener;
 
+
     // ------------------------------------------- Control Device variables -------------------------------------------
 
     private List<ControlDevice> cDevices;
+
+    // ------------------------------------------- PrepaintTask -------------------------------------------
+    private ValueEventListener prepaintTaskValueEventListener;
+    private List<Task> prepaintSubTasks;
 
     // -------------------------------------------------------------------------------------------------------------
 
@@ -395,8 +403,11 @@ public class FirebaseHelper {
                 EditText dateEditText = activity.findViewById(R.id.dateEditText);
                 EditText employeeCommentEditText = activity.findViewById(R.id.employeeCommentEditText);
 
+                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+                String date = formatter.format(currentTask.getDate());
+
                 descriptionEditText.setText(currentTask.getDescription());
-                dateEditText.setText(String.valueOf(currentTask.getDate()));
+                dateEditText.setText(String.valueOf(date));
 
                 employeeCommentEditText.setText(currentTask.getEmployeeComment());
 
@@ -516,7 +527,73 @@ public class FirebaseHelper {
         rootRef.child("cDevices").child(cDeviceTitle).child("cDeviceStatus").setValue(state);
         Log.d(TAG, cDeviceTitle + " IS NOW " + state);
     }
+
+
+    // -------------------------------------------- Firebase Prepaint Task Methods --------------------------------------------
+    public void setPrepaintTaskValueListener(String taskId, final Activity activity){
+        DatabaseReference prepaintTaskRef = rootRef.child("tasks").child(taskId);
+
+        prepaintTaskValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                final List<String> prepaintTaskIDs = new ArrayList<>();
+
+                if(dataSnapshot.child("prepaintTasks").hasChildren()){
+                    for(DataSnapshot postSnapshot : dataSnapshot.child("prepaintTasks").getChildren()){
+                        prepaintTaskIDs.add(postSnapshot.getKey());
+                    }
+
+                    rootRef.child("subTasks").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            prepaintSubTasks = new ArrayList<Task>();
+                            for (String taskID : prepaintTaskIDs) {
+                                if (dataSnapshot.hasChild(taskID)) {
+                                    Task newTask = new Task();
+                                    newTask.setDescription(dataSnapshot.child(taskID).child("description").getValue(String.class));
+                                    newTask.setEmployeeComment((dataSnapshot.child(taskID).child("employeeComment").getValue(String.class)));
+                                    newTask.setPrepaintName(dataSnapshot.child(taskID).child("prepaintName").getValue(String.class));
+                                    prepaintSubTasks.add(newTask);
+                                }
+                            }
+                            callPrepaintTaskListViewAdapter(activity, prepaintSubTasks);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        prepaintTaskRef.addValueEventListener(prepaintTaskValueEventListener);
+
+    }
+
+    public void createAPrepaintTaskID(String id){
+        rootRef.child("subTasks").child(id).child("prepaintTaskName").setValue("Sanding");
+        rootRef.child("subTasks").child(id).child("description").setValue("Sand parts");
+        rootRef.child("subTasks").child(id).child("employeeComment").setValue("Comment");
+    }
+
+    private void callPrepaintTaskListViewAdapter(Activity activity, List<Task> prepaintSubTasks){
+        PrepaintTaskListViewAdapter adapter = new PrepaintTaskListViewAdapter(activity, prepaintSubTasks);
+        ListView prepaintTasksListView = activity.findViewById(R.id.prepaintTaskListView);
+        prepaintTasksListView.setAdapter(adapter);
+    }
+
 }
+
+
+
 
 
 

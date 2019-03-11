@@ -18,6 +18,9 @@ public class Task {
     private int partRejected = 0;
 
 
+    // prepaint variables
+    private String prepaintName;
+
     public Task(){}
 
     public Task(String taskID, String projectPO, String taskType, String description, long createdTime) {
@@ -96,6 +99,14 @@ public class Task {
 
     public void setEmployeeComment(String employeeComment) {
         this.employeeComment = employeeComment;
+    }
+
+    public String getPrepaintName() {
+        return prepaintName;
+    }
+
+    public void setPrepaintName(String prepaintName) {
+        this.prepaintName = prepaintName;
     }
 
     public int getPartCounted() {
