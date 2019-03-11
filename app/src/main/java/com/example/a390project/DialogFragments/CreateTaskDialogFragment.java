@@ -48,8 +48,7 @@ public class CreateTaskDialogFragment extends DialogFragment {
                 final String projectPO = ((ProjectActivity)getActivity()).getProjectPO();
                 Log.d(TAG, "Task selected: " + taskType);
 
-                if (taskType.equals("Inspection") || taskType.equals("Baking") ||
-                        taskType.equals("Packaging") || taskType.equals("Final-Inspection")) {
+                if (taskType.equals("Inspection") || taskType.equals("Packaging") || taskType.equals("Final-Inspection")) {
                     mFab.setImageResource(R.drawable.plus_sign);
                     mFab.setOnClickListener(new View.OnClickListener() {
                         @Override
