@@ -96,6 +96,7 @@ public class TaskListViewAdapter extends BaseAdapter {
                 }
                 else if(taskType.equals("Painting")) {
                     Intent intent = new Intent(context, TaskPaintingActivity.class);
+                    intent.putExtra("paintingTaskID",currentItem.getTaskID());
                     context.startActivity(intent);
                 }
                 else if(taskType.equals("Baking")) {

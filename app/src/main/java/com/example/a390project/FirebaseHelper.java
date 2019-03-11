@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static java.lang.Integer.parseInt;
 
@@ -726,6 +727,27 @@ public class FirebaseHelper {
         });
     }
 
+    public void setPaintingValues(final TextView mPaintCode, final TextView mBakeTemp, final TextView mBakeTime, final TextView mDescription, String paintingTaskID) {
+        rootRef.child("tasks").child(paintingTaskID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mPaintCode.setText(dataSnapshot.child("paintingCode").getValue(String.class));
+                mBakeTemp.setText(Integer.toString(dataSnapshot.child("bakingTemp").getValue(int.class)));
+                long bakingTime = dataSnapshot.child("bakingTime").getValue(long.class);
+                long hours = TimeUnit.MILLISECONDS.toHours(bakingTime);
+//                long minutes = TimeUnit.MILLISECONDS.toMinutes(bakingTime);
+//                long seconds = TimeUnit.MILLISECONDS.toSeconds(bakingTime);
+                mBakeTime.setText(Long.toString(hours)+ "h");
+//                mBakeTime.setText(Long.toString(hours)+ "h" + Long.toString(minutes)+ "m" + Long.toString(seconds)+ "s");
+                mDescription.setText(dataSnapshot.child("description").getValue(String.class));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
 }
 
 

@@ -38,10 +38,11 @@ public class TaskPaintingActivity extends AppCompatActivity {
         mCompletedTime = findViewById(R.id.completed_painting_task);
         mComment = findViewById(R.id.employee_comment_painting_task);
 
-        mPaintCode.setText("1234asdf");
-        mBakeTemp.setText("450");
-        mBakeTime.setText("2:35h");
-        mDescription.setText("Make sure you paint everything or you're fired!");
+
+        FirebaseHelper firebaseHelper = new FirebaseHelper();
+
+        String paintingTaskID = getIntent().getStringExtra("paintingTaskID");
+        firebaseHelper.setPaintingValues(mPaintCode, mBakeTemp, mBakeTime, mDescription, paintingTaskID);
 
         mStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
