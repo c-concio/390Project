@@ -15,4 +15,20 @@
         android:dividerHeight="15.0sp"
         tools:layout_editor_absoluteX="15dp"
         tools:layout_editor_absoluteY="15dp" />
+
+    <Button
+        android:id="@+id/completed_prepaint_task"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="20dp"
+        android:text="Pre-Painting Completed"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/prepaintTaskListView" />
 </android.support.constraint.ConstraintLayout>

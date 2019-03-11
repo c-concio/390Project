@@ -36,7 +36,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginBottom="30dp">
 
         <TextView
             android:id="@+id/bakeTimeTitleTextView"
@@ -65,7 +66,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginBottom="50dp">
 
         <Button
             android:id="@+id/startTimeButton"
@@ -82,12 +84,23 @@
             android:text="End Time" />
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/employeeCommentEditText"
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/employee_comment_baking_task"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Employee Comment"
+            android:inputType="textMultiLine"
+            android:padding="10dp"
+            android:layout_marginTop="30dp" />
+    </android.support.design.widget.TextInputLayout>
+    <Button
+        android:id="@+id/completed_baking_task"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Employee Comment"
-        android:inputType="textMultiLine" />
+        android:text="Baking Completed"
+        android:layout_gravity="center_horizontal"/>
 
 </LinearLayout>

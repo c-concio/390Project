@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -604,7 +605,8 @@ public class FirebaseHelper {
                 paintCodeTextView = activity.findViewById(R.id.paintCodeTextView);
                 bakeTimeTextView = activity.findViewById(R.id.bakeTimeTextView);
                 descriptionEditText = activity.findViewById(R.id.descriptionEditText);
-                employeeCommentEditText = activity.findViewById(R.id.employeeCommentEditText);
+                employeeCommentEditText = activity.findViewById(R.id.employee_comment_baking_task);
+
 
                 Task newTask = dataSnapshot.getValue(Task.class);
 
