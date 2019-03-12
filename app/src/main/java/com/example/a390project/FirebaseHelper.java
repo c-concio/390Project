@@ -31,6 +31,7 @@ import com.example.a390project.Model.Machine;
 import com.example.a390project.Model.Oven;
 import com.example.a390project.Model.Paintbooth;
 import com.example.a390project.Model.Project;
+import com.example.a390project.Model.SubTask;
 import com.example.a390project.Model.Task;
 import com.example.a390project.Model.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -734,10 +735,14 @@ public class FirebaseHelper {
                 mPaintCode.setText(dataSnapshot.child("paintingCode").getValue(String.class));
                 mBakeTemp.setText(Integer.toString(dataSnapshot.child("bakingTemp").getValue(int.class)));
                 long bakingTime = dataSnapshot.child("bakingTime").getValue(long.class);
-                long hours = TimeUnit.MILLISECONDS.toHours(bakingTime);
+
+                long second = (bakingTime / 1000) % 60;
+                long minute = (bakingTime / (1000 * 60)) % 60;
+                long hour = (bakingTime / (1000 * 60 * 60)) % 24;
+
 //                long minutes = TimeUnit.MILLISECONDS.toMinutes(bakingTime);
 //                long seconds = TimeUnit.MILLISECONDS.toSeconds(bakingTime);
-                mBakeTime.setText(Long.toString(hours)+ "h");
+                mBakeTime.setText(Long.toString(hour)+ "h" + Long.toString(minute)+ "m" + Long.toString(second)+ "s");
 //                mBakeTime.setText(Long.toString(hours)+ "h" + Long.toString(minutes)+ "m" + Long.toString(seconds)+ "s");
                 mDescription.setText(dataSnapshot.child("description").getValue(String.class));
             }
@@ -747,6 +752,10 @@ public class FirebaseHelper {
 
             }
         });
+    }
+
+    public void createPrepaintingTask(String taskID, String projectPO, String prePainting, String taskDescription, long createdTime, List<SubTask> subTasks) {
+
     }
 }
 

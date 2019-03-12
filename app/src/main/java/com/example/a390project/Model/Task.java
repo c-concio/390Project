@@ -1,6 +1,7 @@
 package com.example.a390project.Model;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 public class Task {
@@ -16,6 +17,7 @@ public class Task {
     private int partCounted = 0;
     private int partAccepted = 0;
     private int partRejected = 0;
+    private List<SubTask> subTasks;
 
 
     // prepaint variables
@@ -33,6 +35,16 @@ public class Task {
         this.taskType = taskType;
         this.description = description;
         this.createdTime = createdTime;
+    }
+
+    //constructor to use when creating a prepaint task
+    public Task(String taskID, String projectPO, String taskType, String description, long createdTime, List<SubTask> subTasks) {
+        this.taskID = taskID;
+        this.projectPO = projectPO;
+        this.taskType = taskType;
+        this.description = description;
+        this.createdTime = createdTime;
+        this.subTasks = subTasks;
     }
 
 
@@ -151,5 +163,13 @@ public class Task {
 
     public void setBakeTime(long bakeTime) {
         this.bakeTime = bakeTime;
+    }
+
+    public List<SubTask> getSubTasks() {
+        return subTasks;
+    }
+
+    public void setSubTasks(List<SubTask> subTasks) {
+        this.subTasks = subTasks;
     }
 }

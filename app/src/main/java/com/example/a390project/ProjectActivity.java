@@ -48,7 +48,7 @@ public class ProjectActivity extends AppCompatActivity {
     }
 
     private void startCreateTaskDialogFragment() {
-        CreateTaskDialogFragment dialog = new CreateTaskDialogFragment();
+        CreateTaskDialogFragment dialog = new CreateTaskDialogFragment(projectPO);
         dialog.show(getSupportFragmentManager(), "Create Task");
     }
 

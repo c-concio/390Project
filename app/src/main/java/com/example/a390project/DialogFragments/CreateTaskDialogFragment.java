@@ -20,6 +20,7 @@ import com.example.a390project.FirebaseHelper;
 import com.example.a390project.ProjectActivity;
 import com.example.a390project.R;
 
+@SuppressLint("ValidFragment")
 public class CreateTaskDialogFragment extends DialogFragment {
 
     private static final String TAG = "CreateTaskDailogF";
@@ -27,6 +28,12 @@ public class CreateTaskDialogFragment extends DialogFragment {
     private Spinner mSpinner;
     private AppCompatEditText mDescription;
     private FloatingActionButton mFab;
+
+    private String projectPO;
+
+    public CreateTaskDialogFragment(String projectPO) {
+        this.projectPO = projectPO;
+    }
 
     @Nullable
     @Override
@@ -72,6 +79,9 @@ public class CreateTaskDialogFragment extends DialogFragment {
                         public void onClick(View v) {
                             //Open 'pre-painting dialog fragment' and follow the design:
                             //https://drive.google.com/file/d/1TIN4Cvezqyr3FZDBwEYyEbq7wecrdxFb/view?usp=sharing
+                            String taskDescription = mDescription.getText().toString().trim();
+                            PrePaintingDialogFragment prePaintingDialogFragment = new PrePaintingDialogFragment(projectPO,taskDescription);
+                            prePaintingDialogFragment.show(getFragmentManager(), "PrePaintingDialogFragment");
                         }
                     });
                 }
