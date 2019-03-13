@@ -45,6 +45,7 @@ public class PrePaintingDialogFragment extends DialogFragment {
         mManualSolventCleaning = view.findViewById(R.id.manual_solvent_cleaning_checkbox);
         mIridite = view.findViewById(R.id.iridite_checkbox);
         mMasking = view.findViewById(R.id.masking_checkbox);
+        mFab = view.findViewById(R.id.fab_prepainting_task);
 
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +81,7 @@ public class PrePaintingDialogFragment extends DialogFragment {
 
                 FirebaseHelper firebaseHelper = new FirebaseHelper();
                 firebaseHelper.createPrepaintingTask(taskID, projectPO,"PrePainting", taskDescription, createdTime, subTasks);
+                getDialog().dismiss();
 
             }
         });

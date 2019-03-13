@@ -82,6 +82,7 @@ public class CreateTaskDialogFragment extends DialogFragment {
                             String taskDescription = mDescription.getText().toString().trim();
                             PrePaintingDialogFragment prePaintingDialogFragment = new PrePaintingDialogFragment(projectPO,taskDescription);
                             prePaintingDialogFragment.show(getFragmentManager(), "PrePaintingDialogFragment");
+                            getDialog().dismiss();
                         }
                     });
                 }

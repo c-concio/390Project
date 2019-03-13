@@ -755,12 +755,11 @@ public class FirebaseHelper {
     }
 
     public void createPrepaintingTask(String taskID, String projectPO, String prePainting, String taskDescription, long createdTime, List<SubTask> subTasks) {
-
+        rootRef.child("tasks").child(taskID).setValue(new Task(taskID, projectPO, prePainting, taskDescription, createdTime));
+        for (SubTask subTask:subTasks) {
+            rootRef.child("subTasks").child(subTask.getSubTaskID()).setValue(subTask);
+            rootRef.child("tasks").child(taskID).child("subTasks").child(subTask.getSubTaskID()).setValue(true);
+            rootRef.child("projects").child(projectPO).child("tasks").child(taskID).child(subTask.getSubTaskID()).setValue(true);
+        }
     }
 }
-
-
-
-
-
-
