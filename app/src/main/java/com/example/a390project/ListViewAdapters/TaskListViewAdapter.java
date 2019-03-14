@@ -91,7 +91,8 @@ public class TaskListViewAdapter extends BaseAdapter {
                 }
                 else if(taskType.equals("Pre-Painting")) {
                     Intent intent = new Intent(context, TaskPrePaintingActivity.class);
-                    intent.putExtra("prepaintTaskID", currentItem.getTaskID());
+                    intent.putExtra("prepaintingTaskID", currentItem.getTaskID());
+                    intent.putExtra("prepaintingDescription", currentItem.getDescription());
                     context.startActivity(intent);
                 }
                 else if(taskType.equals("Painting")) {

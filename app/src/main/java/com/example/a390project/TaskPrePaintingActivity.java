@@ -5,12 +5,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class TaskPrePaintingActivity extends AppCompatActivity {
 
-    ListView prepaintTasksListView;
-    FirebaseHelper firebaseHelper;
-    String taskId;
+    private TextView mDescription;
+    private ListView prepaintTasksListView;
+    private FirebaseHelper firebaseHelper;
+    private String taskId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,12 +27,14 @@ public class TaskPrePaintingActivity extends AppCompatActivity {
 
         setupUI();
 
-        firebaseHelper.setPrepaintTaskValueListener(taskId, this);
+        firebaseHelper.populateSubTasks(taskId, this);
     }
 
     private void setupUI(){
         prepaintTasksListView = findViewById(R.id.prepaintTaskListView);
-        taskId = getIntent().getStringExtra("prepaintTaskID");
+        mDescription = findViewById(R.id.prepaint_task_description);
+        mDescription.setText(getIntent().getStringExtra("prepaintingDescription"));
+        taskId = getIntent().getStringExtra("prepaintingTaskID");
         firebaseHelper = new FirebaseHelper();
     }
 

@@ -80,7 +80,7 @@ public class PrePaintingDialogFragment extends DialogFragment {
                 }
 
                 FirebaseHelper firebaseHelper = new FirebaseHelper();
-                firebaseHelper.createPrepaintingTask(taskID, projectPO,"PrePainting", taskDescription, createdTime, subTasks);
+                firebaseHelper.createPrepaintingTask(taskID, projectPO,"Pre-Painting", taskDescription, createdTime, subTasks);
                 getDialog().dismiss();
 
             }

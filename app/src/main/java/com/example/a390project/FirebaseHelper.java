@@ -94,8 +94,6 @@ public class FirebaseHelper {
     private List<ControlDevice> cDevices;
 
     // ------------------------------------------- PrepaintTask -------------------------------------------
-    private ValueEventListener prepaintTaskValueEventListener;
-    private List<Task> prepaintSubTasks;
 
     // -------------------------------------------------------------------------------------------------------------
 
@@ -635,62 +633,50 @@ public class FirebaseHelper {
 
 
     // -------------------------------------------- Firebase Prepaint Task Methods --------------------------------------------
-    public void setPrepaintTaskValueListener(String taskId, final Activity activity){
-        DatabaseReference prepaintTaskRef = rootRef.child("tasks").child(taskId);
-
-        prepaintTaskValueEventListener = new ValueEventListener() {
+    public void populateSubTasks(String taskId, final Activity activity){
+        final List<String> subTasksID = new ArrayList<>();
+        final List<SubTask> subTasks = new ArrayList<>();
+        rootRef.child("tasks").child(taskId).child("subTasks").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                final List<String> prepaintTaskIDs = new ArrayList<>();
-
-                if(dataSnapshot.child("prepaintTasks").hasChildren()){
-                    for(DataSnapshot postSnapshot : dataSnapshot.child("prepaintTasks").getChildren()){
-                        prepaintTaskIDs.add(postSnapshot.getKey());
+                for(DataSnapshot ds:dataSnapshot.getChildren()) {
+                    subTasksID.add(ds.getKey());
+                }
+                rootRef.child("subTasks").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (String subTaskID:subTasksID) {
+                            boolean isCompleted = dataSnapshot.child(subTaskID).child("completed").getValue(boolean.class);
+                            if (!isCompleted) {
+                                String subTaskType = dataSnapshot.child(subTaskID).child("subTaskType").getValue(String.class);
+                                String ID = dataSnapshot.child(subTaskID).child("subTaskID").getValue(String.class);
+                                String projectID = dataSnapshot.child(subTaskID).child("projectID").getValue(String.class);
+                                String taskID = dataSnapshot.child(subTaskID).child("taskID").getValue(String.class);
+                                long createdTime = dataSnapshot.child(subTaskID).child("createdTime").getValue(long.class);
+                                subTasks.add(new SubTask(subTaskType,subTaskID,projectID,taskID,isCompleted,createdTime));
+                            }
+                        }
+                        callPrepaintTaskListViewAdapter(activity, subTasks);
                     }
 
-                    rootRef.child("subTasks").addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            prepaintSubTasks = new ArrayList<Task>();
-                            for (String taskID : prepaintTaskIDs) {
-                                if (dataSnapshot.hasChild(taskID)) {
-                                    Task newTask = new Task();
-                                    newTask.setDescription(dataSnapshot.child(taskID).child("description").getValue(String.class));
-                                    newTask.setEmployeeComment((dataSnapshot.child(taskID).child("employeeComment").getValue(String.class)));
-                                    newTask.setPrepaintName(dataSnapshot.child(taskID).child("prepaintName").getValue(String.class));
-                                    prepaintSubTasks.add(newTask);
-                                }
-                            }
-                            callPrepaintTaskListViewAdapter(activity, prepaintSubTasks);
-                        }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
 
-                        }
-                    });
-                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        };
-
-        prepaintTaskRef.addValueEventListener(prepaintTaskValueEventListener);
+        });
 
     }
 
-    public void createAPrepaintTaskID(String id){
-        rootRef.child("subTasks").child(id).child("prepaintTaskName").setValue("Sanding");
-        rootRef.child("subTasks").child(id).child("description").setValue("Sand parts");
-        rootRef.child("subTasks").child(id).child("employeeComment").setValue("Comment");
-    }
-
-    private void callPrepaintTaskListViewAdapter(Activity activity, List<Task> prepaintSubTasks){
-        PrepaintTaskListViewAdapter adapter = new PrepaintTaskListViewAdapter(activity, prepaintSubTasks);
+    private void callPrepaintTaskListViewAdapter(Activity activity, List<SubTask> subTasks){
+        PrepaintTaskListViewAdapter adapter = new PrepaintTaskListViewAdapter(activity, subTasks);
         ListView prepaintTasksListView = activity.findViewById(R.id.prepaintTaskListView);
         prepaintTasksListView.setAdapter(adapter);
     }
@@ -759,7 +745,7 @@ public class FirebaseHelper {
         for (SubTask subTask:subTasks) {
             rootRef.child("subTasks").child(subTask.getSubTaskID()).setValue(subTask);
             rootRef.child("tasks").child(taskID).child("subTasks").child(subTask.getSubTaskID()).setValue(true);
-            rootRef.child("projects").child(projectPO).child("tasks").child(taskID).child(subTask.getSubTaskID()).setValue(true);
+            rootRef.child("projects").child(projectPO).child("tasks").child(taskID).child("subTasks").child(subTask.getSubTaskID()).setValue(true);
         }
     }
 }

@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.a390project.Model.SubTask;
 import com.example.a390project.Model.Task;
 import com.example.a390project.R;
 
@@ -17,7 +18,7 @@ import java.util.List;
 
 public class PrepaintTaskListViewAdapter extends BaseAdapter {
 
-    private List<Task> tasks;
+    private List<SubTask> subTasks;
     private Context context;
 
     private static final String TAG = "PrepaintTaskListViewAda";
@@ -29,20 +30,20 @@ public class PrepaintTaskListViewAdapter extends BaseAdapter {
     private Button endTimeButton;
     private EditText employeeCommentEditText;
 
-    public PrepaintTaskListViewAdapter(Context context, List<Task> tasks){
+    public PrepaintTaskListViewAdapter(Context context, List<SubTask> subTasks){
         this.context = context;
-        this.tasks = tasks;
-        Log.d(TAG, "PrepaintTaskListViewAdapter: task size: " + tasks.size());
+        this.subTasks = subTasks;
+        Log.d(TAG, "PrepaintTaskListViewAdapter: task size: " + this.subTasks.size());
     }
 
     @Override
     public int getCount() {
-        return tasks.size();
+        return subTasks.size();
     }
 
     @Override
-    public Task getItem(int position) {
-        return tasks.get(position);
+    public SubTask getItem(int position) {
+        return subTasks.get(position);
     }
 
     @Override
@@ -56,15 +57,15 @@ public class PrepaintTaskListViewAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.row_item_prepaint_tasks, parent, false);
         }
 
+        final SubTask currentItem = (SubTask) getItem(position);
+
         prepaintNameTextView = convertView.findViewById(R.id.prepaintNameTextView);
         descriptionEditText = convertView.findViewById(R.id.descriptionEditText);
         startTimeButton = convertView.findViewById(R.id.startTimeButton);
         endTimeButton = convertView.findViewById(R.id.endTimeButton);
         employeeCommentEditText = convertView.findViewById(R.id.employeeCommentEditText);
 
-        prepaintNameTextView.setText(tasks.get(position).getPrepaintName());
-        descriptionEditText.setText(tasks.get(position).getDescription());
-        employeeCommentEditText.setText(tasks.get(position).getEmployeeComment());
+        prepaintNameTextView.setText(subTasks.get(position).getSubTaskType());
 
         Log.d(TAG, "getView: got view");
 

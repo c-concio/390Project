@@ -1,34 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".TaskPrePaintingActivity">
+    android:padding="15dp"
+    android:layout_margin="5dp"
+    android:orientation="vertical">
 
-    <ListView
-        android:id="@+id/prepaintTaskListView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="15dp"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="15.0sp"
-        tools:layout_editor_absoluteX="15dp"
-        tools:layout_editor_absoluteY="15dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="25dp"
+            android:text="Pre-Painting Task"
+            android:gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:textSize="20dp"
+            android:textColor="@color/colorPrimaryDark"/>
+        <TextView
+            android:id="@+id/prepaint_task_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:layout_marginBottom="8dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tasks To Do"
+            android:textStyle="bold"
+            android:gravity="center_horizontal"
+            android:textSize="20dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_marginBottom="8dp"/>
+
+        <ListView
+            android:id="@+id/prepaintTaskListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="50dp"/>
+        </LinearLayout>
     <Button
-        android:id="@+id/completed_prepaint_task"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="20dp"
-        android:text="Pre-Painting Completed"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/prepaintTaskListView" />
-</android.support.constraint.ConstraintLayout>
+        android:text="Prepainting Completed"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"/>
+</RelativeLayout>

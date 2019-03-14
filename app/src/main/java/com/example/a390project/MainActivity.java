@@ -205,10 +205,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // testing purposes
-    private void generateSubTask(){
-        String taskId = new Task().generateRandomChars();
-        new FirebaseHelper().createAPrepaintTaskID(taskId);
-    }
-
 }
