@@ -15,6 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.a390project.FirebaseHelper;
+import com.example.a390project.Model.Task;
 import com.example.a390project.R;
 
 @SuppressLint("ValidFragment")
@@ -28,6 +29,8 @@ class PaintingDialogFragment extends DialogFragment {
     //variables
     private String projectPO;
     private String taskDescription;
+    private String paintType;
+    private String paintCode;
 
     public PaintingDialogFragment(String projectPO, String taskDescription) {
         this.projectPO = projectPO;
@@ -52,7 +55,7 @@ class PaintingDialogFragment extends DialogFragment {
         mPaintType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                final String paintType = adapterView.getItemAtPosition(i).toString().trim();
+                paintType = adapterView.getItemAtPosition(i).toString().trim();
                 ArrayAdapter<CharSequence> adapter;
                 if (paintType.equals("Liquid")) {
                      adapter = ArrayAdapter.createFromResource(getContext(), R.array.paint_liquid, android.R.layout.simple_spinner_item);
@@ -65,7 +68,7 @@ class PaintingDialogFragment extends DialogFragment {
                 mPaintCode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                        final String paintCode = adapterView.getItemAtPosition(i).toString().trim();
+                        paintCode = adapterView.getItemAtPosition(i).toString().trim();
                         //populate fields of painting characteristics
                         FirebaseHelper firebaseHelper = new FirebaseHelper();
                         firebaseHelper.populatePaintingTaskCharacteristics(paintCode, mPaintDescription, mPaintBakeTemperature, mPaintBakeTime, mPaintQuantity);
@@ -81,6 +84,18 @@ class PaintingDialogFragment extends DialogFragment {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
+            }
+        });
+
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!paintCode.isEmpty() && !paintType.isEmpty()) {
+                    FirebaseHelper firebaseHelper = new FirebaseHelper();
+                    String taskID = Task.generateRandomChars();
+                    long createdTime = System.currentTimeMillis();
+                    firebaseHelper.createPaintingTask(projectPO, taskID, taskDescription, createdTime, paintCode);
+                }
             }
         });
 

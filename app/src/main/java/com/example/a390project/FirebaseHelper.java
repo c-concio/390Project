@@ -740,6 +740,10 @@ public class FirebaseHelper {
         });
     }
 
+    /*
+    // ------------------------------------------------ Firebase PrePaintingTask Methods ------------------------------------------------
+     */
+
     public void createPrepaintingTask(String taskID, String projectPO, String prePainting, String taskDescription, long createdTime, List<SubTask> subTasks) {
         rootRef.child("tasks").child(taskID).setValue(new Task(taskID, projectPO, prePainting, taskDescription, createdTime));
         for (SubTask subTask:subTasks) {
@@ -749,6 +753,13 @@ public class FirebaseHelper {
         }
     }
 
+    /*
+    // ------------------------------------------------ Firebase PaintingTask Methods ------------------------------------------------
+     */
+
     public void populatePaintingTaskCharacteristics(String paintCode, TextView mPaintDescription, TextView mPaintBakeTemperature, TextView mPaintBakeTime, TextView mPaintQuantity) {
+    }
+
+    public void createPaintingTask(String projectPO, String taskID, String taskDescription, long createdTime, String paintCode) {
     }
 }
