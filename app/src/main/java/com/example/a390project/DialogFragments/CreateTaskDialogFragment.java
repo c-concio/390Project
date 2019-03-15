@@ -93,6 +93,10 @@ public class CreateTaskDialogFragment extends DialogFragment {
                         public void onClick(View v) {
                             //Open 'painting dialog fragment' and follow the design:
                             //https://drive.google.com/file/d/1TIN4Cvezqyr3FZDBwEYyEbq7wecrdxFb/view?usp=sharing
+                            String taskDescription = mDescription.getText().toString().trim();
+                            PaintingDialogFragment PaintingDialogFragment = new PaintingDialogFragment(projectPO,taskDescription);
+                            PaintingDialogFragment.show(getFragmentManager(), "PaintingDialogFragment");
+                            getDialog().dismiss();
                         }
                     });
                 }

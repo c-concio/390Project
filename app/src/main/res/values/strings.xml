@@ -16,4 +16,23 @@
         <item>Baking</item>
         <item>Final-Inspection</item>
     </string-array>
+
+    <string-array name="paint_type">
+        <item>Liquid</item>
+        <item>Powder</item>
+    </string-array>
+
+
+    <string-array name="paint_liquid">
+        <item>Liquid</item>
+        <item>Powder</item>
+    </string-array>
+
+    <string-array name="paint_powder">
+        <item>Liquid</item>
+        <item>Powder</item>
+    </string-array>
+
+
+
 </resources>

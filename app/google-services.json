@@ -31,6 +31,14 @@
           }
         },
         {
+          "client_id": "439442543072-g2e3n4r33nq2qgnrj66nei6vpj5n14oj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.a390project",
+            "certificate_hash": "dc0b737ca9d64ce5d76829b7a420a7a318b5b320"
+          }
+        },
+        {
           "client_id": "439442543072-le2hl1215bkee7qlafs0fnsb6k9ruhlr.apps.googleusercontent.com",
           "client_type": 3
         }

@@ -748,4 +748,7 @@ public class FirebaseHelper {
             rootRef.child("projects").child(projectPO).child("tasks").child(taskID).child("subTasks").child(subTask.getSubTaskID()).setValue(true);
         }
     }
+
+    public void populatePaintingTaskCharacteristics(String paintCode, TextView mPaintDescription, TextView mPaintBakeTemperature, TextView mPaintBakeTime, TextView mPaintQuantity) {
+    }
 }
