@@ -24,13 +24,13 @@
 
 
     <string-array name="paint_liquid">
-        <item>Liquid</item>
-        <item>Powder</item>
+        <item>SS541N25</item>
+        <item>PX611N26</item>
     </string-array>
 
     <string-array name="paint_powder">
-        <item>Liquid</item>
-        <item>Powder</item>
+        <item>US612N48</item>
+        <item>HX622N53</item>
     </string-array>
 
 
