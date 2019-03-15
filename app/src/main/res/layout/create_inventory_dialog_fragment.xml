@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="20dp"
+    android:layout_margin="10dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create Inventory Item"
+        android:textColor="@android:color/black"
+        android:textSize="22dp"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="8dp"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="Paint Type"
+            android:textSize="18dp"
+            android:textColor="@color/colorPrimaryDark"/>
+        <Spinner
+            android:id="@+id/paint_type_inventory_df"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true">
+        </Spinner>
+    </RelativeLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/paint_description_inventory_df"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Paint Description"
+            android:inputType=""
+            android:padding="10dp"
+            android:layout_marginTop="8dp"
+            android:focusedByDefault="false"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/paint_code_inventory_df"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Paint Code"
+            android:inputType=""
+            android:padding="10dp"
+            android:layout_marginTop="8dp"
+            android:focusedByDefault="false"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/bake_temperature_inventory_df"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Bake Temperature (°C)"
+            android:inputType=""
+            android:padding="10dp"
+            android:layout_marginTop="8dp"
+            android:focusedByDefault="false"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/bake_time_inventory_df"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Bake Time (min)"
+            android:inputType=""
+            android:padding="10dp"
+            android:layout_marginTop="8dp"
+            android:focusedByDefault="false"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/paint_weight_inventory_df"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Paint Weight (kg)"
+            android:inputType=""
+            android:padding="10dp"
+            android:layout_marginTop="8dp"
+            android:focusedByDefault="false"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_inventory_dialog_fragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center"
+            app:fabSize="normal"
+            android:src="@drawable/plus_sign"
+            app:maxImageSize="30dp"/>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+
+
+</LinearLayout>

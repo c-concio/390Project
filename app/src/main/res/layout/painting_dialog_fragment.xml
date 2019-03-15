@@ -145,7 +145,7 @@
             android:layout_marginRight="10dp"/>
 
         <TextView
-            android:id="@+id/paint_quantity_painting_task"
+            android:id="@+id/paint_weight_painting_task"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="-"/>

@@ -23,7 +23,7 @@ class PaintingDialogFragment extends DialogFragment {
 
     //views
     private Spinner mPaintType, mPaintCode;
-    private TextView mPaintDescription, mPaintBakeTemperature, mPaintBakeTime, mPaintQuantity;
+    private TextView mPaintDescription, mPaintBakeTemperature, mPaintBakeTime, mPaintWeight;
     private FloatingActionButton mFab;
 
     //variables
@@ -47,7 +47,7 @@ class PaintingDialogFragment extends DialogFragment {
         mPaintDescription = view.findViewById(R.id.paint_description_painting_task);
         mPaintBakeTemperature = view.findViewById(R.id.bake_temperature_painting_task);
         mPaintBakeTime = view.findViewById(R.id.bake_time_painting_task);
-        mPaintQuantity = view.findViewById(R.id.paint_quantity_painting_task);
+        mPaintWeight = view.findViewById(R.id.paint_weight_painting_task);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(), R.array.paint_type, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -71,7 +71,7 @@ class PaintingDialogFragment extends DialogFragment {
                         paintCode = adapterView.getItemAtPosition(i).toString().trim();
                         //populate fields of painting characteristics
                         FirebaseHelper firebaseHelper = new FirebaseHelper();
-                        firebaseHelper.populatePaintingTaskCharacteristics(paintCode, mPaintDescription, mPaintBakeTemperature, mPaintBakeTime, mPaintQuantity);
+                        firebaseHelper.populatePaintingTaskCharacteristics(paintCode, mPaintDescription, mPaintBakeTemperature, mPaintBakeTime, mPaintWeight);
                     }
 
                     @Override

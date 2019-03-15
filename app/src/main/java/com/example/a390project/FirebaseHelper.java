@@ -770,4 +770,7 @@ public class FirebaseHelper {
 
     public void populateInventory(View view, Activity activity) {
     }
+
+    public void createInventoryItem(String paintType, String paintCode, String paintDescription, int paintBakeTemperature, int paintBakeTime, float paintWeight) {
+    }
 }

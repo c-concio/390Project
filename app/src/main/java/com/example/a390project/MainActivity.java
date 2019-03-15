@@ -13,21 +13,17 @@ import android.widget.Toast;
 
 import com.example.a390project.DialogFragments.CreateControlDeviceDialogFragment;
 import com.example.a390project.DialogFragments.CreateEmployeeDialogFragment;
+import com.example.a390project.DialogFragments.CreateInventoryDialogFragment;
 import com.example.a390project.DialogFragments.CreateMachineDialogFragment;
 import com.example.a390project.DialogFragments.CreateProjectDialogFragment;
 import com.example.a390project.Fragments.ControlDeviceFragment;
 import com.example.a390project.Fragments.EmployeeFragment;
+import com.example.a390project.Fragments.InventoryFragment;
 import com.example.a390project.Fragments.MachineFragment;
 import com.example.a390project.Fragments.ProjectFragment;
-import com.example.a390project.Model.ControlDevice;
-import com.example.a390project.Model.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton mFabOpenDialogFragmentMachine;
     FloatingActionButton mFabOpenDialogFragmentControlDevice;
     FloatingActionButton mFabOpenDialogFragmentProject;
+    FloatingActionButton mFabOpenDialogFragmentInventory;
     //firebase auth
     private FirebaseAuth mAuth;
 
@@ -95,10 +92,17 @@ public class MainActivity extends AppCompatActivity {
                 startCreateMachineDialogFragment();
             }
         });
+        mFabOpenDialogFragmentInventory = findViewById(R.id.fab_open_dialog_fragment_inventory);
+        mFabOpenDialogFragmentInventory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startCreateInventoryDialogFragment();
+            }
+        });
 
         //Initializing viewPager
         viewPager = findViewById(R.id.viewpager);
-        viewPager.setOffscreenPageLimit(4); // <---- .setOffscreenPageLimit controls the max amount of tabs
+        viewPager.setOffscreenPageLimit(5); // <---- .setOffscreenPageLimit controls the max amount of tabs
 
         //Initializing the tablayout
         tabLayout = findViewById(R.id.tablayout);
@@ -154,6 +158,9 @@ public class MainActivity extends AppCompatActivity {
         MachineFragment machineFragment = new MachineFragment();
         adapter.addFragment(machineFragment,"MACHINES");
 
+        InventoryFragment inventoryFragment = new InventoryFragment();
+        adapter.addFragment(inventoryFragment, "INVENTORY");
+
 
         viewPager.setAdapter(adapter);
     }
@@ -178,28 +185,42 @@ public class MainActivity extends AppCompatActivity {
         dialog.show(getSupportFragmentManager(), "Create Machine");
     }
 
+    private void startCreateInventoryDialogFragment() {
+        CreateInventoryDialogFragment dialog = new CreateInventoryDialogFragment();
+        dialog.show(getSupportFragmentManager(), "Create Inventory");
+    }
+
     private void animateFab(int position) {
         switch (position) {
             case 0:
                 mFabOpenDialogFragmentProject.show();
                 mFabOpenDialogFragmentControlDevice.hide();
                 mFabOpenDialogFragmentMachine.hide();
+                mFabOpenDialogFragmentInventory.hide();
                 break;
             case 1:
                 mFabOpenDialogFragmentProject.hide();
                 mFabOpenDialogFragmentControlDevice.hide();
                 mFabOpenDialogFragmentMachine.hide();
+                mFabOpenDialogFragmentInventory.hide();
                 break;
             case 2:
                 mFabOpenDialogFragmentControlDevice.show();
                 mFabOpenDialogFragmentProject.hide();
                 mFabOpenDialogFragmentMachine.hide();
+                mFabOpenDialogFragmentInventory.hide();
                 break;
             case 3:
                 mFabOpenDialogFragmentMachine.show();
                 mFabOpenDialogFragmentProject.hide();
                 mFabOpenDialogFragmentControlDevice.hide();
+                mFabOpenDialogFragmentInventory.hide();
                 break;
+            case 4:
+                mFabOpenDialogFragmentMachine.hide();
+                mFabOpenDialogFragmentProject.hide();
+                mFabOpenDialogFragmentControlDevice.hide();
+                mFabOpenDialogFragmentInventory.show();
             default:
                 break;
         }
