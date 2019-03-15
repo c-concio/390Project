@@ -56,11 +56,11 @@ public class ProjectListViewAdapter extends BaseAdapter {
         // get current item to be displayed
         final Project currentItem = (Project) getItem(position);
 
-        mClient = convertView.findViewById(R.id.task_type_row_item);
-        mTitle = convertView.findViewById(R.id.task_description_row_item);
-        mPO = convertView.findViewById(R.id.project_PO);
-        mStartDate = convertView.findViewById(R.id.project_startDate);
-        mDueDate = convertView.findViewById(R.id.project_dueDate);
+        mClient = convertView.findViewById(R.id.paint_description_row_item);
+        mTitle = convertView.findViewById(R.id.paint_code_row_item);
+        mPO = convertView.findViewById(R.id.paint_type_row_item);
+        mStartDate = convertView.findViewById(R.id.bake_temperature_row_item);
+        mDueDate = convertView.findViewById(R.id.bake_time_row_item);
 
         mClient.setText(currentItem.getClient());
         mTitle.setText(currentItem.getTitle());

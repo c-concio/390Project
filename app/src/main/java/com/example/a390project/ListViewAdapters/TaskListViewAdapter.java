@@ -1,9 +1,7 @@
 package com.example.a390project.ListViewAdapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +9,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.example.a390project.EmployeeActivity;
-import com.example.a390project.Model.Machine;
-import com.example.a390project.Model.Project;
 import com.example.a390project.Model.Task;
 import com.example.a390project.R;
 import com.example.a390project.TaskBakingActivity;
@@ -68,7 +63,7 @@ public class TaskListViewAdapter extends BaseAdapter {
         final Task currentItem = (Task) getItem(position);
 
         //set views of row item
-        mTaskType = convertView.findViewById(R.id.task_type_row_item);
+        mTaskType = convertView.findViewById(R.id.paint_description_row_item);
         mCreatedTime = convertView.findViewById(R.id.task_created_time_row_item);
 
         mTaskType.setText(currentItem.getTaskType());

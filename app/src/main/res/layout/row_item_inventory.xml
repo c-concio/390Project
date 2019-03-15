@@ -11,7 +11,7 @@
         android:id="@+id/paint_description_row_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Client"
+        android:text="Paint Description"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="22dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,7 +21,8 @@
         android:id="@+id/paint_code_row_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Project Title"
+        android:text="Paint Code"
+        android:layout_marginTop="15dp"
         android:textColor="@color/colorPrimary"
         android:textSize="18dp"
         app:layout_constraintStart_toStartOf="@+id/paint_description_row_item"
@@ -31,19 +32,19 @@
         android:id="@+id/paint_type_row_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="PO"
+        android:text="Paint Type"
         android:textSize="16dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="@+id/paint_code_row_item"
         app:layout_constraintTop_toBottomOf="@+id/paint_code_row_item" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="@+id/paint_type_row_item"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/paint_description_row_item">
+        app:layout_constraintTop_toTopOf="@+id/paint_code_row_item">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -54,7 +55,7 @@
                 android:id="@+id/bake_temp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Start: "
+                android:text="Bake Temperature: "
                 android:textColor="@color/colorPrimary"
                 android:textSize="16dp" />
 
@@ -62,7 +63,7 @@
                 android:id="@+id/bake_temperature_row_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="startDate"
+                android:text="350"
                 android:textSize="16dp" />
 
         </LinearLayout>
@@ -71,12 +72,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <TextView
                 android:id="@+id/bake_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="7dp"
-                android:text="Due: "
+                android:text="Bake Time: "
                 android:textColor="@color/colorPrimary"
                 android:textSize="16dp" />
 
@@ -84,7 +86,29 @@
                 android:id="@+id/bake_time_row_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="dueDate"
+                android:text="15"
+                android:textSize="16dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/weight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="7dp"
+                android:text="Weight: "
+                android:textColor="@color/colorPrimary"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/paint_weight_row_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="28.64"
                 android:textSize="16dp" />
         </LinearLayout>
     </LinearLayout>

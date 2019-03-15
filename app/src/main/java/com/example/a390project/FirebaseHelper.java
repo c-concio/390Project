@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.View;
@@ -741,7 +742,7 @@ public class FirebaseHelper {
     }
 
     /*
-    // ------------------------------------------------ Firebase PrePaintingTask Methods ------------------------------------------------
+       ------------------------------------------------ Firebase PrePaintingTask Methods ------------------------------------------------
      */
 
     public void createPrepaintingTask(String taskID, String projectPO, String prePainting, String taskDescription, long createdTime, List<SubTask> subTasks) {
@@ -754,12 +755,19 @@ public class FirebaseHelper {
     }
 
     /*
-    // ------------------------------------------------ Firebase PaintingTask Methods ------------------------------------------------
+      ------------------------------------------------ Firebase PaintingTask Methods ------------------------------------------------
      */
 
     public void populatePaintingTaskCharacteristics(String paintCode, TextView mPaintDescription, TextView mPaintBakeTemperature, TextView mPaintBakeTime, TextView mPaintQuantity) {
     }
 
     public void createPaintingTask(String projectPO, String taskID, String taskDescription, long createdTime, String paintCode) {
+    }
+
+    /*
+      ------------------------------------------------ Firebase Inventory Fragment Methods ------------------------------------------------
+     */
+
+    public void populateInventory(View view, Activity activity) {
     }
 }
