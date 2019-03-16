@@ -25,7 +25,7 @@ public class Task {
 
     // baking variables <---------------------USE PAINTBUCKET MODEL INSTEAD
     private String paintCode;
-    private long bakeTime;
+    private String paintType;
 
     public Task(){}
 
@@ -157,12 +157,12 @@ public class Task {
         this.paintCode = paintCode;
     }
 
-    public long getBakeTime() {
-        return bakeTime;
+    public String getPaintType() {
+        return paintType;
     }
 
-    public void setBakeTime(long bakeTime) {
-        this.bakeTime = bakeTime;
+    public void setPaintType(String paintType) {
+        this.paintType = paintType;
     }
 
     public List<SubTask> getSubTasks() {

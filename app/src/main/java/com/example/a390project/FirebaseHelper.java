@@ -694,25 +694,63 @@ public class FirebaseHelper {
         rootRef.child("tasks").child(taskID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                TextView paintCodeTextView;
-                TextView bakeTimeTextView;
+                // Task views
                 EditText descriptionEditText;
                 EditText employeeCommentEditText;
+                TextView paintCodeTextView;
+                Button startTimeButton;
+                Button endTimeButton;
+                Button bakingCompletedButton;
 
-                paintCodeTextView = activity.findViewById(R.id.paintCodeTextView);
-                bakeTimeTextView = activity.findViewById(R.id.bakeTimeTextView);
                 descriptionEditText = activity.findViewById(R.id.descriptionEditText);
-                employeeCommentEditText = activity.findViewById(R.id.employee_comment_baking_task);
-
+                employeeCommentEditText = activity.findViewById(R.id.employeeCommentEditText);
+                paintCodeTextView = activity.findViewById(R.id.paintCodeTextView);
+                startTimeButton = activity.findViewById(R.id.startTimeButton);
+                endTimeButton = activity.findViewById(R.id.endTimeButton);
+                bakingCompletedButton = activity.findViewById(R.id.bakingCompletedButton);
 
                 Task newTask = dataSnapshot.getValue(Task.class);
 
+                // Task set text
+                if (newTask.getDescription() != null)
+                    descriptionEditText.setText(newTask.getDescription());
+                if (newTask.getEmployeeComment() != null)
+                    employeeCommentEditText.setText(newTask.getEmployeeComment());
+
+                final String paintCode = newTask.getPaintCode();
+                final String paintType = newTask.getPaintType();
+
+                paintCodeTextView.setText(paintCode);
+
                 //Should modify path to get paintCode(achieved through painting task: tasks > taskID > paintCode & paintType,
                 // THEN: inventory > paintingType > paintingCode > all data needed)
-                paintCodeTextView.setText(newTask.getPaintCode());
-                bakeTimeTextView.setText(Long.toString(newTask.getBakeTime()));
-                descriptionEditText.setText(newTask.getDescription());
-                employeeCommentEditText.setText(newTask.getEmployeeComment());
+
+                // create a listener for the paint inventory to get the paintBucket info
+
+                rootRef.child("inventory").child(paintType).child(paintCode).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        // Inventory views
+                        TextView paintDescriptionTextVIew;
+                        TextView bakingTimeTextView;
+                        TextView bakingTempTextView;
+
+                        paintDescriptionTextVIew = activity.findViewById(R.id.paintDescriptionTextView);
+                        bakingTimeTextView = activity.findViewById(R.id.bakingTimeTextView);
+                        bakingTempTextView = activity.findViewById(R.id.bakingTempTextView);
+
+                        PaintBucket newPaintBucket = dataSnapshot.getValue(PaintBucket.class);
+
+                        paintDescriptionTextVIew.setText(newPaintBucket.getPaintDescription());
+                        bakingTimeTextView.setText(String.valueOf(newPaintBucket.getBakeTime()));
+                        bakingTempTextView.setText(String.valueOf(newPaintBucket.getBakeTemperature()));
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
             }
 

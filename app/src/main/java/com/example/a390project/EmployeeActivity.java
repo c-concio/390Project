@@ -22,8 +22,6 @@ import java.util.List;
 
 // Todo: Create Assigned tasks in Firebase
 // Todo: Create Completed tasks in Firebase
-// Todo: Output assigned tasks to listView
-// Todo: Output completed tasks to listView
 
 public class EmployeeActivity extends AppCompatActivity{
 

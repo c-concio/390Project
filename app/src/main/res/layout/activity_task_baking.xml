@@ -5,55 +5,83 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="10dp"
-    android:divider="@android:color/transparent"
-    android:dividerPadding="10.0sp"
     android:orientation="vertical"
     tools:context=".TaskBakingActivity">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
+            android:id="@+id/paintCodeTitleTextView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Paint Code: "
+            android:text="Paint Code:"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="22sp" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/paintCodeTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Paint Code"
-            android:textColor="@color/colorPrimary"
-            android:textSize="22sp" />
+            android:text="Code"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/paintDescriptionTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Paint Description:"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/paintDescriptionTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Description" />
+
+        <TextView
+            android:id="@+id/bakingTimeTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Baking Time (minutes):"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/bakingTimeTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Time" />
+
+        <TextView
+            android:id="@+id/bakingTempTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Baking Temperature (°C):"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/bakingTempTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Temperature" />
     </LinearLayout>
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/descriptionTitleTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="30dp">
-
-        <TextView
-            android:id="@+id/bakeTimeTitleTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bake Time: "
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/bakeTimeTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Time"
-            android:textSize="20sp" />
-    </LinearLayout>
+        android:layout_marginTop="8dp"
+        android:text="Description:"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp" />
 
     <EditText
         android:id="@+id/descriptionEditText"
@@ -66,8 +94,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="50dp">
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/startTimeButton"
@@ -86,21 +114,25 @@
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp">
+
         <EditText
             android:id="@+id/employee_comment_baking_task"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
             android:hint="Employee Comment"
             android:inputType="textMultiLine"
-            android:padding="10dp"
-            android:layout_marginTop="30dp" />
+            android:padding="10dp" />
     </android.support.design.widget.TextInputLayout>
+
     <Button
-        android:id="@+id/completed_baking_task"
+        android:id="@+id/bakingCompletedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Baking Completed"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center"
+        android:layout_marginTop="8dp"
+        android:text="Baking Completed" />
 
 </LinearLayout>

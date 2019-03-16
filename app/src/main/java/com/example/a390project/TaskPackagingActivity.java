@@ -12,7 +12,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-// Todo: navigate up
 // Todo: input set firebase
 
 public class TaskPackagingActivity extends AppCompatActivity {

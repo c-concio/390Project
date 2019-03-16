@@ -8,6 +8,7 @@ public class PaintBucket {
     private int bakeTime;
     private float paintWeight;
 
+    public PaintBucket() {}
 
     public PaintBucket(String paintType, String paintCode, String paintDescription, int bakeTemp, int bakeTime, float paintWeight) {
         this.paintType = paintType;
