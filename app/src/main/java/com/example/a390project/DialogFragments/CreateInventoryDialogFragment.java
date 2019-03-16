@@ -49,7 +49,7 @@ public class CreateInventoryDialogFragment extends DialogFragment {
         mPaintType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                paintType = adapterView.getItemAtPosition(i).toString().trim();
+                paintType = adapterView.getItemAtPosition(i).toString().trim().toLowerCase();
             }
 
             @Override

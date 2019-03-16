@@ -1,27 +1,32 @@
 package com.example.a390project;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.a390project.ListViewAdapters.ControlDeviceListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeTasksListViewAdapter;
+import com.example.a390project.ListViewAdapters.InventoryListViewAdapter;
 import com.example.a390project.ListViewAdapters.MachineListViewAdapter;
 import com.example.a390project.ListViewAdapters.PrepaintTaskListViewAdapter;
 import com.example.a390project.ListViewAdapters.ProjectListViewAdapter;
@@ -30,6 +35,7 @@ import com.example.a390project.Model.ControlDevice;
 import com.example.a390project.Model.Employee;
 import com.example.a390project.Model.Machine;
 import com.example.a390project.Model.Oven;
+import com.example.a390project.Model.PaintBucket;
 import com.example.a390project.Model.Paintbooth;
 import com.example.a390project.Model.Project;
 import com.example.a390project.Model.SubTask;
@@ -701,6 +707,7 @@ public class FirebaseHelper {
 
                 Task newTask = dataSnapshot.getValue(Task.class);
 
+                //Should modify path to get paintCode and get value from paintCode (achieved through painting task: tasks > taskID > paintCode & paintType)
                 paintCodeTextView.setText(newTask.getPaintCode());
                 bakeTimeTextView.setText(Long.toString(newTask.getBakeTime()));
                 descriptionEditText.setText(newTask.getDescription());
@@ -715,23 +722,37 @@ public class FirebaseHelper {
         });
     }
 
-    public void setPaintingValues(final TextView mPaintCode, final TextView mBakeTemp, final TextView mBakeTime, final TextView mDescription, String paintingTaskID) {
+    public void setPaintingValues(final TextView mPaintCode, final TextView mBakeTemp, final TextView mBakeTime, final TextView mDescription, final TextView mPaintDescription, String paintingTaskID) {
         rootRef.child("tasks").child(paintingTaskID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mPaintCode.setText(dataSnapshot.child("paintingCode").getValue(String.class));
-                mBakeTemp.setText(Integer.toString(dataSnapshot.child("bakingTemp").getValue(int.class)));
-                long bakingTime = dataSnapshot.child("bakingTime").getValue(long.class);
 
-                long second = (bakingTime / 1000) % 60;
-                long minute = (bakingTime / (1000 * 60)) % 60;
-                long hour = (bakingTime / (1000 * 60 * 60)) % 24;
+                final String paintType = dataSnapshot.child("paintType").getValue(String.class);
+                final String paintCode = dataSnapshot.child("paintCode").getValue(String.class);
+                final String description = dataSnapshot.child("description").getValue(String.class);
 
-//                long minutes = TimeUnit.MILLISECONDS.toMinutes(bakingTime);
-//                long seconds = TimeUnit.MILLISECONDS.toSeconds(bakingTime);
-                mBakeTime.setText(Long.toString(hour)+ "h" + Long.toString(minute)+ "m" + Long.toString(second)+ "s");
-//                mBakeTime.setText(Long.toString(hours)+ "h" + Long.toString(minutes)+ "m" + Long.toString(seconds)+ "s");
-                mDescription.setText(dataSnapshot.child("description").getValue(String.class));
+                rootRef.child("inventory").child(paintType).child(paintCode).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        int bakeTemperature = dataSnapshot.child("bakeTemperature").getValue(int.class);
+                        int bakingTime = dataSnapshot.child("bakeTime").getValue(int.class);
+                        String paintDescription = dataSnapshot.child("paintDescription").getValue(String.class);
+
+                        mPaintCode.setText(paintCode);
+                        mPaintDescription.setText(paintDescription);
+                        mBakeTemp.setText(Integer.toString(bakeTemperature));
+                        mBakeTime.setText(Integer.toString(bakingTime));
+                        mDescription.setText(description);
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
             }
 
             @Override
@@ -755,22 +776,139 @@ public class FirebaseHelper {
     }
 
     /*
-      ------------------------------------------------ Firebase PaintingTask Methods ------------------------------------------------
+      ------------------------------------------------ Firebase PaintingTaskDialogFragment Methods ------------------------------------------------
      */
 
-    public void populatePaintingTaskCharacteristics(String paintCode, TextView mPaintDescription, TextView mPaintBakeTemperature, TextView mPaintBakeTime, TextView mPaintQuantity) {
+    public void createPaintingTask(String projectPO, String taskDescription, String paintCode, String paintType, Dialog dialog) {
+        String taskID = Task.generateRandomChars();
+        long createdTime = System.currentTimeMillis();
+
+        //add task in 'tasks'
+        rootRef.child("tasks").child(taskID).setValue(new Task(taskID, projectPO,"Painting",taskDescription,createdTime));
+        rootRef.child("tasks").child(taskID).child("paintCode").setValue(paintCode);
+        rootRef.child("tasks").child(taskID).child("paintType").setValue(paintType);
+
+        //add task in 'projects'>'tasks'
+        rootRef.child("projects").child(projectPO).child("tasks").child(taskID).setValue(true);
+        dialog.dismiss();
     }
 
-    public void createPaintingTask(String projectPO, String taskID, String taskDescription, long createdTime, String paintCode) {
+    public void populatePaintCodesANDCreatePaintingTask(final String paintType, final Spinner mPaintCode, final Context context,
+                                                        final TextView mPaintDescription, final TextView mPaintBakeTemperature,
+                                                        final TextView mPaintBakeTime, final TextView mPaintWeight, final FloatingActionButton mFab,
+                                                        final String projectPO, final String taskDescription, final Dialog dialog) {
+        rootRef.child("inventory").child(paintType).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<String> paintCodes = new ArrayList<>();
+                for(DataSnapshot ds:dataSnapshot.getChildren()) {
+                    paintCodes.add(ds.getKey());
+                    Log.d(TAG, "Paint code: "+ds.getKey());
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(context,android.R.layout.simple_spinner_dropdown_item,paintCodes);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                mPaintCode.setAdapter(adapter);
+
+
+                mPaintCode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                        final String paintCode = adapterView.getItemAtPosition(i).toString().trim();
+                        //populate fields of painting characteristics
+                        rootRef.child("inventory").child(paintType).child(paintCode).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                String paintDescription = dataSnapshot.child("paintDescription").getValue(String.class);
+                                String bakeTemperature = Integer.toString(dataSnapshot.child("bakeTemperature").getValue(int.class));
+                                String bakeTime = Integer.toString(dataSnapshot.child("bakeTime").getValue(int.class));
+                                String paintWeight = Float.toString(dataSnapshot.child("paintWeight").getValue(float.class));
+
+                                mPaintDescription.setText(paintDescription);
+                                mPaintBakeTemperature.setText(bakeTemperature);
+                                mPaintBakeTime.setText(bakeTime);
+                                mPaintWeight.setText(paintWeight);
+
+                                mFab.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        if (!paintCode.isEmpty() && !paintType.isEmpty()) {
+                                            FirebaseHelper firebaseHelper = new FirebaseHelper();
+                                            firebaseHelper.createPaintingTask(projectPO, taskDescription, paintCode, paintType, dialog);
+                                        }
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+
+
+
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     /*
       ------------------------------------------------ Firebase Inventory Fragment Methods ------------------------------------------------
      */
 
-    public void populateInventory(View view, Activity activity) {
+    public void populateInventory(final View view, final Activity activity) {
+        rootRef.child("inventory").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<PaintBucket> paintBuckets = new ArrayList<>();
+
+                for(DataSnapshot ds:dataSnapshot.getChildren()) {
+                    String paintType = ds.getKey();
+
+                    for(DataSnapshot ds2:ds.getChildren()) {
+                        String paintCode = ds2.getKey();
+                        String paintDescription = ds2.child("paintDescription").getValue(String.class);
+                        int bakeTemperature = ds2.child("bakeTemperature").getValue(int.class);
+                        int bakeTime = ds2.child("bakeTime").getValue(int.class);
+                        float paintWeight = ds2.child("paintWeight").getValue(float.class);
+
+                        paintBuckets.add(new PaintBucket(paintType, paintCode, paintDescription, bakeTemperature, bakeTime, paintWeight));
+                    }
+                }
+                callInventoryListViewAdapter(view,activity,paintBuckets);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void callInventoryListViewAdapter(View view, Activity activity, List<PaintBucket> paintBuckets) {
+        // instantiate the custom list adapter
+        InventoryListViewAdapter adapter = new InventoryListViewAdapter(activity, paintBuckets);
+
+        // get the ListView and attach the adapter
+        ListView itemsListView  = (ListView) view.findViewById(R.id.inventory_list_view);
+        itemsListView.setAdapter(adapter);
     }
 
     public void createInventoryItem(String paintType, String paintCode, String paintDescription, int paintBakeTemperature, int paintBakeTime, float paintWeight) {
+        rootRef.child("inventory").child(paintType).child(paintCode).setValue(new PaintBucket(paintType,paintCode,paintDescription,paintBakeTemperature,paintBakeTime,paintWeight));
     }
+
 }

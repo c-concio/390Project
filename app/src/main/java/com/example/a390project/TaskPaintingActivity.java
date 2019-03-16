@@ -14,6 +14,7 @@ import android.widget.Toast;
 public class TaskPaintingActivity extends AppCompatActivity {
 
     private TextView mPaintCode;
+    private TextView mPaintDescription;
     private TextView mBakeTemp;
     private TextView mBakeTime;
     private TextView mDescription;
@@ -30,6 +31,7 @@ public class TaskPaintingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_task_painting);
 
         mPaintCode = findViewById(R.id.paint_code_painting_task);
+        mPaintDescription = findViewById(R.id.paint_description_painting_task);
         mBakeTemp = findViewById(R.id.baking_temperature_painting_task);
         mBakeTime = findViewById(R.id.baking_time_painting_task);
         mDescription = findViewById(R.id.task_description_painting_task);
@@ -42,7 +44,7 @@ public class TaskPaintingActivity extends AppCompatActivity {
         FirebaseHelper firebaseHelper = new FirebaseHelper();
 
         String paintingTaskID = getIntent().getStringExtra("paintingTaskID");
-        firebaseHelper.setPaintingValues(mPaintCode, mBakeTemp, mBakeTime, mDescription, paintingTaskID);
+        firebaseHelper.setPaintingValues(mPaintCode, mBakeTemp, mBakeTime, mDescription, mPaintDescription, paintingTaskID);
 
         mStartTime.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -23,7 +23,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_marginBottom="10dp">
 
         <TextView
@@ -45,13 +45,35 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Paint Description: "
+            android:layout_marginRight="5dp"
+            android:textSize="20dp"
+            android:textColor="@color/colorPrimaryDark"/>
+
+        <TextView
+            android:id="@+id/paint_description_painting_task"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Paint Description"
+            android:layout_gravity="center_vertical"
+            android:textSize="16dp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginBottom="10dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Baking Time: "
+            android:text="Baking Time (min): "
             android:layout_marginRight="5dp"
             android:textSize="20dp"
             android:textColor="@color/colorPrimaryDark"/>
@@ -73,7 +95,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Baking Temperature: "
+            android:text="Baking Temperature (°C): "
             android:layout_marginRight="5dp"
             android:textSize="20dp"
             android:textColor="@color/colorPrimaryDark"/>
@@ -82,7 +104,7 @@
             android:id="@+id/baking_temperature_painting_task"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Baking Temperature"
+            android:text="300"
             android:textSize="16dp"/>
     </LinearLayout>
     <LinearLayout
