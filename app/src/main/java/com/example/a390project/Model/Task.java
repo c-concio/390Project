@@ -23,7 +23,7 @@ public class Task {
     // prepaint variables
     private String prepaintName;
 
-    // baking variables
+    // baking variables <---------------------USE PAINTBUCKET MODEL INSTEAD
     private String paintCode;
     private long bakeTime;
 

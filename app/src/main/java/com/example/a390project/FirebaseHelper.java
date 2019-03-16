@@ -707,7 +707,8 @@ public class FirebaseHelper {
 
                 Task newTask = dataSnapshot.getValue(Task.class);
 
-                //Should modify path to get paintCode and get value from paintCode (achieved through painting task: tasks > taskID > paintCode & paintType)
+                //Should modify path to get paintCode(achieved through painting task: tasks > taskID > paintCode & paintType,
+                // THEN: inventory > paintingType > paintingCode > all data needed)
                 paintCodeTextView.setText(newTask.getPaintCode());
                 bakeTimeTextView.setText(Long.toString(newTask.getBakeTime()));
                 descriptionEditText.setText(newTask.getDescription());
