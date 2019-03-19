@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.a390project.ListViewAdapters.EmployeeTasksListViewAdapter;
 import com.example.a390project.Model.EmployeeTasks;
@@ -28,6 +29,8 @@ public class EmployeeActivity extends AppCompatActivity{
     // activity components
     ListView assignedTasksListView;
     ListView completedTasksListView;
+    TextView noWorkingTasksTextView;
+    TextView noCompletedTasksTextView;
 
     // variables
     List<Task> assignedTasks = new ArrayList<>();
@@ -56,18 +59,24 @@ public class EmployeeActivity extends AppCompatActivity{
         ListUtils.setDynamicHeight(assignedTasksListView);
         ListUtils.setDynamicHeight(completedTasksListView);
 
-        firebaseHelper.setAssignedTasksValueListener(employeeID, this);
+        firebaseHelper.setWorkingTasksValueListener(employeeID, this);
         firebaseHelper.setCompletedTasksValueEventListener(employeeID, this);
 
     }
 
     private void setupUI(){
-        assignedTasksListView = findViewById(R.id.assignedTasksListView);
+        assignedTasksListView = findViewById(R.id.workingTasksListView);
         completedTasksListView = findViewById(R.id.completedTasksListView);
+        noWorkingTasksTextView = findViewById(R.id.noWorkingTasksTextView);
+        noCompletedTasksTextView = findViewById(R.id.noCompletedTasksTextView);
 
         // get intent to get extra
         Intent intent = getIntent();
         employeeID = intent.getStringExtra("employeeID");
+        setActionBar(intent.getStringExtra("employeeName"));
+
+        noWorkingTasksTextView.setVisibility(View.GONE);
+        noCompletedTasksTextView.setVisibility(View.GONE);
 
         firebaseHelper = new FirebaseHelper();
 
@@ -118,5 +127,14 @@ public class EmployeeActivity extends AppCompatActivity{
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    //custom heading and back button
+    public void setActionBar(String heading) {
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setTitle(heading);
+        actionBar.show();
     }
 }

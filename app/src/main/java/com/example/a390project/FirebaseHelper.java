@@ -133,7 +133,7 @@ public class FirebaseHelper {
                     String machineLastEmployee =  ds.child("machineLastEmployee").getValue(String.class);
                     String machineType = ds.child("machineType").getValue(String.class);
                     boolean machineStatus = ds.child("machineStatus").getValue(boolean.class);
-                    float temperature = ds.child("temperature").getValue(float.class);
+                    float temperature = ds.child("Temperature").getValue(float.class);
 
                     if (machineType.equals("Oven")) {
                         long machineStatusTimeOff = ds.child("machineStatusTimeOff").getValue(long.class);
@@ -211,8 +211,8 @@ public class FirebaseHelper {
 
     private void getEmployees(DataSnapshot dataSnapshot){
 
-        Log.d(TAG, "updateUsers: dataSnapshot return: " + dataSnapshot.getValue());
         Employee newEmployee = dataSnapshot.getValue(Employee.class);
+
         if (newEmployee != null) {
             newEmployee.setAccountID(dataSnapshot.getKey());
             Log.d(TAG, "updateUsers: account id: " + newEmployee.getAccountID());
@@ -244,14 +244,6 @@ public class FirebaseHelper {
     }
 
     private void callEmployeeListViewAdapter(){
-        //Log.d(TAG, "updateUsers: updated name: " + employees.get(3));
-
-        Log.d(TAG, "listViewAdapter: employees size = " + employees.size());
-        Log.d(TAG, "listViewAdapter: --------------------------------------");
-        for(Employee currentEmployee : employees){
-            Log.d(TAG, "listViewAdapter: employee name = " + currentEmployee.getName());
-        }
-        Log.d(TAG, "listViewAdapter: --------------------------------------");
 
         ListView employeeListView = employeeFragmentView.findViewById(R.id.employeesListView);
         EmployeeListViewAdapter employeeAdapter = new EmployeeListViewAdapter(employeeFragmentView.getContext(), employees);
@@ -266,6 +258,7 @@ public class FirebaseHelper {
                 // go to the employee's activity
                 Intent intent = new Intent(view.getContext(), EmployeeActivity.class);
                 intent.putExtra("employeeID", employees.get(position).getAccountID());
+                intent.putExtra("employeeName", employees.get(position).getName());
                 employeeFragmentView.getContext().startActivity(intent);
             }
         });
@@ -275,7 +268,7 @@ public class FirebaseHelper {
         dbRefEmployees.removeEventListener(childEventListener);
     }
 
-    void setAssignedTasksValueListener(String userID, final Activity activity){
+    void setWorkingTasksValueListener(String userID, final Activity activity){
 
 
         rootRef.child("users").child(userID).child("assignedTasks").addValueEventListener(new ValueEventListener() {
@@ -299,7 +292,15 @@ public class FirebaseHelper {
                                 Log.d(TAG, "onDataChange: Project PO" + newTask.getProjectPO());
                             }
                         }
-                        callAssignedTasksListViewAdapter(activity, assignedTasks);
+                        if (assignedTasks.size() < 1){
+                            TextView noWorkingTasksTextView = activity.findViewById(R.id.noWorkingTasksTextView);
+                            noWorkingTasksTextView.setVisibility(View.VISIBLE);
+                        }
+                        else {
+                            TextView noWorkingTasksTextView = activity.findViewById(R.id.noWorkingTasksTextView);
+                            noWorkingTasksTextView.setVisibility(View.GONE);
+                            callWorkingTasksListViewAdapter(activity, assignedTasks);
+                        }
                     }
 
                     @Override
@@ -317,10 +318,10 @@ public class FirebaseHelper {
         });
     }
 
-    private void callAssignedTasksListViewAdapter(Activity activity, List<Task> assignedTasks){
+    private void callWorkingTasksListViewAdapter(Activity activity, List<Task> assignedTasks){
 
         EmployeeTasksListViewAdapter adapter = new EmployeeTasksListViewAdapter(activity, assignedTasks);
-        ListView assignedTasksListView = activity.findViewById(R.id.assignedTasksListView);
+        ListView assignedTasksListView = activity.findViewById(R.id.workingTasksListView);
         assignedTasksListView.setAdapter(adapter);
 
     }
@@ -350,7 +351,15 @@ public class FirebaseHelper {
                                 Log.d(TAG, "onDataChange: " + newTask.getTaskID());
                             }
                         }
-                        callCompletedTasksListViewAdapter(activity, completedTasks);
+                        if (completedTasks.size() < 1){
+                            TextView noCompletedTasksTextView = activity.findViewById(R.id.noCompletedTasksTextView);
+                            noCompletedTasksTextView.setVisibility(View.VISIBLE);
+                        }
+                        else {
+                            TextView noCompletedTasksTextView = activity.findViewById(R.id.noCompletedTasksTextView);
+                            noCompletedTasksTextView.setVisibility(View.GONE);
+                            callCompletedTasksListViewAdapter(activity, completedTasks);
+                        }
                     }
 
                     @Override

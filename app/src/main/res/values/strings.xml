@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">390Project</string>
     <string name="employee_name">Employee Name</string>
-    <string name="assigned_tasks">Assigned Tasks</string>
+    <string name="assigned_tasks">Tasks Working On</string>
     <string name="completed_tasks">Completed Tasks</string>
 
     <string-array name="machine_type">

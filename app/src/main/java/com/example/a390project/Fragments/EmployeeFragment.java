@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Todo: Search button, authenticate only manager can view
-// Todo: Fix up employee floating button
+// Todo: Delete an employee
 
 public class EmployeeFragment extends Fragment {
 
