@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +39,7 @@ public class EmployeeActivity extends AppCompatActivity{
     String employeeID;
 
     FirebaseHelper firebaseHelper;
-
+    private static final String TAG = "EmployeeActivity";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,8 +95,8 @@ public class EmployeeActivity extends AppCompatActivity{
 
     // create a list utility class to dynamically change the height of the listView
     // reference: https://stackoverflow.com/questions/17693578/android-how-to-display-2-listviews-in-one-activity-one-after-the-other
-    private static class ListUtils{
-        private static void setDynamicHeight(ListView listView){
+    static class ListUtils{
+        static void setDynamicHeight(ListView listView){
             ListAdapter listAdapter = listView.getAdapter();
             if (listAdapter == null){
                 return;
@@ -107,10 +108,12 @@ public class EmployeeActivity extends AppCompatActivity{
             for(int i = 0; i < listAdapter.getCount(); i++){
                 View listItem = listAdapter.getView(i, null, listView);
                 listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-                height += listItem.getMeasuredHeight();
+                height += 175;
+
             }
             ViewGroup.LayoutParams params = listView.getLayoutParams();
-            params.height = height + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+            params.height = height ;
+            Log.d(TAG, "setDynamicHeight: " + height);
             listView.setLayoutParams(params);
             listView.requestLayout();
         }

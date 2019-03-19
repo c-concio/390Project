@@ -271,7 +271,7 @@ public class FirebaseHelper {
     void setWorkingTasksValueListener(String userID, final Activity activity){
 
 
-        rootRef.child("users").child(userID).child("assignedTasks").addValueEventListener(new ValueEventListener() {
+        rootRef.child("users").child(userID).child("workingTasks").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -286,8 +286,10 @@ public class FirebaseHelper {
                         List<Task> assignedTasks = new ArrayList<>();
                         for (String taskID : assignedTasksIDs) {
                             if (dataSnapshot.hasChild(taskID)) {
-                                Task newTask = dataSnapshot.child(taskID).getValue(Task.class);
+                                Task newTask = new Task();
                                 newTask.setTaskID(taskID);
+                                newTask.setProjectPO(dataSnapshot.child(taskID).child("projectPO").getValue(String.class));
+                                newTask.setTaskType(dataSnapshot.child(taskID).child("taskType").getValue(String.class));
                                 assignedTasks.add(newTask);
                                 Log.d(TAG, "onDataChange: Project PO" + newTask.getProjectPO());
                             }
@@ -323,6 +325,7 @@ public class FirebaseHelper {
         EmployeeTasksListViewAdapter adapter = new EmployeeTasksListViewAdapter(activity, assignedTasks);
         ListView assignedTasksListView = activity.findViewById(R.id.workingTasksListView);
         assignedTasksListView.setAdapter(adapter);
+        EmployeeActivity.ListUtils.setDynamicHeight(assignedTasksListView);
 
     }
 
@@ -344,8 +347,10 @@ public class FirebaseHelper {
                         List<Task> completedTasks = new ArrayList<>();
                         for (String taskID : completedTasksIDs) {
                             if (dataSnapshot.hasChild(taskID)) {
-                                Task newTask = dataSnapshot.child(taskID).getValue(Task.class);
+                                Task newTask = new Task();
                                 newTask.setTaskID(taskID);
+                                newTask.setProjectPO(dataSnapshot.child(taskID).child("projectPO").getValue(String.class));
+                                newTask.setTaskType(dataSnapshot.child(taskID).child("taskType").getValue(String.class));
                                 completedTasks.add(newTask);
                                 Log.d(TAG, "onDataChange: completed task: " + newTask.getProjectPO());
                                 Log.d(TAG, "onDataChange: " + newTask.getTaskID());
@@ -382,6 +387,7 @@ public class FirebaseHelper {
         EmployeeTasksListViewAdapter adapter = new EmployeeTasksListViewAdapter(activity, completedTasks);
         ListView completedTasksListView = activity.findViewById(R.id.completedTasksListView);
         completedTasksListView.setAdapter(adapter);
+        EmployeeActivity.ListUtils.setDynamicHeight(completedTasksListView);
 
     }
 
