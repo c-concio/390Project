@@ -594,6 +594,19 @@ public class FirebaseHelper {
         rootRef.child("tasks").child(taskID).removeEventListener(inspectionValueEventListener);
     }
 
+    //Inspection Controllers
+    public void changeInspectionCounted(String taskID, int partCounted){
+        rootRef.child("tasks").child(taskID).child("partCounted").setValue(partCounted);
+    }
+
+    public void changeInspectionAccepted(String taskID, int partCounted){
+        rootRef.child("tasks").child(taskID).child("partAccepted").setValue(partCounted);
+    }
+
+    public void changeInspectionRejected(String taskID, int partCounted){
+        rootRef.child("tasks").child(taskID).child("partRejected").setValue(partCounted);
+    }
+    //end of Inspection Controllers
 
     //------------------------------ Firebase Control Device Methods --------------------------------------------------------
 
