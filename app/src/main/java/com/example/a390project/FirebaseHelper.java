@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -24,6 +25,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.a390project.ListViewAdapters.ControlDeviceListViewAdapter;
+import com.example.a390project.ListViewAdapters.EmployeeCommentListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeTasksListViewAdapter;
 import com.example.a390project.ListViewAdapters.InventoryListViewAdapter;
@@ -33,6 +35,7 @@ import com.example.a390project.ListViewAdapters.ProjectListViewAdapter;
 import com.example.a390project.ListViewAdapters.TaskListViewAdapter;
 import com.example.a390project.Model.ControlDevice;
 import com.example.a390project.Model.Employee;
+import com.example.a390project.Model.EmployeeComment;
 import com.example.a390project.Model.Machine;
 import com.example.a390project.Model.Oven;
 import com.example.a390project.Model.PaintBucket;
@@ -978,4 +981,59 @@ public class FirebaseHelper {
         rootRef.child("inventory").child(paintType).child(paintCode).setValue(new PaintBucket(paintType,paintCode,paintDescription,paintBakeTemperature,paintBakeTime,paintWeight));
     }
 
+    // ------------------------------------------------ Firebase Employee Comments ------------------------------------------------
+
+    // function that gets all the comments of the specified task
+    public void getEmployeeComments(final Activity activity, final String taskID){
+        rootRef.child("tasks").child(taskID).child("employeeComments").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<EmployeeComment> comments = new ArrayList<>();
+                Log.d(TAG, "onDataChange: Called snapshot " + taskID);
+                for(DataSnapshot postSnapshot : dataSnapshot.getChildren()){
+                    EmployeeComment currentComment = postSnapshot.getValue(EmployeeComment.class);
+                    Log.d(TAG, "onDataChange: Called snapshot");
+
+                    comments.add(currentComment);
+                }
+
+                if (comments.size() > 0)
+                    callEmployeeCommentListViewAdapter(activity, comments);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void callEmployeeCommentListViewAdapter(Activity activity, List<EmployeeComment> comments){
+        EmployeeCommentListViewAdapter adapter = new EmployeeCommentListViewAdapter(activity, comments);
+        ListView employeeCommentsListView = activity.findViewById(R.id.employeeCommentsListView);
+        employeeCommentsListView.setAdapter(adapter);
+        setListViewHeightBasedOnChildren(employeeCommentsListView);
+    }
+
+    // Reference: https://stackoverflow.com/questions/18367522/android-list-view-inside-a-scroll-view/26998840
+    private static void setListViewHeightBasedOnChildren(ListView listView) {
+        EmployeeCommentListViewAdapter listAdapter = (EmployeeCommentListViewAdapter) listView.getAdapter();
+        if (listAdapter == null)
+            return;
+
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, listView);
+            if (i == 0)
+                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
+    }
 }

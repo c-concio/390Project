@@ -4,10 +4,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatEditText;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,8 +24,11 @@ public class TaskPaintingActivity extends AppCompatActivity {
     private Button mEndTime;
     private Button mCompletedTime;
     private EditText mComment;
+    private ListView employeeCommentsListView;
 
     private String employeeComment;
+
+    private static final String TAG = "TaskPaintingActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,7 @@ public class TaskPaintingActivity extends AppCompatActivity {
         mEndTime = findViewById(R.id.end_time_painting_task);
         mCompletedTime = findViewById(R.id.completed_painting_task);
         mComment = findViewById(R.id.employee_comment_painting_task);
+        employeeCommentsListView = findViewById(R.id.employeeCommentsListView);
 
 
         FirebaseHelper firebaseHelper = new FirebaseHelper();
@@ -69,6 +75,9 @@ public class TaskPaintingActivity extends AppCompatActivity {
         });
 
         setActionBar("Painting");
+
+        Log.d(TAG, "onCreate: getting all comments");
+        firebaseHelper.getEmployeeComments(this, paintingTaskID);
     }
 
     //custom heading and back button
