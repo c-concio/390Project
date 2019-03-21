@@ -7,16 +7,20 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class TaskInspectionActivity extends AppCompatActivity {
 
     // activity widgets
-    EditText partCountedEditText;
-    EditText partAcceptedEditText;
-    EditText partRejectedEditText;
-    Button completeButton;
+    EditText mCounted;
+    EditText mAccepted;
+    EditText mRejected;
+    Button mStartTime;
+    Button mEndTime;
+    Button mCompleteTime;
 
     FirebaseHelper firebaseHelper;
     String inspectionTaskID;
@@ -31,7 +35,7 @@ public class TaskInspectionActivity extends AppCompatActivity {
 
 
         //Text changed listener
-        partCountedEditText.addTextChangedListener(new TextWatcher() {
+        mCounted.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -47,12 +51,12 @@ public class TaskInspectionActivity extends AppCompatActivity {
                 String partCounted = s.toString();
                 if(!partCounted.equals("")) {
                     firebaseHelper.changeInspectionCounted(inspectionTaskID, Integer.parseInt(partCounted));
-                    partCountedEditText.setSelection(s.length());   //Places cursor at the end
+                    mCounted.setSelection(s.length());   //Places cursor at the end
                 }
             }
         });
 
-        partAcceptedEditText.addTextChangedListener(new TextWatcher() {
+        mAccepted.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -68,12 +72,12 @@ public class TaskInspectionActivity extends AppCompatActivity {
                 String partAccepted = s.toString();
                 if(!partAccepted.equals("")) {
                     firebaseHelper.changeInspectionAccepted(inspectionTaskID, Integer.parseInt(partAccepted));
-                    partAcceptedEditText.setSelection(s.length());   //Places cursor at the end
+                    mAccepted.setSelection(s.length());   //Places cursor at the end
                 }
             }
         });
 
-        partRejectedEditText.addTextChangedListener(new TextWatcher() {
+        mRejected.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -89,8 +93,22 @@ public class TaskInspectionActivity extends AppCompatActivity {
                 String partRejected = s.toString();
                 if(!partRejected.equals("")) {
                     firebaseHelper.changeInspectionRejected(inspectionTaskID, Integer.parseInt(partRejected));
-                    partRejectedEditText.setSelection(s.length());   //Places cursor at the end
+                    mRejected.setSelection(s.length());   //Places cursor at the end
                 }
+            }
+        });
+
+        mStartTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                firebaseHelper.checkIfCanStart(inspectionTaskID, getApplicationContext());
+            }
+        });
+
+        mEndTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                firebaseHelper.checkIfCanEnd(inspectionTaskID, getApplicationContext());
             }
         });
 
@@ -108,10 +126,12 @@ public class TaskInspectionActivity extends AppCompatActivity {
 
     private void setupUI(){
         // find the ids of the widgets
-        partCountedEditText = findViewById(R.id.partCountedEditText);
-        partAcceptedEditText = findViewById(R.id.partAcceptedEditText);
-        partRejectedEditText = findViewById(R.id.partRejectedEditText);
-        completeButton = findViewById(R.id.completeButton);
+        mCounted = findViewById(R.id.partCountedEditText);
+        mAccepted = findViewById(R.id.partAcceptedEditText);
+        mRejected = findViewById(R.id.partRejectedEditText);
+        mCompleteTime = findViewById(R.id.completeButton);
+        mStartTime = findViewById(R.id.startTimeButton_inspection);
+        mEndTime = findViewById(R.id.endTimeButton_inspection);
 
         firebaseHelper = new FirebaseHelper();
         Intent intent = getIntent();

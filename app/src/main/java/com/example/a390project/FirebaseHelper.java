@@ -4,12 +4,9 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.a390project.ListViewAdapters.ControlDeviceListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeCommentListViewAdapter;
@@ -44,6 +42,7 @@ import com.example.a390project.Model.Project;
 import com.example.a390project.Model.SubTask;
 import com.example.a390project.Model.Task;
 import com.example.a390project.Model.User;
+import com.example.a390project.Model.WorkBlock;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -59,7 +58,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static java.lang.Integer.parseInt;
 
@@ -102,8 +100,6 @@ public class FirebaseHelper {
     // ------------------------------------------- Control Device variables -------------------------------------------
 
     private List<ControlDevice> cDevices;
-
-    // ------------------------------------------- PrepaintTask -------------------------------------------
 
     // -------------------------------------------------------------------------------------------------------------
 
@@ -271,40 +267,41 @@ public class FirebaseHelper {
         dbRefEmployees.removeEventListener(childEventListener);
     }
 
+
+    /*
+    -------------------------------------------Employees workingTasks & completedTasks ListView Population methods ------------------------------------------------------------
+     */
+
     void setWorkingTasksValueListener(String userID, final Activity activity){
-
-
         rootRef.child("users").child(userID).child("workingTasks").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                final List<String> assignedTasksIDs = new ArrayList<>();
+                final List<String> workingTaskIDs = new ArrayList<>();
                 for(DataSnapshot postSnapshot : dataSnapshot.getChildren()){
-                    assignedTasksIDs.add(postSnapshot.getKey());
+                    workingTaskIDs.add(postSnapshot.getKey());
                 }
-
                 rootRef.child("tasks").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        List<Task> assignedTasks = new ArrayList<>();
-                        for (String taskID : assignedTasksIDs) {
+                        List<Task> workingTasks = new ArrayList<>();
+                        for (String taskID : workingTaskIDs) {
                             if (dataSnapshot.hasChild(taskID)) {
                                 Task newTask = new Task();
                                 newTask.setTaskID(taskID);
                                 newTask.setProjectPO(dataSnapshot.child(taskID).child("projectPO").getValue(String.class));
                                 newTask.setTaskType(dataSnapshot.child(taskID).child("taskType").getValue(String.class));
-                                assignedTasks.add(newTask);
+                                workingTasks.add(newTask);
                                 Log.d(TAG, "onDataChange: Project PO" + newTask.getProjectPO());
                             }
                         }
-                        if (assignedTasks.size() < 1){
+                        if (workingTasks.size() < 1){
                             TextView noWorkingTasksTextView = activity.findViewById(R.id.noWorkingTasksTextView);
                             noWorkingTasksTextView.setVisibility(View.VISIBLE);
                         }
                         else {
                             TextView noWorkingTasksTextView = activity.findViewById(R.id.noWorkingTasksTextView);
                             noWorkingTasksTextView.setVisibility(View.GONE);
-                            callWorkingTasksListViewAdapter(activity, assignedTasks);
+                            callWorkingTasksListViewAdapter(activity, workingTasks);
                         }
                     }
 
@@ -1058,5 +1055,115 @@ public class FirebaseHelper {
     // function that saves a comment to the specified task
     private void postComment(Activity activity, String taskID, EmployeeComment newComment){
 
+    }
+    /*
+    ---------------------------------------------- Create Work Block -------------------------------------------------------
+     */
+
+    public void createWorkBlock(String taskID) {
+        //boolean isCompleted, String workBlockID, long startTime, long endTime, long workingTime, String taskID, String employeeID
+        String workBlockID = WorkBlock.generateRandomChars();
+        long timeNow = System.currentTimeMillis();
+        WorkBlock workBlock = new WorkBlock(workBlockID, timeNow, 0, 0, taskID, uId);
+        rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").child(workBlockID).setValue(workBlock);
+        rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("workBlocks").child(workBlockID).setValue(true);
+        rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canStart").setValue(false);
+        rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canEnd").setValue(true);
+        rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("currentWorkBlock").setValue(workBlockID);
+        rootRef.child("tasks").child(taskID).child("workBlocks").child(workBlockID).setValue(true);
+
+    }
+
+    public void endWorkBlock(final String taskID) {
+        final DatabaseReference currentWorkBlockRef = rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("currentWorkBlock");
+        currentWorkBlockRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                currentWorkBlockRef.removeEventListener(this);
+                final String currentWorkBlock = dataSnapshot.getValue(String.class);
+                final long timeNow = System.currentTimeMillis();
+
+                final DatabaseReference startTimeRef = rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").child(currentWorkBlock).child("startTime");
+                startTimeRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        startTimeRef.removeEventListener(this);
+                        long startTime = dataSnapshot.getValue(long.class);
+                        rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").child(currentWorkBlock).child("endTime").setValue(timeNow);
+                        long duration = timeNow - startTime;
+                        rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").child(currentWorkBlock).child("workingTime").setValue(duration);
+                        rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canStart").setValue(true);
+                        rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canEnd").setValue(false);
+                        rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("currentWorkBlock").setValue("none");
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void checkIfCanStart(final String taskID, final Context context) {
+        final DatabaseReference uIdRef = rootRef.child("users").child(uId);
+        uIdRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                uIdRef.removeEventListener(this);
+                if (dataSnapshot.child("workingTasks").hasChild(taskID)) {
+                    boolean canStart = dataSnapshot.child("workingTasks").child(taskID).child("canStart").getValue(boolean.class);
+                    if(canStart) {
+                        createWorkBlock(taskID);
+                        Toast.makeText(context, "Work Block started...", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Toast.makeText(context, "Work Block already started...", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    createWorkBlock(taskID);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void checkIfCanEnd(final String taskID, final Context context) {
+        final DatabaseReference uIdRef = rootRef.child("users").child(uId);
+        uIdRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                uIdRef.removeEventListener(this);
+                if (dataSnapshot.child("workingTasks").hasChild(taskID)) {
+                    boolean canEnd = dataSnapshot.child("workingTasks").child(taskID).child("canEnd").getValue(boolean.class);
+                    if(canEnd) {
+                        endWorkBlock(taskID);
+                        Toast.makeText(context, "Work Block ended...", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Toast.makeText(context, "Work Block Already ended. Start new Work Block...", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    Toast.makeText(context, "Cannot end a Work Block that hasn't started...", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

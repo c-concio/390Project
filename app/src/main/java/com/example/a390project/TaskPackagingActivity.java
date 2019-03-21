@@ -72,10 +72,7 @@ public class TaskPackagingActivity extends AppCompatActivity {
     View.OnClickListener startTimeOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            // when the button is clicked, the current time will be saved to the database as the start time
-            firebaseHelper.setStartTime(packagingTaskID);
-            /*startTimeButton.setEnabled(false);
-            endTimeButton.setEnabled(true);*/
+            firebaseHelper.checkIfCanStart(packagingTaskID, getApplicationContext());
         }
     };
 
@@ -83,10 +80,7 @@ public class TaskPackagingActivity extends AppCompatActivity {
     View.OnClickListener endTimeOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            // when the button is clicked, the current time will be saved to the database as the end time
-            firebaseHelper.setEndTime(packagingTaskID);
-            /*endTimeButton.setEnabled(false);
-            startTimeButton.setEnabled(true);*/
+            firebaseHelper.checkIfCanEnd(packagingTaskID, getApplicationContext());
         }
     };
 

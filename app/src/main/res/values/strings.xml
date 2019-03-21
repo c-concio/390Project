@@ -13,7 +13,7 @@
         <item>Inspection</item>
         <item>Pre-Painting</item>
         <item>Painting</item>
-        <item>Baking</item>
+        <item>Packaging</item>
         <item>Final-Inspection</item>
     </string-array>
 
@@ -21,18 +21,5 @@
         <item>Liquid</item>
         <item>Powder</item>
     </string-array>
-
-
-    <string-array name="paint_liquid">
-        <item>SS541N25</item>
-        <item>PX611N26</item>
-    </string-array>
-
-    <string-array name="paint_powder">
-        <item>US612N48</item>
-        <item>HX622N53</item>
-    </string-array>
-
-
 
 </resources>
