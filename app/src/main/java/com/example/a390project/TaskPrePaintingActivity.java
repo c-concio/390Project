@@ -3,6 +3,7 @@ package com.example.a390project;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -10,6 +11,12 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.a390project.Model.EmployeeComment;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class TaskPrePaintingActivity extends AppCompatActivity {
 
@@ -19,6 +26,8 @@ public class TaskPrePaintingActivity extends AppCompatActivity {
     private String taskId;
     private Button postCommentButton;
     private EditText newEmployeeCommentEdtText;
+
+    private static final String TAG = "TaskPrePaintingActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,14 +61,18 @@ public class TaskPrePaintingActivity extends AppCompatActivity {
         postCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String editTextValue = newEmployeeCommentEdtText.getText().toString();
+                String comment = newEmployeeCommentEdtText.getText().toString();
 
                 // check if the editText field is empty, if it is empty output error
-                if (editTextValue.isEmpty()){
+                if (comment.isEmpty()){
                     newEmployeeCommentEdtText.setError("Field is empty");
                 }
                 // else save comment into firebase
-
+                else {
+                    firebaseHelper.postComment(taskId, comment);
+                    newEmployeeCommentEdtText.getText().clear();
+                    Toast.makeText(TaskPrePaintingActivity.this, "Comment Posted", Toast.LENGTH_SHORT).show();
+                }
 
 
             }
