@@ -1054,4 +1054,9 @@ public class FirebaseHelper {
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
     }
+
+    // function that saves a comment to the specified task
+    private void postComment(Activity activity, String taskID, EmployeeComment newComment){
+
+    }
 }

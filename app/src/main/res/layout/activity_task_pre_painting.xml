@@ -58,6 +58,40 @@
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/linearLayout3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/divider3">
+
+                        <EditText
+                            android:id="@+id/newEmployeeCommentEditText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:layout_weight="1"
+                            android:ems="10"
+                            android:hint="New Comment"
+                            android:inputType="textMultiLine|textCapSentences"
+                            android:isScrollContainer="true"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/divider3" />
+
+                        <Button
+                            android:id="@+id/postCommentButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginTop="8dp"
+                            android:text="Post"
+                            app:layout_constraintStart_toEndOf="@+id/newEmployeeCommentEditText"
+                            app:layout_constraintTop_toBottomOf="@+id/divider3" />
+                </LinearLayout>
+
                 <ListView
                     android:id="@+id/prepaintTaskListView"
                     android:layout_width="match_parent"
@@ -72,8 +106,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="84dp"
                     android:layout_marginLeft="84dp"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="28dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
                     android:text="Prepainting Completed"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.025"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/prepaintTaskListView" />
 
@@ -87,30 +125,17 @@
                     app:layout_constraintTop_toBottomOf="@+id/prepaintingCompletedButton"
                     tools:layout_editor_absoluteX="0dp" />
 
-                <EditText
-                    android:id="@+id/newEmployeeComment"
-                    android:layout_width="374dp"
-                    android:layout_height="41dp"
-                    android:layout_marginTop="20dp"
-                    android:ems="10"
-                    android:hint="New Comment"
-                    android:inputType="textMultiLine"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/divider3" />
-
                 <TextView
                     android:id="@+id/commentTitleTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="8dp"
                     android:text="Comments"
                     android:textAllCaps="false"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="20sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/newEmployeeComment" />
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
                 <ListView
                     android:id="@+id/employeeCommentsListView"
