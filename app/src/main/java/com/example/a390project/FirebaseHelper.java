@@ -145,7 +145,7 @@ public class FirebaseHelper {
                                 machineStatusTimeOff, machineStatusTimeOn));
                     }
                     else if (machineType.equals("PaintBooth")) {
-                        float humidity = ds.child("humidity").getValue(float.class);
+                        float humidity = ds.child("Humidity").getValue(float.class);
                         machines.add(new Paintbooth(machineTitle, machineLastEmployee, machineStatus, temperature, machineType,
                                 humidity));
                     }
@@ -717,6 +717,28 @@ public class FirebaseHelper {
         PrepaintTaskListViewAdapter adapter = new PrepaintTaskListViewAdapter(activity, subTasks);
         ListView prepaintTasksListView = activity.findViewById(R.id.prepaintTaskListView);
         prepaintTasksListView.setAdapter(adapter);
+        setPrepaintTasksListViewHeightBasedOnChildren(prepaintTasksListView);
+    }
+
+    private static void setPrepaintTasksListViewHeightBasedOnChildren(ListView listView) {
+        PrepaintTaskListViewAdapter listAdapter = (PrepaintTaskListViewAdapter) listView.getAdapter();
+        if (listAdapter == null)
+            return;
+
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, listView);
+            if (i == 0)
+                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
     }
 
     // ------------------------------------------------ Firebase Baking Methods ------------------------------------------------
@@ -1012,11 +1034,11 @@ public class FirebaseHelper {
         EmployeeCommentListViewAdapter adapter = new EmployeeCommentListViewAdapter(activity, comments);
         ListView employeeCommentsListView = activity.findViewById(R.id.employeeCommentsListView);
         employeeCommentsListView.setAdapter(adapter);
-        setListViewHeightBasedOnChildren(employeeCommentsListView);
+        setEmployeeCommentsListViewHeightBasedOnChildren(employeeCommentsListView);
     }
 
     // Reference: https://stackoverflow.com/questions/18367522/android-list-view-inside-a-scroll-view/26998840
-    private static void setListViewHeightBasedOnChildren(ListView listView) {
+    private static void setEmployeeCommentsListViewHeightBasedOnChildren(ListView listView) {
         EmployeeCommentListViewAdapter listAdapter = (EmployeeCommentListViewAdapter) listView.getAdapter();
         if (listAdapter == null)
             return;

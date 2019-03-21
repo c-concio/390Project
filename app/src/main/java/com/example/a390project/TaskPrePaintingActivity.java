@@ -28,6 +28,7 @@ public class TaskPrePaintingActivity extends AppCompatActivity {
         setupUI();
 
         firebaseHelper.populateSubTasks(taskId, this);
+        firebaseHelper.getEmployeeComments(this, taskId);
     }
 
     private void setupUI(){

@@ -1,60 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="15dp"
     android:layout_margin="5dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="15dp">
 
-        <LinearLayout
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            tools:layout_editor_absoluteX="15dp"
+            tools:layout_editor_absoluteY="15dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="25dp"
-            android:text="Pre-Painting Task"
-            android:gravity="center_horizontal"
-            android:layout_marginBottom="10dp"
-            android:textColor="@color/colorPrimaryDark"
-            android:textStyle="bold"/>
+                <LinearLayout
+                    android:id="@+id/linearLayout2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Description"
-            android:textSize="20dp"
-            android:textColor="@color/colorPrimaryDark"/>
-        <TextView
-            android:id="@+id/prepaint_task_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Description"
-            android:layout_marginBottom="8dp"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Tasks To Do"
-            android:textStyle="bold"
-            android:gravity="center_horizontal"
-            android:textSize="20dp"
-            android:textColor="@color/colorPrimaryDark"
-            android:layout_marginBottom="8dp"/>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:gravity="center_horizontal"
+                            android:text="Pre-Painting Task"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="25dp"
+                            android:textStyle="bold" />
 
-        <ListView
-            android:id="@+id/prepaintTaskListView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="50dp"/>
-        </LinearLayout>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Prepainting Completed"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"/>
-</RelativeLayout>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Description"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="20dp" />
+
+                        <TextView
+                            android:id="@+id/prepaint_task_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="Description" />
+
+                        <TextView
+                            android:id="@+id/textView4"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:gravity="center_horizontal"
+                            android:text="Tasks To Do"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="20dp"
+                            android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <ListView
+                    android:id="@+id/prepaintTaskListView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+                    tools:layout_editor_absoluteX="0dp" />
+
+                <Button
+                    android:id="@+id/prepaintingCompletedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="84dp"
+                    android:layout_marginLeft="84dp"
+                    android:layout_marginTop="24dp"
+                    android:text="Prepainting Completed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/prepaintTaskListView" />
+
+                <View
+                    android:id="@+id/divider3"
+                    android:layout_width="match_parent"
+                    android:layout_height="5dp"
+                    android:layout_marginTop="24dp"
+                    android:background="@color/colorPrimaryDark"
+                    android:visibility="visible"
+                    app:layout_constraintTop_toBottomOf="@+id/prepaintingCompletedButton"
+                    tools:layout_editor_absoluteX="0dp" />
+
+                <EditText
+                    android:id="@+id/newEmployeeComment"
+                    android:layout_width="374dp"
+                    android:layout_height="41dp"
+                    android:layout_marginTop="20dp"
+                    android:ems="10"
+                    android:hint="New Comment"
+                    android:inputType="textMultiLine"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/divider3" />
+
+                <TextView
+                    android:id="@+id/commentTitleTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Comments"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/newEmployeeComment" />
+
+                <ListView
+                    android:id="@+id/employeeCommentsListView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintTop_toBottomOf="@+id/commentTitleTextView"
+                    tools:layout_editor_absoluteX="0dp" />
+
+        </android.support.constraint.ConstraintLayout>
+
+</ScrollView>
