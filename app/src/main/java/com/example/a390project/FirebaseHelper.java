@@ -136,7 +136,7 @@ public class FirebaseHelper {
                     String machineLastEmployee =  ds.child("machineLastEmployee").getValue(String.class);
                     String machineType = ds.child("machineType").getValue(String.class);
                     boolean machineStatus = ds.child("machineStatus").getValue(boolean.class);
-                    float temperature = ds.child("Temperature").getValue(float.class);
+                    float temperature = ds.child("temperature").getValue(float.class);
 
                     if (machineType.equals("Oven")) {
                         long machineStatusTimeOff = ds.child("machineStatusTimeOff").getValue(long.class);
@@ -145,7 +145,7 @@ public class FirebaseHelper {
                                 machineStatusTimeOff, machineStatusTimeOn));
                     }
                     else if (machineType.equals("PaintBooth")) {
-                        float humidity = ds.child("Humidity").getValue(float.class);
+                        float humidity = ds.child("humidity").getValue(float.class);
                         machines.add(new Paintbooth(machineTitle, machineLastEmployee, machineStatus, temperature, machineType,
                                 humidity));
                     }
@@ -943,10 +943,6 @@ public class FirebaseHelper {
 
                     }
                 });
-
-
-
-
 
             }
 
