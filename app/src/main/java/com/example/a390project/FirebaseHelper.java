@@ -528,8 +528,23 @@ public class FirebaseHelper {
             series1.appendData(new DataPoint(x.get(i),y.get(i)),true,100);
         }
         graph.addSeries(series1);
+        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setMinX(0);
+        graph.getViewport().setMaxX(getMax(x)+10);
+        graph.getViewport().setMinY(0);
+        graph.getViewport().setMaxY(getMax(y));
 
 
+    }
+
+    public float getMax(List<Float> list){
+        float max = Integer.MIN_VALUE;
+        for(int i=0; i<list.size(); i++){
+            if(list.get(i) > max){
+                max = list.get(i);
+            }
+        }
+        return max;
     }
 
     // --------------------------------------- Packaging Task Methods ---------------------------------------
