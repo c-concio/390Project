@@ -325,7 +325,8 @@ public class FirebaseHelper {
 
         EmployeeTasksListViewAdapter adapter = new EmployeeTasksListViewAdapter(activity, assignedTasks);
         assignedTasksListView.setAdapter(adapter);
-        ListUtils.setDynamicHeight(assignedTasksListView);
+        setEmployeeTasksListViewHeightBasedOnChildren(assignedTasksListView);
+
 
     }
 
@@ -385,7 +386,7 @@ public class FirebaseHelper {
         EmployeeTasksListViewAdapter adapter = new EmployeeTasksListViewAdapter(activity, completedTasks);
         ListView completedTasksListView = activity.findViewById(R.id.completedTasksListView);
         completedTasksListView.setAdapter(adapter);
-        ListUtils.setDynamicHeight(completedTasksListView);
+        setEmployeeTasksListViewHeightBasedOnChildren(completedTasksListView);
 
     }
 
@@ -1263,29 +1264,25 @@ public class FirebaseHelper {
 
     }
 
-    // create a list utility class to dynamically change the height of the listView
-    // reference: https://stackoverflow.com/questions/17693578/android-how-to-display-2-listviews-in-one-activity-one-after-the-other
-    public static class ListUtils{
-        public static void setDynamicHeight(ListView listView){
-            ListAdapter listAdapter = listView.getAdapter();
-            if (listAdapter == null){
-                return;
-            }
+    public static void setEmployeeTasksListViewHeightBasedOnChildren(ListView listView) {
+        EmployeeTasksListViewAdapter listAdapter = (EmployeeTasksListViewAdapter) listView.getAdapter();
+        if (listAdapter == null)
+            return;
 
-            int height = 0;
-            int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, listView);
+            if (i == 0)
+                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-            for(int i = 0; i < listAdapter.getCount(); i++){
-                View listItem = listAdapter.getView(i, null, listView);
-                listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-                height += 175;
-
-            }
-            ViewGroup.LayoutParams params = listView.getLayoutParams();
-            params.height = height ;
-            Log.d(TAG, "setDynamicHeight: " + height);
-            listView.setLayoutParams(params);
-            listView.requestLayout();
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
         }
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1) + (32 * listAdapter.getCount()));
+        listView.setLayoutParams(params);
     }
+
 }

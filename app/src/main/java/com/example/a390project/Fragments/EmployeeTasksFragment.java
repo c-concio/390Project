@@ -61,8 +61,8 @@ public class EmployeeTasksFragment extends Fragment {
         noWorkingTasksTextView.setVisibility(View.GONE);
         noCompletedTasksTextView.setVisibility(View.GONE);
 
-        FirebaseHelper.ListUtils.setDynamicHeight(assignedTasksListView);
-        FirebaseHelper.ListUtils.setDynamicHeight(completedTasksListView);
+        FirebaseHelper.setEmployeeTasksListViewHeightBasedOnChildren(assignedTasksListView);
+        FirebaseHelper.setEmployeeTasksListViewHeightBasedOnChildren(completedTasksListView);
 
         firebaseHelper.setWorkingTasksValueListener(employeeID, noWorkingTasksTextView, getActivity(), assignedTasksListView);
         firebaseHelper.setCompletedTasksValueEventListener(employeeID, noCompletedTasksTextView, getActivity());
