@@ -1,9 +1,12 @@
 package com.example.a390project;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,6 +18,13 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.a390project.Fragments.ControlDeviceFragment;
+import com.example.a390project.Fragments.EmployeeFragment;
+import com.example.a390project.Fragments.EmployeeTasksFragment;
+import com.example.a390project.Fragments.EmployeeWorkBlocksFragment;
+import com.example.a390project.Fragments.InventoryFragment;
+import com.example.a390project.Fragments.MachineFragment;
+import com.example.a390project.Fragments.ProjectFragment;
 import com.example.a390project.ListViewAdapters.EmployeeTasksListViewAdapter;
 import com.example.a390project.Model.EmployeeTasks;
 import com.example.a390project.Model.Task;
@@ -27,19 +37,15 @@ import java.util.List;
 
 public class EmployeeActivity extends AppCompatActivity{
 
-    // activity components
-    ListView assignedTasksListView;
-    ListView completedTasksListView;
-    TextView noWorkingTasksTextView;
-    TextView noCompletedTasksTextView;
+    //This is our tab-layout
+    private TabLayout tabLayout;
+    //This is our viewPager
+    private ViewPager viewPager;
 
-    // variables
-    List<Task> assignedTasks = new ArrayList<>();
-    List<Task> completedTasks = new ArrayList<>();
-    String employeeID;
 
-    FirebaseHelper firebaseHelper;
     private static final String TAG = "EmployeeActivity";
+    private String employeeID;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,74 +54,77 @@ public class EmployeeActivity extends AppCompatActivity{
         // provide up navigation
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-
-
-        // setup the components
-        setupUI();
-
-        // setup the adapters and make the height of the list views dynamic
-        assignedTasksListViewAdapter();
-        completedTasksListViewAdapter();
-
-        ListUtils.setDynamicHeight(assignedTasksListView);
-        ListUtils.setDynamicHeight(completedTasksListView);
-
-        firebaseHelper.setWorkingTasksValueListener(employeeID, this);
-        firebaseHelper.setCompletedTasksValueEventListener(employeeID, this);
-
-    }
-
-    private void setupUI(){
-        assignedTasksListView = findViewById(R.id.workingTasksListView);
-        completedTasksListView = findViewById(R.id.completedTasksListView);
-        noWorkingTasksTextView = findViewById(R.id.noWorkingTasksTextView);
-        noCompletedTasksTextView = findViewById(R.id.noCompletedTasksTextView);
-
         // get intent to get extra
         Intent intent = getIntent();
         employeeID = intent.getStringExtra("employeeID");
         setActionBar(intent.getStringExtra("employeeName"));
 
-        noWorkingTasksTextView.setVisibility(View.GONE);
-        noCompletedTasksTextView.setVisibility(View.GONE);
-
-        firebaseHelper = new FirebaseHelper();
+        prepareActivity();
 
     }
 
-    private void assignedTasksListViewAdapter(){
-        EmployeeTasksListViewAdapter taskAdapter = new EmployeeTasksListViewAdapter(this, assignedTasks);
-        assignedTasksListView.setAdapter(taskAdapter);
-    }
+    private void prepareActivity() {
+        //Initializing viewPager
+        viewPager = findViewById(R.id.viewpager_employee);
+        viewPager.setOffscreenPageLimit(5); // <---- .setOffscreenPageLimit controls the max amount of tabs
 
-    private void completedTasksListViewAdapter(){
-        EmployeeTasksListViewAdapter taskAdapter = new EmployeeTasksListViewAdapter(this, completedTasks);
-        completedTasksListView.setAdapter(taskAdapter);
-    }
+        //Initializing the tablayout
+        tabLayout = findViewById(R.id.tablayout_employee);
+        tabLayout.setupWithViewPager(viewPager);
 
-    // create a list utility class to dynamically change the height of the listView
-    // reference: https://stackoverflow.com/questions/17693578/android-how-to-display-2-listviews-in-one-activity-one-after-the-other
-    static class ListUtils{
-        static void setDynamicHeight(ListView listView){
-            ListAdapter listAdapter = listView.getAdapter();
-            if (listAdapter == null){
-                return;
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @SuppressLint("RestrictedApi")
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
             }
 
-            int height = 0;
-            int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+            @Override
+            public void onPageSelected(int position) {
+                animateFab(position);
+            }
 
-            for(int i = 0; i < listAdapter.getCount(); i++){
-                View listItem = listAdapter.getView(i, null, listView);
-                listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-                height += 175;
+            @Override
+            public void onPageScrollStateChanged(int state) {
 
             }
-            ViewGroup.LayoutParams params = listView.getLayoutParams();
-            params.height = height ;
-            Log.d(TAG, "setDynamicHeight: " + height);
-            listView.setLayoutParams(params);
-            listView.requestLayout();
+        });
+        setupViewPager(viewPager);
+    }
+
+    private void setupViewPager(ViewPager viewPager)
+    {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+
+        //To add a fragment to a viewPager;
+        // 1.create an instance of the fragment
+        // 2.add the created instance to the adapter
+
+        //fragement1 = new Fragment1();
+        //fragement2 = new Fragment2();
+
+        //adapter.addFragment(fragment1,"FRAGMENT_1_TITLE");
+        //adapter.addFragment(fragment2,"FRAGMENT_2_TITLE");
+
+        // ------------------ PROJECT FRAGMENT ------------------------
+
+        EmployeeTasksFragment employeeTasksFragment = new EmployeeTasksFragment(employeeID);
+        adapter.addFragment(employeeTasksFragment, "TASKS");
+
+        EmployeeWorkBlocksFragment employeeWorkBlocksFragment = new EmployeeWorkBlocksFragment(employeeID);
+        adapter.addFragment(employeeWorkBlocksFragment, "WORK BLOCKS");
+
+        viewPager.setAdapter(adapter);
+    }
+
+    private void animateFab(int position) {
+        switch (position) {
+            case 0:
+                break;
+            case 1:
+                break;
+            default:
+                break;
         }
     }
 

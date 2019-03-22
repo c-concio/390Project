@@ -10,8 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.a390project.FirebaseHelper;
 import com.example.a390project.Model.SubTask;
-import com.example.a390project.Model.Task;
 import com.example.a390project.R;
 
 import java.util.List;
@@ -64,6 +64,22 @@ public class PrepaintTaskListViewAdapter extends BaseAdapter {
         startTimeButton = convertView.findViewById(R.id.startTimeButton);
         endTimeButton = convertView.findViewById(R.id.endTimeButton);
         employeeCommentEditText = convertView.findViewById(R.id.employeeCommentEditText);
+
+
+        final FirebaseHelper firebaseHelper = new FirebaseHelper();
+        startTimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                firebaseHelper.checkIfCanStart(currentItem.getTaskID(), context);
+            }
+        });
+
+        endTimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                firebaseHelper.checkIfCanEnd(currentItem.getTaskID(), context);
+            }
+        });
 
         prepaintNameTextView.setText(subTasks.get(position).getSubTaskType());
 

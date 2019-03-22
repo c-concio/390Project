@@ -24,6 +24,7 @@ public class TaskInspectionActivity extends AppCompatActivity {
 
     FirebaseHelper firebaseHelper;
     String inspectionTaskID;
+    String inspectionType;
 
 
     @Override
@@ -101,6 +102,8 @@ public class TaskInspectionActivity extends AppCompatActivity {
         mStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = getIntent();
+                inspectionType = intent.getStringExtra("taskType_final_or_not");
                 firebaseHelper.checkIfCanStart(inspectionTaskID, getApplicationContext());
             }
         });

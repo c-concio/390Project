@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class EmployeeTasks{
 
-    private static final String TAG = "EmployeeTasks";
+    private static final String TAG = "EmployeeTasksFragment";
 
     private ArrayList<Integer> employeeIDs = new ArrayList<>(); // <----- List of employees working on the task
     private int projectID; // <---------------- ID of project that the task belongs to

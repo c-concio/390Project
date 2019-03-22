@@ -82,6 +82,7 @@ public class EmployeeTasksListViewAdapter extends BaseAdapter {
                     Intent intent = new Intent(context, TaskInspectionActivity.class);
                     // send the TaskInspectionActivity the projectPO
                     intent.putExtra("inspectionTaskID", currentItem.getTaskID());
+                    intent.putExtra("taskType_final_or_not", taskType);
                     context.startActivity(intent);
                 }
                 else if(taskType.equals("Pre-Painting")) {
@@ -91,6 +92,7 @@ public class EmployeeTasksListViewAdapter extends BaseAdapter {
                 }
                 else if(taskType.equals("Painting")) {
                     Intent intent = new Intent(context, TaskPaintingActivity.class);
+                    intent.putExtra("paintingTaskID", currentItem.getTaskID());
                     context.startActivity(intent);
                 }
                 else if(taskType.equals("Baking")) {

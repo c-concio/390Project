@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -22,10 +23,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.a390project.Fragments.EmployeeTasksFragment;
 import com.example.a390project.ListViewAdapters.ControlDeviceListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeCommentListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeTasksListViewAdapter;
+import com.example.a390project.ListViewAdapters.EmployeeWorkBlocksListViewAdapter;
 import com.example.a390project.ListViewAdapters.InventoryListViewAdapter;
 import com.example.a390project.ListViewAdapters.MachineListViewAdapter;
 import com.example.a390project.ListViewAdapters.PrepaintTaskListViewAdapter;
@@ -272,7 +275,7 @@ public class FirebaseHelper {
     -------------------------------------------Employees workingTasks & completedTasks ListView Population methods ------------------------------------------------------------
      */
 
-    void setWorkingTasksValueListener(String userID, final Activity activity){
+    public void setWorkingTasksValueListener(String userID, final TextView noWorkingTasksTextView, final Activity activity, final ListView assignedTasksListView){
         rootRef.child("users").child(userID).child("workingTasks").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -295,13 +298,11 @@ public class FirebaseHelper {
                             }
                         }
                         if (workingTasks.size() < 1){
-                            TextView noWorkingTasksTextView = activity.findViewById(R.id.noWorkingTasksTextView);
                             noWorkingTasksTextView.setVisibility(View.VISIBLE);
                         }
                         else {
-                            TextView noWorkingTasksTextView = activity.findViewById(R.id.noWorkingTasksTextView);
                             noWorkingTasksTextView.setVisibility(View.GONE);
-                            callWorkingTasksListViewAdapter(activity, workingTasks);
+                            callWorkingTasksListViewAdapter(activity, workingTasks, assignedTasksListView);
                         }
                     }
 
@@ -320,16 +321,15 @@ public class FirebaseHelper {
         });
     }
 
-    private void callWorkingTasksListViewAdapter(Activity activity, List<Task> assignedTasks){
+    private void callWorkingTasksListViewAdapter(Activity activity, List<Task> assignedTasks, ListView assignedTasksListView){
 
         EmployeeTasksListViewAdapter adapter = new EmployeeTasksListViewAdapter(activity, assignedTasks);
-        ListView assignedTasksListView = activity.findViewById(R.id.workingTasksListView);
         assignedTasksListView.setAdapter(adapter);
-        EmployeeActivity.ListUtils.setDynamicHeight(assignedTasksListView);
+        ListUtils.setDynamicHeight(assignedTasksListView);
 
     }
 
-    void setCompletedTasksValueEventListener(String userID, final Activity activity){
+    public void setCompletedTasksValueEventListener(String userID, final TextView noCompletedTasksTextView, final Activity activity){
 
 
         rootRef.child("users").child(userID).child("completedTasks").addValueEventListener(new ValueEventListener() {
@@ -357,11 +357,9 @@ public class FirebaseHelper {
                             }
                         }
                         if (completedTasks.size() < 1){
-                            TextView noCompletedTasksTextView = activity.findViewById(R.id.noCompletedTasksTextView);
                             noCompletedTasksTextView.setVisibility(View.VISIBLE);
                         }
                         else {
-                            TextView noCompletedTasksTextView = activity.findViewById(R.id.noCompletedTasksTextView);
                             noCompletedTasksTextView.setVisibility(View.GONE);
                             callCompletedTasksListViewAdapter(activity, completedTasks);
                         }
@@ -387,7 +385,7 @@ public class FirebaseHelper {
         EmployeeTasksListViewAdapter adapter = new EmployeeTasksListViewAdapter(activity, completedTasks);
         ListView completedTasksListView = activity.findViewById(R.id.completedTasksListView);
         completedTasksListView.setAdapter(adapter);
-        EmployeeActivity.ListUtils.setDynamicHeight(completedTasksListView);
+        ListUtils.setDynamicHeight(completedTasksListView);
 
     }
 
@@ -1060,17 +1058,45 @@ public class FirebaseHelper {
     ---------------------------------------------- Create Work Block -------------------------------------------------------
      */
 
-    public void createWorkBlock(String taskID) {
+    public void createWorkBlock(final String taskID) {
         //boolean isCompleted, String workBlockID, long startTime, long endTime, long workingTime, String taskID, String employeeID
-        String workBlockID = WorkBlock.generateRandomChars();
-        long timeNow = System.currentTimeMillis();
-        WorkBlock workBlock = new WorkBlock(workBlockID, timeNow, 0, 0, taskID, uId);
-        rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").child(workBlockID).setValue(workBlock);
-        rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("workBlocks").child(workBlockID).setValue(true);
-        rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canStart").setValue(false);
-        rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canEnd").setValue(true);
-        rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("currentWorkBlock").setValue(workBlockID);
-        rootRef.child("tasks").child(taskID).child("workBlocks").child(workBlockID).setValue(true);
+        rootRef.child("tasks").child(taskID).child("projectPO").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                final String projectPO = dataSnapshot.getValue(String.class);
+                final String workBlockID = WorkBlock.generateRandomChars();
+                final long timeNow = System.currentTimeMillis();
+
+                rootRef.child("tasks").child(taskID).child("taskType").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String title = dataSnapshot.getValue(String.class);
+                        WorkBlock workBlock = new WorkBlock(workBlockID, timeNow, 0, 0, taskID, uId, title,projectPO);
+                        rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").child(workBlockID).setValue(workBlock);
+
+                        rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("workBlocks").child(workBlockID).setValue(true);
+                        rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canStart").setValue(false);
+                        rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canEnd").setValue(true);
+                        rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("currentWorkBlock").setValue(workBlockID);
+
+                        rootRef.child("tasks").child(taskID).child("workBlocks").child(workBlockID).setValue(true);
+
+                        Log.d(TAG, "WORKBLOCK CREATED: " + workBlockID + " " + title + " " + projectPO);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
 
     }
 
@@ -1129,6 +1155,7 @@ public class FirebaseHelper {
                 }
                 else {
                     createWorkBlock(taskID);
+                    Toast.makeText(context, "Work Block started...", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -1165,5 +1192,86 @@ public class FirebaseHelper {
 
             }
         });
+    }
+
+    public void populateWorkBlocksForEmployee(final String employeeID, final View view, final Activity activity) {
+        final List<WorkBlock> employeeWorkBlocks = new ArrayList<>();
+        rootRef.child("users").child(employeeID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                rootRef.child("users").child(employeeID).removeEventListener(this);
+                if (dataSnapshot.hasChild("workingTasks")) {
+                    for (final DataSnapshot taskData:dataSnapshot.child("workingTasks").getChildren()) {
+                        for (final DataSnapshot workBlockData:taskData.child("workBlocks").getChildren()) {
+                            rootRef.child("workHistory").child("workingTasks").child(taskData.getKey()).child("workBlocks").child(workBlockData.getKey()).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    rootRef.child("workHistory").child("workingTasks").child(taskData.getKey()).child("workBlocks").child(workBlockData.getKey()).removeEventListener(this);
+                                    String workBlockID = dataSnapshot.child("workBlockID").getValue(String.class);
+                                    long startTime = dataSnapshot.child("startTime").getValue(long.class);
+                                    long endTime = dataSnapshot.child("endTime").getValue(long.class);
+                                    long workingTime = dataSnapshot.child("workingTime").getValue(long.class);
+                                    String taskID = dataSnapshot.child("taskID").getValue(String.class);
+                                    String title = dataSnapshot.child("title").getValue(String.class);
+                                    String projectPO = dataSnapshot.child("projectPO").getValue(String.class);
+                                    //public WorkBlock(String workBlockID, long startTime, long endTime, long workingTime, String taskID, String employeeID)
+                                    employeeWorkBlocks.add(new WorkBlock(workBlockID, startTime, endTime, workingTime, taskID, employeeID, title, projectPO));
+                                    Log.d(TAG, "WORKBLOCK: " + workBlockID + " " + startTime + " " + endTime + " " + workingTime
+                                            + " " + taskID + " " + workBlockID + " " + employeeID + " " + title + " " + projectPO);
+                                    callEmployeeWorkBlocksListViewAdapter(view, activity, employeeWorkBlocks);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void callEmployeeWorkBlocksListViewAdapter(View view, Activity activity, List<WorkBlock> employeeWorkBlocks) {
+        // instantiate the custom list adapter
+        EmployeeWorkBlocksListViewAdapter adapter = new EmployeeWorkBlocksListViewAdapter(activity, employeeWorkBlocks);
+
+        // get the ListView and attach the adapter
+        ListView itemsListView  = (ListView) view.findViewById(R.id.work_blocks_list_view);
+        itemsListView.setAdapter(adapter);
+
+    }
+
+    // create a list utility class to dynamically change the height of the listView
+    // reference: https://stackoverflow.com/questions/17693578/android-how-to-display-2-listviews-in-one-activity-one-after-the-other
+    public static class ListUtils{
+        public static void setDynamicHeight(ListView listView){
+            ListAdapter listAdapter = listView.getAdapter();
+            if (listAdapter == null){
+                return;
+            }
+
+            int height = 0;
+            int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+
+            for(int i = 0; i < listAdapter.getCount(); i++){
+                View listItem = listAdapter.getView(i, null, listView);
+                listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+                height += 175;
+
+            }
+            ViewGroup.LayoutParams params = listView.getLayoutParams();
+            params.height = height ;
+            Log.d(TAG, "setDynamicHeight: " + height);
+            listView.setLayoutParams(params);
+            listView.requestLayout();
+        }
     }
 }

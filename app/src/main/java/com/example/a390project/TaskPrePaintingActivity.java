@@ -59,9 +59,6 @@ public class TaskPrePaintingActivity extends AppCompatActivity {
                     newEmployeeCommentEdtText.setError("Field is empty");
                 }
                 // else save comment into firebase
-
-
-
             }
         });
     }

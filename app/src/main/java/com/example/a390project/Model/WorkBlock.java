@@ -10,14 +10,34 @@ public class WorkBlock {
     private long workingTime;
     private String taskID;
     private String employeeID;
+    private String title;
+    private String projectPO;
 
-    public WorkBlock(String workBlockID, long startTime, long endTime, long workingTime, String taskID, String employeeID) {
+    public WorkBlock(String workBlockID, long startTime, long endTime, long workingTime, String taskID, String employeeID, String title, String projectPO) {
         this.workBlockID = workBlockID;
         this.startTime = startTime;
         this.endTime = endTime;
         this.workingTime = workingTime;
         this.taskID = taskID;
         this.employeeID = employeeID;
+        this.title = title;
+        this.projectPO = projectPO;
+    }
+
+    public String getProjectPO() {
+        return projectPO;
+    }
+
+    public void setProjectPO(String projectPO) {
+        this.projectPO = projectPO;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getWorkBlockID() {
