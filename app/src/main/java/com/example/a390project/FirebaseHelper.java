@@ -530,7 +530,7 @@ public class FirebaseHelper {
     }
     public void callGraphListViewAdapter(Activity activity, View view, List<GraphData> graphs) {
         GraphsListViewAdapter adapter = new GraphsListViewAdapter(activity, graphs);
-        ListView itemsListView  = view.findViewById(R.id.graph_list_view);
+        ListView itemsListView  = view.findViewById(R.id.graph_v);
         itemsListView.setAdapter(adapter);
     }
 
