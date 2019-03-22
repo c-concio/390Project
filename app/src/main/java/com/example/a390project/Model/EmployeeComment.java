@@ -1,5 +1,7 @@
 package com.example.a390project.Model;
 
+import java.util.Random;
+
 public class EmployeeComment {
 
     private String comment;
@@ -8,7 +10,7 @@ public class EmployeeComment {
 
     EmployeeComment(){}
 
-    EmployeeComment(String comment, long date, String username){
+    public EmployeeComment(String username, long date, String comment){
         this.comment = comment;
         this.date = date;
         this.username = username;

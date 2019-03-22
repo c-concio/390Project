@@ -10,12 +10,13 @@ import android.widget.TextView;
 import com.example.a390project.Model.EmployeeComment;
 import com.example.a390project.R;
 
+import java.text.DateFormat;
 import java.util.List;
 
 public class EmployeeCommentListViewAdapter extends BaseAdapter {
 
-    Context context;
-    List<EmployeeComment> employeeComments;
+    private Context context;
+    private List<EmployeeComment> employeeComments;
 
     public EmployeeCommentListViewAdapter(Context context, List<EmployeeComment> employeeComments){
         this.context = context;
@@ -51,7 +52,12 @@ public class EmployeeCommentListViewAdapter extends BaseAdapter {
         EmployeeComment currentComment = employeeComments.get(position);
 
         usernameTextView.setText(currentComment.getUsername());
-        createdDateTextView.setText(String.valueOf(currentComment.getDate()));
+
+        // format the miliseconds to date and time
+        DateFormat df = DateFormat.getDateTimeInstance();
+        String dateString = df.format(currentComment.getDate());
+        createdDateTextView.setText(dateString);
+
         commentTextView.setText(currentComment.getComment());
 
         return convertView;

@@ -3,6 +3,7 @@ package com.example.a390project;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatEditText;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,22 +47,22 @@ public class TaskPaintingActivity extends AppCompatActivity {
         employeeCommentsListView = findViewById(R.id.employeeCommentsListView);
 
 
-        final FirebaseHelper firebaseHelper = new FirebaseHelper();
+        FirebaseHelper firebaseHelper = new FirebaseHelper();
 
-        final String paintingTaskID = getIntent().getStringExtra("paintingTaskID");
+        String paintingTaskID = getIntent().getStringExtra("paintingTaskID");
         firebaseHelper.setPaintingValues(mPaintCode, mBakeTemp, mBakeTime, mDescription, mPaintDescription, paintingTaskID);
 
         mStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firebaseHelper.checkIfCanStart(paintingTaskID, getApplicationContext());
+                Toast.makeText(TaskPaintingActivity.this, "Task Started!" , Toast.LENGTH_SHORT).show();
             }
         });
 
         mEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firebaseHelper.checkIfCanEnd(paintingTaskID, getApplicationContext());
+                Toast.makeText(TaskPaintingActivity.this, "Task Ended!" , Toast.LENGTH_SHORT).show();
             }
         });
 
