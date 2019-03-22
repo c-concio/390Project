@@ -82,6 +82,7 @@ public class TaskListViewAdapter extends BaseAdapter {
                     Intent intent = new Intent(context, TaskInspectionActivity.class);
                     // send the TaskInspectionActivity the projectPO
                     intent.putExtra("inspectionTaskID", currentItem.getTaskID());
+                    intent.putExtra("taskType", taskType);
                     context.startActivity(intent);
                 }
                 else if(taskType.equals("Pre-Painting")) {

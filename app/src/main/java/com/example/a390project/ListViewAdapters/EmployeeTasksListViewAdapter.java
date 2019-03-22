@@ -29,7 +29,7 @@ public class EmployeeTasksListViewAdapter extends BaseAdapter {
     private TextView taskTextView;
     private TextView projectPOTextView;
 
-    private static final String TAG = "EmployeeTasksListViewAd";
+    private static final String TAG = "employeetaskli";
 
     // UI components
     private List<Task> tasks;
@@ -70,7 +70,6 @@ public class EmployeeTasksListViewAdapter extends BaseAdapter {
         taskTextView.setText(tasks.get(position).getTaskType());
         projectPOTextView.setText(tasks.get(position).getProjectPO());
 
-        final View finalConvertView = convertView;
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,7 +83,6 @@ public class EmployeeTasksListViewAdapter extends BaseAdapter {
                     Intent intent = new Intent(context, TaskInspectionActivity.class);
                     // send the TaskInspectionActivity the projectPO
                     intent.putExtra("inspectionTaskID", currentItem.getTaskID());
-                    intent.putExtra("taskType", taskType);
                     context.startActivity(intent);
                 }
                 else if(taskType.equals("Pre-Painting")) {
