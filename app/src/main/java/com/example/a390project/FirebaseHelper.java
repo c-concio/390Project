@@ -1064,7 +1064,10 @@ public class FirebaseHelper {
                 Log.d(TAG, "postComment: " + username);
 
                 EmployeeComment newComment = new EmployeeComment(username, currentTime, comment);
-                String commentID = generateRandomChars();
+
+
+                // check if the data base
+                String commentID = String.valueOf(currentTime);
 
                 rootRef.child("tasks").child(taskID).child("employeeComments").child(commentID).setValue(newComment);
             }
@@ -1076,17 +1079,7 @@ public class FirebaseHelper {
         });
     }
 
-    private static String generateRandomChars() {
-        int length = 16;
-        String candidateChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-        StringBuilder sb = new StringBuilder();
-        Random random = new Random();
-        for (int i = 0; i < length; i++) {
-            sb.append(candidateChars.charAt(random.nextInt(candidateChars.length())));
-        }
 
-        return sb.toString();
-    }
     /*
     ---------------------------------------------- Create Work Block -------------------------------------------------------
      */
