@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +14,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class TaskInspectionActivity extends AppCompatActivity {
+
+    private static final String TAG = "TaskInspectionActivity";
 
     // activity widgets
     EditText mCounted;
@@ -103,8 +106,9 @@ public class TaskInspectionActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = getIntent();
-                inspectionType = intent.getStringExtra("taskType_final_or_not");
-                firebaseHelper.checkIfCanStart(inspectionTaskID, getApplicationContext());
+                inspectionType = intent.getStringExtra("taskType");
+                Log.d(TAG, "onClick: " + inspectionType);
+                firebaseHelper.checkIfCanStart(inspectionTaskID, getApplicationContext(), inspectionType);
             }
         });
 

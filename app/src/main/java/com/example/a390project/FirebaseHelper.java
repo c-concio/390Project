@@ -23,7 +23,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.a390project.Fragments.EmployeeTasksFragment;
 import com.example.a390project.ListViewAdapters.ControlDeviceListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeCommentListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeListViewAdapter;
@@ -1084,7 +1083,7 @@ public class FirebaseHelper {
     ---------------------------------------------- Create Work Block -------------------------------------------------------
      */
 
-    public void createWorkBlock(final String taskID) {
+    public void createWorkBlock(final String taskID, final String taskTitle) {
         //boolean isCompleted, String workBlockID, long startTime, long endTime, long workingTime, String taskID, String employeeID
         rootRef.child("tasks").child(taskID).child("projectPO").addValueEventListener(new ValueEventListener() {
             @Override
@@ -1093,28 +1092,17 @@ public class FirebaseHelper {
                 final String workBlockID = WorkBlock.generateRandomChars();
                 final long timeNow = System.currentTimeMillis();
 
-                rootRef.child("tasks").child(taskID).child("taskType").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        String title = dataSnapshot.getValue(String.class);
-                        WorkBlock workBlock = new WorkBlock(workBlockID, timeNow, 0, 0, taskID, uId, title,projectPO);
-                        rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").child(workBlockID).setValue(workBlock);
+                WorkBlock workBlock = new WorkBlock(workBlockID, timeNow, 0, 0, taskID, uId, taskTitle, projectPO);
+                rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").child(workBlockID).setValue(workBlock);
 
-                        rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("workBlocks").child(workBlockID).setValue(true);
-                        rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canStart").setValue(false);
-                        rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canEnd").setValue(true);
-                        rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("currentWorkBlock").setValue(workBlockID);
+                rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("workBlocks").child(workBlockID).setValue(true);
+                rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canStart").setValue(false);
+                rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canEnd").setValue(true);
+                rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("currentWorkBlock").setValue(workBlockID);
 
-                        rootRef.child("tasks").child(taskID).child("workBlocks").child(workBlockID).setValue(true);
+                rootRef.child("tasks").child(taskID).child("workBlocks").child(workBlockID).setValue(true);
 
-                        Log.d(TAG, "WORKBLOCK CREATED: " + workBlockID + " " + title + " " + projectPO);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                Log.d(TAG, "WORKBLOCK CREATED: " + workBlockID + " " + taskTitle + " " + projectPO);
             }
 
             @Override
@@ -1163,7 +1151,7 @@ public class FirebaseHelper {
         });
     }
 
-    public void checkIfCanStart(final String taskID, final Context context) {
+    public void checkIfCanStart(final String taskID, final Context context, final String taskTitle) {
         final DatabaseReference uIdRef = rootRef.child("users").child(uId);
         uIdRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -1172,7 +1160,7 @@ public class FirebaseHelper {
                 if (dataSnapshot.child("workingTasks").hasChild(taskID)) {
                     boolean canStart = dataSnapshot.child("workingTasks").child(taskID).child("canStart").getValue(boolean.class);
                     if(canStart) {
-                        createWorkBlock(taskID);
+                        createWorkBlock(taskID, taskTitle);
                         Toast.makeText(context, "Work Block started...", Toast.LENGTH_SHORT).show();
                     }
                     else {
@@ -1180,7 +1168,7 @@ public class FirebaseHelper {
                     }
                 }
                 else {
-                    createWorkBlock(taskID);
+                    createWorkBlock(taskID, taskTitle);
                     Toast.makeText(context, "Work Block started...", Toast.LENGTH_SHORT).show();
                 }
             }

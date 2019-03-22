@@ -71,7 +71,7 @@ public class TaskPackagingActivity extends AppCompatActivity {
     View.OnClickListener startTimeOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            firebaseHelper.checkIfCanStart(packagingTaskID, getApplicationContext());
+            firebaseHelper.checkIfCanStart(packagingTaskID, getApplicationContext(), "Packaging");
         }
     };
 

@@ -52,7 +52,7 @@ public class PrepaintTaskListViewAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         if (convertView == null){
             convertView = LayoutInflater.from(context).inflate(R.layout.row_item_prepaint_tasks, parent, false);
         }
@@ -70,7 +70,7 @@ public class PrepaintTaskListViewAdapter extends BaseAdapter {
         startTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firebaseHelper.checkIfCanStart(currentItem.getTaskID(), context);
+                firebaseHelper.checkIfCanStart(currentItem.getTaskID(), context, subTasks.get(position).getSubTaskType());
             }
         });
 

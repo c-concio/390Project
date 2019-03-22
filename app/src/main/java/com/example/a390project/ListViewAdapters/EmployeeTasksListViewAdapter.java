@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.a390project.Model.EmployeeTasks;
 import com.example.a390project.Model.Task;
@@ -55,7 +56,7 @@ public class EmployeeTasksListViewAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         if (convertView == null) {
             convertView = LayoutInflater.from(context).
@@ -74,6 +75,7 @@ public class EmployeeTasksListViewAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 String taskType = currentItem.getTaskType();
+                Log.d(TAG, "onClick: " + taskType);
 
                 // 5 possible TaskActivities in total:
                 // Inspection & Final-Inspection - Pre-Painting - Painting - Baking - Packaging
@@ -82,7 +84,7 @@ public class EmployeeTasksListViewAdapter extends BaseAdapter {
                     Intent intent = new Intent(context, TaskInspectionActivity.class);
                     // send the TaskInspectionActivity the projectPO
                     intent.putExtra("inspectionTaskID", currentItem.getTaskID());
-                    intent.putExtra("taskType_final_or_not", taskType);
+                    intent.putExtra("taskType", taskType);
                     context.startActivity(intent);
                 }
                 else if(taskType.equals("Pre-Painting")) {
