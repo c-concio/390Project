@@ -497,7 +497,8 @@ public class FirebaseHelper {
     private void callTaskListViewAdapter(Activity activity, List<Task> tasks) {
         TaskListViewAdapter adapter = new TaskListViewAdapter(activity,tasks);
         ListView itemsListView  = activity.findViewById(R.id.project_tasks_list_view);
-        itemsListView.setAdapter(adapter);
+        if (itemsListView!= null)
+            itemsListView.setAdapter(adapter);
     }
 //-----------------------------------------GraphFragment Methods----------------------------------------------
 
