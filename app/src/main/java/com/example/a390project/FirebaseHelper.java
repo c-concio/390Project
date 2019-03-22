@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -15,7 +16,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -28,6 +28,7 @@ import com.example.a390project.ListViewAdapters.EmployeeCommentListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeTasksListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeWorkBlocksListViewAdapter;
+import com.example.a390project.ListViewAdapters.GraphsListViewAdapter;
 import com.example.a390project.ListViewAdapters.InventoryListViewAdapter;
 import com.example.a390project.ListViewAdapters.MachineListViewAdapter;
 import com.example.a390project.ListViewAdapters.PrepaintTaskListViewAdapter;
@@ -36,6 +37,7 @@ import com.example.a390project.ListViewAdapters.TaskListViewAdapter;
 import com.example.a390project.Model.ControlDevice;
 import com.example.a390project.Model.Employee;
 import com.example.a390project.Model.EmployeeComment;
+import com.example.a390project.Model.GraphData;
 import com.example.a390project.Model.Machine;
 import com.example.a390project.Model.Oven;
 import com.example.a390project.Model.PaintBucket;
@@ -54,16 +56,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.OnDataPointTapListener;
+import com.jjoe64.graphview.series.PointsGraphSeries;
+import com.jjoe64.graphview.series.Series;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import static java.lang.Integer.parseInt;
 
@@ -493,23 +499,27 @@ public class FirebaseHelper {
         ListView itemsListView  = activity.findViewById(R.id.project_tasks_list_view);
         itemsListView.setAdapter(adapter);
     }
-//-----------------------------------------Temperatures----------------------------------------------
+//-----------------------------------------GraphFragment Methods----------------------------------------------
 
-    public void GetTemperature(final Activity activity, String projectPO) {
-        rootRef.child("graphs").child(projectPO).child("graphID").child("temperatures").addValueEventListener(new ValueEventListener() {
+    public void populateGraphs(final Activity activity, final View view, String projectPO, final Context context) {
+        rootRef.child("graphs").child(projectPO).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<Float> y = new ArrayList<>();
-                List<Float> x = new ArrayList<>();
-                for (DataSnapshot TempSnapshot : dataSnapshot.getChildren()) {
-                    String time = TempSnapshot.getKey();
-                    int timei = parseInt(time);
-                    x.add((float)(timei));
-                    Float temp = TempSnapshot.getValue(float.class);
-                    y.add(temp);
+                List<GraphData> graphs = new ArrayList<>();
+                for (DataSnapshot graph:dataSnapshot.getChildren()) {
+                    List<Float> y = new ArrayList<>();
+                    List<Float> x = new ArrayList<>();
+                    String graphTitle = graph.child("graphTitle").getValue(String.class);
+                    for (DataSnapshot TempSnapshot : graph.child("temperatures").getChildren()) {
+                        String time = TempSnapshot.getKey();
+                        int timei = parseInt(time);
+                        x.add((float) (timei));
+                        Float temp = TempSnapshot.getValue(float.class);
+                        y.add(temp);
+                    }
+                    graphs.add(new GraphData(x,y,graphTitle));
                 }
-                SetUpGraph(activity,x,y);
-
+                callGraphListViewAdapter(activity, view, graphs);
             }
 
             @Override
@@ -517,34 +527,11 @@ public class FirebaseHelper {
 
             }
         });
-
     }
-    private void SetUpGraph(Activity activity,List<Float>x,List<Float> y){
-        GraphView graph = activity.findViewById(R.id.graph_v);
-        LineGraphSeries<DataPoint> series1 = new LineGraphSeries<>();
-
-
-        for(int i = 0;i<y.size();i++){
-            series1.appendData(new DataPoint(x.get(i),y.get(i)),true,100);
-        }
-        graph.addSeries(series1);
-        graph.getViewport().setXAxisBoundsManual(true);
-        graph.getViewport().setMinX(0);
-        graph.getViewport().setMaxX(getMax(x)+10);
-        graph.getViewport().setMinY(0);
-        graph.getViewport().setMaxY(getMax(y));
-
-
-    }
-
-    public float getMax(List<Float> list){
-        float max = Integer.MIN_VALUE;
-        for(int i=0; i<list.size(); i++){
-            if(list.get(i) > max){
-                max = list.get(i);
-            }
-        }
-        return max;
+    public void callGraphListViewAdapter(Activity activity, View view, List<GraphData> graphs) {
+        GraphsListViewAdapter adapter = new GraphsListViewAdapter(activity, graphs);
+        ListView itemsListView  = view.findViewById(R.id.graph_list_view);
+        itemsListView.setAdapter(adapter);
     }
 
     // --------------------------------------- Packaging Task Methods ---------------------------------------

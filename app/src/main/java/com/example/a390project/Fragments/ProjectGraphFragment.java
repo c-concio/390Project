@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.a390project.FirebaseHelper;
-import com.example.a390project.ProjectActivity;
 import com.example.a390project.R;
 
 @SuppressLint("ValidFragment")
@@ -32,6 +31,6 @@ public class ProjectGraphFragment extends Fragment {
         // setup the adapters and make the height of the list views dynamic
 
         FirebaseHelper firebaseHelper = new FirebaseHelper();
-        firebaseHelper.GetTemperature(getActivity(), projectPO);
+        firebaseHelper.populateGraphs(getActivity(),view, projectPO, getContext());
     }
 }
