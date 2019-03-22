@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -271,7 +272,7 @@ public class FirebaseHelper {
         dbRefEmployees.removeEventListener(childEventListener);
     }
 
-    void setWorkingTasksValueListener(String userID, final Activity activity){
+    public void setWorkingTasksValueListener(String userID, TextView noWorkingTasksTextView, final Activity activity, ListView assignedTasksListView){
 
 
         rootRef.child("users").child(userID).child("workingTasks").addValueEventListener(new ValueEventListener() {
@@ -328,11 +329,11 @@ public class FirebaseHelper {
         EmployeeTasksListViewAdapter adapter = new EmployeeTasksListViewAdapter(activity, assignedTasks);
         ListView assignedTasksListView = activity.findViewById(R.id.workingTasksListView);
         assignedTasksListView.setAdapter(adapter);
-        EmployeeActivity.ListUtils.setDynamicHeight(assignedTasksListView);
+        ListUtils.setDynamicHeight(assignedTasksListView);
 
     }
 
-    void setCompletedTasksValueEventListener(String userID, final Activity activity){
+    public void setCompletedTasksValueEventListener(String userID, TextView noCompletedTasksTextView, final Activity activity){
 
 
         rootRef.child("users").child(userID).child("completedTasks").addValueEventListener(new ValueEventListener() {
@@ -390,7 +391,7 @@ public class FirebaseHelper {
         EmployeeTasksListViewAdapter adapter = new EmployeeTasksListViewAdapter(activity, completedTasks);
         ListView completedTasksListView = activity.findViewById(R.id.completedTasksListView);
         completedTasksListView.setAdapter(adapter);
-        EmployeeActivity.ListUtils.setDynamicHeight(completedTasksListView);
+        ListUtils.setDynamicHeight(completedTasksListView);
 
     }
 
@@ -1063,4 +1064,29 @@ public class FirebaseHelper {
     private void postComment(Activity activity, String taskID, EmployeeComment newComment){
 
     }
+
+    public static class ListUtils{
+        public static void setDynamicHeight(ListView listView){
+            ListAdapter listAdapter = listView.getAdapter();
+            if (listAdapter == null){
+                return;
+            }
+
+            int height = 0;
+            int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+
+            for(int i = 0; i < listAdapter.getCount(); i++){
+                View listItem = listAdapter.getView(i, null, listView);
+                listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+                height += 175;
+
+            }
+            ViewGroup.LayoutParams params = listView.getLayoutParams();
+            params.height = height ;
+            Log.d(TAG, "setDynamicHeight: " + height);
+            listView.setLayoutParams(params);
+            listView.requestLayout();
+        }
+    }
+
 }
