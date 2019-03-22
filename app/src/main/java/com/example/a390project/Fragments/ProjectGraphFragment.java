@@ -32,6 +32,6 @@ public class ProjectGraphFragment extends Fragment {
         // setup the adapters and make the height of the list views dynamic
 
         FirebaseHelper firebaseHelper = new FirebaseHelper();
-        firebaseHelper.GetTemperature(getActivity());
+        firebaseHelper.GetTemperature(getActivity(), projectPO);
     }
 }

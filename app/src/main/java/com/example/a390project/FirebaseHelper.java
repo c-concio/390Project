@@ -495,8 +495,8 @@ public class FirebaseHelper {
     }
 //-----------------------------------------Temperatures----------------------------------------------
 
-    public void GetTemperature(final Activity activity) {
-        rootRef.child("graphs").child("graphID").child("temperatures").addValueEventListener(new ValueEventListener() {
+    public void GetTemperature(final Activity activity, String projectPO) {
+        rootRef.child("graphs").child(projectPO).child("graphID").child("temperatures").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Float> y = new ArrayList<>();
