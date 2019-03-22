@@ -52,7 +52,6 @@ public class CreateTaskDialogFragment extends DialogFragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 final String taskType = adapterView.getItemAtPosition(i).toString().trim();
-                final String projectPO = ((ProjectActivity)getActivity()).getProjectPO();
                 Log.d(TAG, "Task selected: " + taskType);
 
                 if (taskType.equals("Inspection") || taskType.equals("Packaging") || taskType.equals("Final-Inspection")) {
