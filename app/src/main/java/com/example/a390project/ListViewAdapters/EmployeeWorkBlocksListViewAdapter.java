@@ -13,6 +13,7 @@ import com.example.a390project.Model.Machine;
 import com.example.a390project.Model.WorkBlock;
 import com.example.a390project.R;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -71,9 +72,17 @@ public class EmployeeWorkBlocksListViewAdapter extends BaseAdapter {
         mTitle.setText(currentItem.getTitle());
         mProjectPO.setText(currentItem.getProjectPO());
 
-        mStartTime.setText(getDate(currentItem.getStartTime()));
-        mEndTime.setText(getDate(currentItem.getEndTime()));
-        mDurationTime.setText(Long.toString(currentItem.getWorkingTime()/60000) + " min");
+        DateFormat df = DateFormat.getDateTimeInstance();
+        String dateStringstartTime = df.format(currentItem.getStartTime());
+        String dateStringendTime = df.format(currentItem.getEndTime());
+
+        mStartTime.setText(dateStringstartTime);
+        mEndTime.setText(dateStringendTime);
+        long milliSec = currentItem.getWorkingTime();
+        long sec = (milliSec/1000) % 60;
+        long min = ((milliSec/1000) / 60) % 60;
+        long hour = ((milliSec/1000) / 60) / 60;
+        mDurationTime.setText(hour+"h"+min+"m"+sec+"s");
 
         return convertView;
     }
