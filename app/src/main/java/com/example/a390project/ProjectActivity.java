@@ -33,6 +33,7 @@ public class ProjectActivity extends AppCompatActivity {
         projectPO = getIntent().getStringExtra("projectPO");
         FirebaseHelper firebaseHelper = new FirebaseHelper();
         firebaseHelper.populateTasks(projectPO, ProjectActivity.this);
+        firebaseHelper.GetTemperature(ProjectActivity.this);
     }
 
     private void prepareActivity() {

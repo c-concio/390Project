@@ -54,6 +54,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -489,6 +492,44 @@ public class FirebaseHelper {
         TaskListViewAdapter adapter = new TaskListViewAdapter(activity,tasks);
         ListView itemsListView  = activity.findViewById(R.id.task_list_view);
         itemsListView.setAdapter(adapter);
+    }
+//-----------------------------------------Temperatures----------------------------------------------
+
+    public void GetTemperature(final Activity activity) {
+        rootRef.child("graphs").child("graphID").child("temperatures").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Float> y = new ArrayList<>();
+                List<Float> x = new ArrayList<>();
+                for (DataSnapshot TempSnapshot : dataSnapshot.getChildren()) {
+                    String time = TempSnapshot.getKey();
+                    int timei = parseInt(time);
+                    x.add((float)(timei));
+                    Float temp = TempSnapshot.getValue(float.class);
+                    y.add(temp);
+                }
+                SetUpGraph(activity,x,y);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+    private void SetUpGraph(Activity activity,List<Float>x,List<Float> y){
+        GraphView graph = activity.findViewById(R.id.graph_v);
+        LineGraphSeries<DataPoint> series1 = new LineGraphSeries<>();
+
+
+        for(int i = 0;i<y.size();i++){
+            series1.appendData(new DataPoint(x.get(i),y.get(i)),true,100);
+        }
+        graph.addSeries(series1);
+
+
     }
 
     // --------------------------------------- Packaging Task Methods ---------------------------------------
