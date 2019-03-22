@@ -61,6 +61,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static java.lang.Integer.parseInt;
 
@@ -1051,8 +1052,40 @@ public class FirebaseHelper {
     }
 
     // function that saves a comment to the specified task
-    private void postComment(Activity activity, String taskID, EmployeeComment newComment){
+    public void postComment(final String taskID, final String comment){
+        // generate an id for comments
 
+        rootRef.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("name").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // get the date, username and save it into Firebase
+                Long currentTime = System.currentTimeMillis();
+                String username = dataSnapshot.getValue(String.class);
+                Log.d(TAG, "postComment: " + username);
+
+                EmployeeComment newComment = new EmployeeComment(username, currentTime, comment);
+                String commentID = generateRandomChars();
+
+                rootRef.child("tasks").child(taskID).child("employeeComments").child(commentID).setValue(newComment);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private static String generateRandomChars() {
+        int length = 16;
+        String candidateChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+        for (int i = 0; i < length; i++) {
+            sb.append(candidateChars.charAt(random.nextInt(candidateChars.length())));
+        }
+
+        return sb.toString();
     }
     /*
     ---------------------------------------------- Create Work Block -------------------------------------------------------

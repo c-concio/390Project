@@ -52,14 +52,18 @@ public class TaskPrePaintingActivity extends AppCompatActivity {
         postCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String editTextValue = newEmployeeCommentEdtText.getText().toString();
+                String comment = newEmployeeCommentEdtText.getText().toString();
 
                 // check if the editText field is empty, if it is empty output error
-                if (editTextValue.isEmpty()){
+                if (comment.isEmpty()){
                     newEmployeeCommentEdtText.setError("Field is empty");
                 }
                 // else save comment into firebase
-
+                else {
+                    firebaseHelper.postComment(taskId, comment);
+                    newEmployeeCommentEdtText.getText().clear();
+                    Toast.makeText(TaskPrePaintingActivity.this, "Comment Posted", Toast.LENGTH_SHORT).show();
+                }
 
 
             }
