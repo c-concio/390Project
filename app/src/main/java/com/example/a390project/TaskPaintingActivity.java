@@ -23,10 +23,14 @@ public class TaskPaintingActivity extends AppCompatActivity {
     private Button mStartTime;
     private Button mEndTime;
     private Button mCompletedTime;
+    private Button mPostCommentButton;
     private EditText mComment;
     private ListView employeeCommentsListView;
 
     private String employeeComment;
+    private String paintingTaskID;
+
+    FirebaseHelper firebaseHelper;
 
     private static final String TAG = "TaskPaintingActivity";
 
@@ -43,13 +47,14 @@ public class TaskPaintingActivity extends AppCompatActivity {
         mStartTime = findViewById(R.id.start_time_painting_task);
         mEndTime = findViewById(R.id.end_time_painting_task);
         mCompletedTime = findViewById(R.id.completed_painting_task);
-        mComment = findViewById(R.id.employee_comment_painting_task);
+        mPostCommentButton = findViewById(R.id.postCommentButton);
+        mComment = findViewById(R.id.newEmployeeCommentEditText);
         employeeCommentsListView = findViewById(R.id.employeeCommentsListView);
 
 
-        FirebaseHelper firebaseHelper = new FirebaseHelper();
+        firebaseHelper = new FirebaseHelper();
 
-        String paintingTaskID = getIntent().getStringExtra("paintingTaskID");
+        paintingTaskID = getIntent().getStringExtra("paintingTaskID");
         firebaseHelper.setPaintingValues(mPaintCode, mBakeTemp, mBakeTime, mDescription, mPaintDescription, paintingTaskID);
 
         mStartTime.setOnClickListener(new View.OnClickListener() {
@@ -78,6 +83,28 @@ public class TaskPaintingActivity extends AppCompatActivity {
 
         Log.d(TAG, "onCreate: getting all comments");
         firebaseHelper.getEmployeeComments(this, paintingTaskID);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // if post button is clicked, checks if the editText is empty or not. If it is empty, get the string in the editText and save it to firebase
+        mPostCommentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String commentString = mComment.getText().toString();
+                if (commentString.isEmpty()){
+                    mComment.setError("Field is empty");
+                }
+                else{
+                    firebaseHelper.postComment(paintingTaskID, commentString);
+                    mComment.getText().clear();
+                    Toast.makeText(TaskPaintingActivity.this, "Comment posted", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
     }
 
     //custom heading and back button

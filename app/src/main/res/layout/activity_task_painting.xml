@@ -188,19 +188,36 @@
                 android:background="@color/colorPrimaryDark"
                 android:visibility="visible" />
 
-            <android.support.design.widget.TextInputLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/employee_comment_painting_task"
+                    android:id="@+id/newEmployeeCommentEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_weight="1"
+                    android:ems="10"
                     android:hint="New Comment"
-                    android:inputType=""
-                    android:padding="10dp" />
-            </android.support.design.widget.TextInputLayout>
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:isScrollContainer="true"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/divider3" />
+
+                <Button
+                    android:id="@+id/postCommentButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Post"
+                    app:layout_constraintStart_toEndOf="@+id/newEmployeeCommentEditText"
+                    app:layout_constraintTop_toBottomOf="@+id/divider3" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/commentsTitleTextView"
