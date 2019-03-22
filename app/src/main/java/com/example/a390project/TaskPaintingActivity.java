@@ -43,7 +43,7 @@ public class TaskPaintingActivity extends AppCompatActivity {
         mStartTime = findViewById(R.id.start_time_painting_task);
         mEndTime = findViewById(R.id.end_time_painting_task);
         mCompletedTime = findViewById(R.id.completed_painting_task);
-        mComment = findViewById(R.id.employee_comment_painting_task);
+        mComment = findViewById(R.id.newEmployeeCommentEditText);
         employeeCommentsListView = findViewById(R.id.employeeCommentsListView);
 
 
