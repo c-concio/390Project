@@ -8,11 +8,14 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.a390project.DialogFragments.GraphDialogFragment;
 import com.example.a390project.Model.Machine;
 
 public class MachineActivity extends AppCompatActivity {
@@ -22,7 +25,8 @@ public class MachineActivity extends AppCompatActivity {
     //views
     private TextView mMachineTitle;
     private TextView mMachineStatus;
-    private Switch mMachineNotifications;
+    private Button mStartTemperatureGraph;
+    private Button mEndTemperatureGraph;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,38 +37,48 @@ public class MachineActivity extends AppCompatActivity {
 
         prepareViews();
 
-        //Controller will only need to send machineID from MachineListViewAdapter to machineActivity,
-        // which will get the entire Machine Object from Firebase
-        String machineTitle = getIntent().getStringExtra("machine_title");
-        boolean machineStatus = getIntent().getBooleanExtra("machine_status",false);
-        Log.d(TAG, "Machine Fetched: " + machineTitle + " " + machineStatus);
+        final FirebaseHelper firebaseHelper = new FirebaseHelper();
 
-        Machine machine = new Machine (machineTitle, machineStatus);
-
-        mMachineTitle.setText(machine.getMachineTitle());
-        mMachineStatus.setText(machine.isMachineStatus() ? "On":"Off");
-
-        //create controller to enable/disable notifications
-        mMachineNotifications.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mStartTemperatureGraph.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    Log.d(TAG, "Notifications Checked ON");
-                    Toast.makeText(MachineActivity.this, "Notifications Enabled", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Log.d(TAG, "Notifications Checked OFF");
-                    Toast.makeText(MachineActivity.this, "Notifications Disabled", Toast.LENGTH_SHORT).show();
-                }
+            public void onClick(View v) {
+                openGraphDialogFragment();
+            }
+        });
+
+        mEndTemperatureGraph.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
             }
         });
+
+    }
+
+    private void openGraphDialogFragment() {
+        GraphDialogFragment dialog = new GraphDialogFragment();
+        dialog.show(getSupportFragmentManager(), "Graphable Projects");
     }
 
     private void prepareViews() {
         mMachineTitle = findViewById(R.id.machine_title_activity);
         mMachineStatus = findViewById(R.id.machine_status_activity);
-        mMachineNotifications = findViewById(R.id.machine_notifications_acitivty);
+        mStartTemperatureGraph = findViewById(R.id.open_graphable_projects);
+        mEndTemperatureGraph = findViewById(R.id.end_graph_graphable);
+
+        String machineTitle = getIntent().getStringExtra("machine_title");
+        boolean machineStatus = getIntent().getBooleanExtra("machine_status", false);
+        Log.d(TAG, "Machine Fetched: " + machineTitle + " " + machineStatus);
+
+        Machine machine = new Machine(machineTitle, machineStatus);
+
+        mMachineTitle.setText(machine.getMachineTitle());
+        mMachineStatus.setText(machine.isMachineStatus() ? "On" : "Off");
+
+        if (!(machineTitle.equals("Big_Oven") || machineTitle.equals("GFS_Oven"))) {
+            mStartTemperatureGraph.setVisibility(View.GONE);
+            mEndTemperatureGraph.setVisibility(View.GONE);
+        }
     }
 
     //custom heading and back button

@@ -2,7 +2,6 @@ package com.example.a390project;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -10,7 +9,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -28,11 +26,13 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.a390project.ForegroundServices.NotificationForegroundService;
 import com.example.a390project.ListViewAdapters.ControlDeviceListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeCommentListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeTasksListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeWorkBlocksListViewAdapter;
+import com.example.a390project.ListViewAdapters.GraphableProjectsListViewAdapter;
 import com.example.a390project.ListViewAdapters.GraphsListViewAdapter;
 import com.example.a390project.ListViewAdapters.InventoryListViewAdapter;
 import com.example.a390project.ListViewAdapters.MachineListViewAdapter;
@@ -615,19 +615,19 @@ public class FirebaseHelper {
         rootRef.child("tasks").child(taskID).addValueEventListener(inspectionValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild("partCounted") && dataSnapshot.hasChild("partAccepted") && dataSnapshot.hasChild("partRejected")) {
+                if (dataSnapshot.hasChild("partCounted")) {
                     int partCounted = dataSnapshot.child("partCounted").getValue(int.class);
-                    int partAccepted = dataSnapshot.child("partAccepted").getValue(int.class);
-                    int partRejected = dataSnapshot.child("partRejected").getValue(int.class);
-
-
                     EditText partCountedEditText = activity.findViewById(R.id.partCountedEditText);
-                    EditText partAcceptedEditText = activity.findViewById(R.id.partAcceptedEditText);
-                    EditText partRejectedEditText = activity.findViewById(R.id.partRejectedEditText);
-
-
                     partCountedEditText.setText(Integer.toString(partCounted));
+                }
+                if (dataSnapshot.hasChild("partAccepted")) {
+                    int partAccepted = dataSnapshot.child("partAccepted").getValue(int.class);
+                    EditText partAcceptedEditText = activity.findViewById(R.id.partAcceptedEditText);
                     partAcceptedEditText.setText(Integer.toString(partAccepted));
+                }
+                if (dataSnapshot.hasChild("partRejected")) {
+                    int partRejected = dataSnapshot.child("partRejected").getValue(int.class);
+                    EditText partRejectedEditText = activity.findViewById(R.id.partRejectedEditText);
                     partRejectedEditText.setText(Integer.toString(partRejected));
                 }
             }
@@ -1552,7 +1552,7 @@ public class FirebaseHelper {
     }
 
     private void startService(final long timeNow, final Context context, Activity activity, final String taskTitle, final String projectPO, String taskID) {
-        final Intent serviceIntent = new Intent(context, ForegroundService.class);
+        final Intent serviceIntent = new Intent(context, NotificationForegroundService.class);
         long idLong = (timeNow % 10000000);
         final int NOTIFICATION_ID = (int)idLong;
 
@@ -1574,7 +1574,7 @@ public class FirebaseHelper {
     }
 
     private void stopService(Context context) {
-        Intent serviceIntent = new Intent(context, ForegroundService.class);
+        Intent serviceIntent = new Intent(context, NotificationForegroundService.class);
         context.stopService(serviceIntent);
     }
 
@@ -1652,5 +1652,34 @@ public class FirebaseHelper {
 
             }
         });
+    }
+
+    /*
+    --------------------------------GRAPHABLE PROJECTS METHODS ---------------------------------------------------------------
+     */
+
+    public void populateGraphableProjects(final View view, final Activity activity, final FloatingActionButton mFab) {
+        final List<String> projectPOs = new ArrayList<>();
+        rootRef.child("projects").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds: dataSnapshot.getChildren()) {
+                    projectPOs.add(ds.getKey());
+                }
+                callGraphableProjectsListViewAdapter(view, activity, projectPOs, mFab);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void callGraphableProjectsListViewAdapter(View view, Activity activity, List<String> projectPOs, FloatingActionButton mFab) {
+        GraphableProjectsListViewAdapter graphableProjectsListViewAdapter = new GraphableProjectsListViewAdapter(activity,projectPOs,mFab);
+        ListView itemsListView  = (ListView) view.findViewById(R.id.graphable_projects_list_view);
+        itemsListView.setAdapter(graphableProjectsListViewAdapter);
+
     }
 }
