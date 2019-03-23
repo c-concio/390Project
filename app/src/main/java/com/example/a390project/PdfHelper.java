@@ -86,7 +86,6 @@ class PdfHelper {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View content = inflater.inflate(R.layout.pdf_paint_layout, null);
 
-        // measure the layout
         int measureWidth = View.MeasureSpec.makeMeasureSpec(page.getCanvas().getWidth(), View.MeasureSpec.EXACTLY);
         int measuredHeight = View.MeasureSpec.makeMeasureSpec(page.getCanvas().getHeight(), View.MeasureSpec.EXACTLY);
         content.measure(measureWidth, measuredHeight);
@@ -98,7 +97,20 @@ class PdfHelper {
     }
 
     // baking
+    public void createBakingLayout(){
 
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View content = inflater.inflate(R.layout.pdf_baking_layout, null);
+
+        int measureWidth = View.MeasureSpec.makeMeasureSpec(page.getCanvas().getWidth(), View.MeasureSpec.EXACTLY);
+        int measuredHeight = View.MeasureSpec.makeMeasureSpec(page.getCanvas().getHeight(), View.MeasureSpec.EXACTLY);
+        content.measure(measureWidth, measuredHeight);
+        content.layout(0, 0, page.getCanvas().getWidth(), page.getCanvas().getHeight());
+
+        content.draw(page.getCanvas());
+        document.finishPage(page);
+
+    }
 
     // comment takes in the taskId
 
