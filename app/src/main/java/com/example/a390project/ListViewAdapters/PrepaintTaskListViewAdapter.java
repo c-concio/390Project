@@ -1,5 +1,6 @@
 package com.example.a390project.ListViewAdapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 import com.example.a390project.FirebaseHelper;
 import com.example.a390project.Model.SubTask;
 import com.example.a390project.R;
+import com.example.a390project.TaskInspectionActivity;
+import com.example.a390project.TaskPrePaintingActivity;
 
 import java.util.List;
 
@@ -20,6 +23,7 @@ public class PrepaintTaskListViewAdapter extends BaseAdapter {
 
     private List<SubTask> subTasks;
     private Context context;
+    private Activity activity;
 
     private static final String TAG = "PrepaintTaskListViewAda";
 
@@ -30,9 +34,10 @@ public class PrepaintTaskListViewAdapter extends BaseAdapter {
     private Button endTimeButton;
     private EditText employeeCommentEditText;
 
-    public PrepaintTaskListViewAdapter(Context context, List<SubTask> subTasks){
+    public PrepaintTaskListViewAdapter(Context context, List<SubTask> subTasks, Activity activity){
         this.context = context;
         this.subTasks = subTasks;
+        this.activity = activity;
         Log.d(TAG, "PrepaintTaskListViewAdapter: task size: " + this.subTasks.size());
     }
 
@@ -70,7 +75,7 @@ public class PrepaintTaskListViewAdapter extends BaseAdapter {
         startTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firebaseHelper.checkIfCanStart(currentItem.getTaskID(), context, subTasks.get(position).getSubTaskType());
+                firebaseHelper.checkIfCanStart(currentItem.getTaskID(), context, subTasks.get(position).getSubTaskType(), activity);
             }
         });
 

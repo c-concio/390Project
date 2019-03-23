@@ -35,7 +35,7 @@ public class TaskInspectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_inspection);
         setupUI();
-        firebaseHelper.setTaskInspectionActivityListener(inspectionTaskID, this);
+        firebaseHelper.setTaskInspectionActivityListener(inspectionTaskID, TaskInspectionActivity.this);
 
 
         //Text changed listener
@@ -108,7 +108,7 @@ public class TaskInspectionActivity extends AppCompatActivity {
                 Intent intent = getIntent();
                 inspectionType = intent.getStringExtra("taskType");
                 Log.d(TAG, "onClick: " + inspectionType);
-                firebaseHelper.checkIfCanStart(inspectionTaskID, getApplicationContext(), inspectionType);
+                firebaseHelper.checkIfCanStart(inspectionTaskID, getApplicationContext(), inspectionType, TaskInspectionActivity.this);
             }
         });
 

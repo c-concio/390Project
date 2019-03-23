@@ -2,12 +2,15 @@ package com.example.a390project;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,20 +59,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
-import com.jjoe64.graphview.DefaultLabelFormatter;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.DataPointInterface;
-import com.jjoe64.graphview.series.LineGraphSeries;
-import com.jjoe64.graphview.series.OnDataPointTapListener;
-import com.jjoe64.graphview.series.PointsGraphSeries;
-import com.jjoe64.graphview.series.Series;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static java.lang.Integer.parseInt;
 
@@ -81,6 +78,7 @@ public class FirebaseHelper {
     private String uId;
     private boolean check;
     private boolean setStatusOfSwitchControlDevice = true;
+    public static final String CHANNEL_ID = "NotificationChannel";
 
     public FirebaseHelper() {
         rootRef = FirebaseDatabase.getInstance().getReference();
@@ -113,8 +111,7 @@ public class FirebaseHelper {
 
     private List<ControlDevice> cDevices;
 
-    // -------------------------------------------------------------------------------------------------------------
-
+    // -------------------------------------------Notification timer method
 
     /*
    ------------------------------------------FirebaseHelper User creation functions-----------------------------------
@@ -754,7 +751,7 @@ public class FirebaseHelper {
     }
 
     private void callPrepaintTaskListViewAdapter(Activity activity, List<SubTask> subTasks){
-        PrepaintTaskListViewAdapter adapter = new PrepaintTaskListViewAdapter(activity, subTasks);
+        PrepaintTaskListViewAdapter adapter = new PrepaintTaskListViewAdapter(activity, subTasks, activity);
         ListView prepaintTasksListView = activity.findViewById(R.id.prepaintTaskListView);
         prepaintTasksListView.setAdapter(adapter);
         setPrepaintTasksListViewHeightBasedOnChildren(prepaintTasksListView);
@@ -1128,7 +1125,36 @@ public class FirebaseHelper {
     ---------------------------------------------- Create Work Block -------------------------------------------------------
      */
 
-    public void createWorkBlock(final String taskID, final String taskTitle) {
+    public void checkIfCanStart(final String taskID, final Context context, final String taskTitle, final Activity activity) {
+        final DatabaseReference uIdRef = rootRef.child("users").child(uId);
+        uIdRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                uIdRef.removeEventListener(this);
+                if (dataSnapshot.child("workingTasks").hasChild(taskID)) {
+                    boolean canStart = dataSnapshot.child("workingTasks").child(taskID).child("canStart").getValue(boolean.class);
+                    if(canStart) {
+                        createWorkBlock(taskID, taskTitle, context, activity);
+                        Toast.makeText(context, "Work Block started...", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Toast.makeText(context, "Work Block already started...", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    createWorkBlock(taskID, taskTitle, context, activity);
+                    Toast.makeText(context, "Work Block started...", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void createWorkBlock(final String taskID, final String taskTitle, final Context context, final Activity activity) {
         //boolean isCompleted, String workBlockID, long startTime, long endTime, long workingTime, String taskID, String employeeID
         rootRef.child("tasks").child(taskID).child("projectPO").addValueEventListener(new ValueEventListener() {
             @Override
@@ -1148,6 +1174,12 @@ public class FirebaseHelper {
                 rootRef.child("tasks").child(taskID).child("workBlocks").child(workBlockID).setValue(true);
 
                 Log.d(TAG, "WORKBLOCK CREATED: " + workBlockID + " " + taskTitle + " " + projectPO);
+
+                //UPON CREATION OF WORKBLOCK, ALSO CREATE PERSISTING NOTIFICATION
+                createNotification(timeNow,context,taskTitle,projectPO,taskID);
+
+                //startService(timeNow,context,activity,taskTitle,projectPO,taskID);
+
             }
 
             @Override
@@ -1155,11 +1187,37 @@ public class FirebaseHelper {
 
             }
         });
-
-
     }
 
-    public void endWorkBlock(final String taskID) {
+    public void checkIfCanEnd(final String taskID, final Context context) {
+        final DatabaseReference uIdRef = rootRef.child("users").child(uId);
+        uIdRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                uIdRef.removeEventListener(this);
+                if (dataSnapshot.child("workingTasks").hasChild(taskID)) {
+                    boolean canEnd = dataSnapshot.child("workingTasks").child(taskID).child("canEnd").getValue(boolean.class);
+                    if(canEnd) {
+                        endWorkBlock(taskID,context);
+                        Toast.makeText(context, "Work Block ended...", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Toast.makeText(context, "Work Block Already ended. Start new Work Block...", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    Toast.makeText(context, "Cannot end a Work Block that hasn't started...", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void endWorkBlock(final String taskID, final Context context) {
         final DatabaseReference currentWorkBlockRef = rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("currentWorkBlock");
         currentWorkBlockRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -1180,6 +1238,13 @@ public class FirebaseHelper {
                         rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canStart").setValue(true);
                         rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canEnd").setValue(false);
                         rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("currentWorkBlock").setValue("none");
+
+                        //UPON ENDING TIME, REMOVE THE PERSISTING NOTIFICATION
+                        removeNotification(startTime, context);
+
+                        //stopService(context);
+
+
                     }
 
                     @Override
@@ -1187,63 +1252,6 @@ public class FirebaseHelper {
 
                     }
                 });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    public void checkIfCanStart(final String taskID, final Context context, final String taskTitle) {
-        final DatabaseReference uIdRef = rootRef.child("users").child(uId);
-        uIdRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                uIdRef.removeEventListener(this);
-                if (dataSnapshot.child("workingTasks").hasChild(taskID)) {
-                    boolean canStart = dataSnapshot.child("workingTasks").child(taskID).child("canStart").getValue(boolean.class);
-                    if(canStart) {
-                        createWorkBlock(taskID, taskTitle);
-                        Toast.makeText(context, "Work Block started...", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        Toast.makeText(context, "Work Block already started...", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                else {
-                    createWorkBlock(taskID, taskTitle);
-                    Toast.makeText(context, "Work Block started...", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    public void checkIfCanEnd(final String taskID, final Context context) {
-        final DatabaseReference uIdRef = rootRef.child("users").child(uId);
-        uIdRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                uIdRef.removeEventListener(this);
-                if (dataSnapshot.child("workingTasks").hasChild(taskID)) {
-                    boolean canEnd = dataSnapshot.child("workingTasks").child(taskID).child("canEnd").getValue(boolean.class);
-                    if(canEnd) {
-                        endWorkBlock(taskID);
-                        Toast.makeText(context, "Work Block ended...", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        Toast.makeText(context, "Work Block Already ended. Start new Work Block...", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                else {
-                    Toast.makeText(context, "Cannot end a Work Block that hasn't started...", Toast.LENGTH_SHORT).show();
-                }
             }
 
             @Override
@@ -1296,6 +1304,132 @@ public class FirebaseHelper {
 
             }
         });
+    }
+
+    /*
+    --------------------------------------WORK BLOCKS NOTIFICATIONS / FOREGROUND SERVICE ---------------------------------------------
+     */
+
+    private void createNotification(final long timeNow, final Context context, final String taskTitle, final String projectPO, final String taskID) {
+
+        long idLong = (timeNow % 10000000);
+        final int NOTIFICATION_ID = (int)idLong;
+        Intent intent;
+        if(taskTitle.equals("Inspection") || taskTitle.equals("Final-Inspection")) {
+            intent = new Intent(context, TaskInspectionActivity.class);
+            // send the TaskInspectionActivity the projectPO
+            intent.putExtra("inspectionTaskID", taskID);
+        }
+        else if(taskTitle.equals("Sanding") || taskTitle.equals("Sand-Blasting") || taskTitle.equals("Manual Solvent Cleaning") || taskTitle.equals("Iridite") || taskTitle.equals("Masking")) {
+            intent = new Intent(context, TaskPrePaintingActivity.class);
+            intent.putExtra("prepaintingTaskID", taskID);
+        }
+        else if(taskTitle.equals("Painting")) {
+            intent = new Intent(context, TaskPaintingActivity.class);
+            intent.putExtra("paintingTaskID", taskID);
+        }
+        else if(taskTitle.equals("Baking")) {
+            intent = new Intent(context, TaskBakingActivity.class);
+            intent.putExtra("bakingTaskID", taskID);
+        }
+        else {
+            intent = new Intent(context, TaskPackagingActivity.class);
+            // send the taskPackagingActivity the projectPO
+            intent.putExtra("packagingTaskID", taskID);
+        }
+
+        final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        final NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        final long timeAtNotificationCreation = System.currentTimeMillis();
+
+        final Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run()
+            {
+                // TODO do your thing
+
+                long timeElapsed = System.currentTimeMillis() - timeAtNotificationCreation;
+
+                long sec = (timeElapsed/1000) % 60;
+                long min = ((timeElapsed/1000) / 60) % 60;
+                long hour = ((timeElapsed/1000) / 60) / 60;
+
+                Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
+                        .setContentTitle("WorkBlock - " + projectPO + " - " + taskTitle)
+                        .setSubText("Start Time: " + getDate(timeNow))
+                        .setContentText("Time Elapsed: " + hour+":"+min+":"+sec)
+                        .setSmallIcon(R.drawable.ic_work_block)
+                        .setContentIntent(pendingIntent)
+                        .setOngoing(true)
+                        .build();
+                notificationManager.notify(NOTIFICATION_ID, notification);
+                Log.d(TAG, "updateNotification: " + NOTIFICATION_ID);
+
+                rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canEnd").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        boolean canEnd = dataSnapshot.getValue(boolean.class);
+                        if (!canEnd) {
+                            removeNotification(timeNow,context);
+                            timer.cancel();
+                            timer.purge();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+        }, 0, 1000);
+
+    }
+
+    private void removeNotification(long startTime, Context context) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        long idLong = (startTime % 10000000);
+        int NOTIFICATION_ID = (int)idLong;
+        notificationManager.cancel(NOTIFICATION_ID);
+        Log.d(TAG, "removeNotification: " + NOTIFICATION_ID);
+    }
+
+    private void startService(final long timeNow, final Context context, Activity activity, final String taskTitle, final String projectPO, String taskID) {
+        Intent serviceIntent = new Intent(context,new ForegroundService().getClass());
+        long idLong = (timeNow % 10000000);
+        final int NOTIFICATION_ID = (int)idLong;
+
+        serviceIntent.putExtra("NOTIFICATION_ID",NOTIFICATION_ID);
+        serviceIntent.putExtra("taskTitle",taskTitle);
+        serviceIntent.putExtra("taskID",taskID);
+        serviceIntent.putExtra("timeNow",timeNow);
+        serviceIntent.putExtra("projectPO",projectPO);
+        context.startService(serviceIntent);
+    }
+
+    private void stopService(Context context) {
+        Intent serviceIntent = new Intent(context,new ForegroundService().getClass());
+        context.stopService(serviceIntent);
+    }
+
+    /*
+    --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     */
+
+    private String getDate(long time) {
+        String value;
+
+        if(time == 0) {
+            value = "-";
+        }
+        else {
+            SimpleDateFormat formatter = new SimpleDateFormat("hh:mm:ss a dd-MM-yyyy");
+            value = formatter.format(time);
+        }
+
+        return value;
     }
 
     private void callEmployeeWorkBlocksListViewAdapter(View view, Activity activity, List<WorkBlock> employeeWorkBlocks) {

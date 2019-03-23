@@ -56,7 +56,7 @@ public class TaskPaintingActivity extends AppCompatActivity {
         mStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firebaseHelper.checkIfCanStart(paintingTaskID, getApplicationContext(), "Painting");
+                firebaseHelper.checkIfCanStart(paintingTaskID, getApplicationContext(), "Painting", TaskPaintingActivity.this);
                 Toast.makeText(TaskPaintingActivity.this, "Task Started!" , Toast.LENGTH_SHORT).show();
             }
         });
