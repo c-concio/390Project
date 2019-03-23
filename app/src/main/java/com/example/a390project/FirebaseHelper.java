@@ -1342,38 +1342,40 @@ public class FirebaseHelper {
         final NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         final long timeAtNotificationCreation = System.currentTimeMillis();
 
-        final Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run()
-            {
-                // TODO do your thing
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context,CHANNEL_ID)
+                .setContentTitle(taskTitle + " - " + projectPO)
+                .setSubText("Start Time: " + getDate(timeNow))
+                .setSmallIcon(R.drawable.ic_work_block)
+                .setContentIntent(pendingIntent)
+                .setOngoing(true);
 
+        final TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
                 long timeElapsed = System.currentTimeMillis() - timeAtNotificationCreation;
 
                 long sec = (timeElapsed/1000) % 60;
                 long min = ((timeElapsed/1000) / 60) % 60;
                 long hour = ((timeElapsed/1000) / 60) / 60;
 
-                Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
-                        .setContentTitle("WorkBlock - " + projectPO + " - " + taskTitle)
-                        .setSubText("Start Time: " + getDate(timeNow))
-                        .setContentText("Time Elapsed: " + hour+":"+min+":"+sec)
-                        .setSmallIcon(R.drawable.ic_work_block)
-                        .setContentIntent(pendingIntent)
-                        .setOngoing(true)
-                        .build();
-                notificationManager.notify(NOTIFICATION_ID, notification);
+                builder.setContentText("Time Elapsed: " + hour+":"+min+":"+sec);
+
+                notificationManager.notify(NOTIFICATION_ID, builder.build());
                 Log.d(TAG, "updateNotification: " + NOTIFICATION_ID);
 
+            }
+        };
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
                 rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canEnd").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         boolean canEnd = dataSnapshot.getValue(boolean.class);
                         if (!canEnd) {
                             removeNotification(timeNow,context);
-                            timer.cancel();
-                            timer.purge();
+                            timerTask.cancel();
                         }
                     }
 
@@ -1382,9 +1384,58 @@ public class FirebaseHelper {
 
                     }
                 });
-
             }
-        }, 0, 1000);
+        });
+
+        Timer timer = new Timer(NOTIFICATION_ID+"");
+        timer.scheduleAtFixedRate(timerTask, 0, 1000);
+
+        t.start();
+
+//
+//        final Timer timer = new Timer();
+//        timer.schedule(new TimerTask() {
+//            @Override
+//            public void run()
+//            {
+//                // TODO do your thing
+//
+//                long timeElapsed = System.currentTimeMillis() - timeAtNotificationCreation;
+//
+//                long sec = (timeElapsed/1000) % 60;
+//                long min = ((timeElapsed/1000) / 60) % 60;
+//                long hour = ((timeElapsed/1000) / 60) / 60;
+//
+//                Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
+//                        .setContentTitle(taskTitle + " - " + projectPO)
+//                        .setSubText("Start Time: " + getDate(timeNow))
+//                        .setContentText("Time Elapsed: " + hour+":"+min+":"+sec)
+//                        .setSmallIcon(R.drawable.ic_work_block)
+//                        .setContentIntent(pendingIntent)
+//                        .setOngoing(true)
+//                        .build();
+//                notificationManager.notify(NOTIFICATION_ID, notification);
+//                Log.d(TAG, "updateNotification: " + NOTIFICATION_ID);
+//
+//                rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canEnd").addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        boolean canEnd = dataSnapshot.getValue(boolean.class);
+//                        if (!canEnd) {
+//                            removeNotification(timeNow,context);
+//                            timer.cancel();
+//                            timer.purge();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                });
+//
+//            }
+//        }, 0, 1000);
 
     }
 
