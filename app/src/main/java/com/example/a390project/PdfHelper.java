@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.pdf.PdfDocument;
 import android.os.Environment;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,12 +58,12 @@ class PdfHelper {
         View content = inflater.inflate(R.layout.pdf_inspection_layout, null);
 
         // find the views for the inspection values
-        TextView recievedTextView = content.findViewById(R.id.receivedTextView);
+        TextView receivedTextView = content.findViewById(R.id.receivedTextView);
         TextView acceptedTextView = content.findViewById(R.id.acceptedTextView);
         TextView rejectedTextView = content.findViewById(R.id.rejectedTextView);
 
         // set the text for the views
-        recievedTextView.setText(String.valueOf(partsReceived));
+        receivedTextView.setText(String.valueOf(partsReceived));
         acceptedTextView.setText(String.valueOf(partsAccepted));
         rejectedTextView.setText(String.valueOf(partsRejected));
 
@@ -80,7 +81,21 @@ class PdfHelper {
 
 
     // paint task
+    public void createPaintLayout(){
 
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View content = inflater.inflate(R.layout.pdf_paint_layout, null);
+
+        // measure the layout
+        int measureWidth = View.MeasureSpec.makeMeasureSpec(page.getCanvas().getWidth(), View.MeasureSpec.EXACTLY);
+        int measuredHeight = View.MeasureSpec.makeMeasureSpec(page.getCanvas().getHeight(), View.MeasureSpec.EXACTLY);
+        content.measure(measureWidth, measuredHeight);
+        content.layout(0, 0, page.getCanvas().getWidth(), page.getCanvas().getHeight());
+
+        content.draw(page.getCanvas());
+        document.finishPage(page);
+
+    }
 
     // baking
 
