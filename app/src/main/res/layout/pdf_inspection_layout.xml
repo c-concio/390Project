@@ -7,11 +7,12 @@
 
     <TextView
         android:id="@+id/inspectionTitleTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:text="Inspection"
         android:textColor="@color/common_google_signin_btn_text_dark_focused"
-        android:textSize="24sp" />
+        android:textSize="18sp" />
 
     <TableLayout
         android:layout_width="wrap_content"
@@ -19,37 +20,46 @@
         android:background="@android:color/darker_gray">
 
         <TableRow
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/receivedTitleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:layout_weight="1"
                 android:padding="8dp"
                 android:text="Parts Received"
-                android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+                android:textColor="@color/common_google_signin_btn_text_dark_focused"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/acceptedTitleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:layout_weight="1"
                 android:padding="8dp"
                 android:text="Parts Accepted"
-                android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+                android:textColor="@color/common_google_signin_btn_text_dark_focused"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/rejectedTitleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:layout_weight="1"
                 android:padding="8dp"
                 android:text="Parts Rejected"
-                android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+                android:textColor="@color/common_google_signin_btn_text_dark_focused"
+                android:textSize="14sp" />
 
         </TableRow>
 
         <TableRow
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent">
 
             <TextView
@@ -59,9 +69,11 @@
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="1dp"
                 android:layout_marginBottom="2dp"
+                android:layout_weight="1"
                 android:background="@color/common_google_signin_btn_text_dark_default"
                 android:padding="8dp"
-                android:text="received" />
+                android:text="received"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/acceptedTextView"
@@ -70,9 +82,11 @@
                 android:layout_marginLeft="1dp"
                 android:layout_marginRight="1dp"
                 android:layout_marginBottom="2dp"
+                android:layout_weight="1"
                 android:background="@color/common_google_signin_btn_text_dark_default"
                 android:padding="8dp"
-                android:text="accepted" />
+                android:text="accepted"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/rejectedTextView"
@@ -81,9 +95,11 @@
                 android:layout_marginLeft="1dp"
                 android:layout_marginRight="2dp"
                 android:layout_marginBottom="2dp"
+                android:layout_weight="1"
                 android:background="@color/common_google_signin_btn_text_dark_default"
                 android:padding="8dp"
-                android:text="rejected" />
+                android:text="rejected"
+                android:textSize="14sp" />
         </TableRow>
 
         <TableRow

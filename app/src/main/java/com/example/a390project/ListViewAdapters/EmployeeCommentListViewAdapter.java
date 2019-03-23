@@ -1,6 +1,7 @@
 package com.example.a390project.ListViewAdapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +19,12 @@ public class EmployeeCommentListViewAdapter extends BaseAdapter {
     private Context context;
     private List<EmployeeComment> employeeComments;
 
+    private static final String TAG = "EmployeeCommentListView";
+
     public EmployeeCommentListViewAdapter(Context context, List<EmployeeComment> employeeComments){
         this.context = context;
         this.employeeComments = employeeComments;
+        Log.d(TAG, "EmployeeCommentListViewAdapter: comment size: " + context);
     }
 
     @Override
@@ -43,6 +47,8 @@ public class EmployeeCommentListViewAdapter extends BaseAdapter {
         if(convertView ==null){
             convertView = LayoutInflater.from(context).inflate(R.layout.row_item_employee_comment, parent, false);
         }
+
+        Log.d(TAG, "getView: getting comment");
 
         // views initialization
         TextView usernameTextView = convertView.findViewById(R.id.usernameTextView);

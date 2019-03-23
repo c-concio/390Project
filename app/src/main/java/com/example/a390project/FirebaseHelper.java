@@ -113,6 +113,12 @@ public class FirebaseHelper {
 
     private List<ControlDevice> cDevices;
 
+
+    // ------------------------------------------- Employee Comments Variables -------------------------------------------
+    private ValueEventListener employeeCommentsValueEventListener;
+
+    // -------------------------------------------------------------------------------------------------------------
+
     // -------------------------------------------Notification timer method
 
     /*
@@ -1041,8 +1047,8 @@ public class FirebaseHelper {
     // ------------------------------------------------ Firebase Employee Comments ------------------------------------------------
 
     // function that gets all the comments of the specified task
-    public void getEmployeeComments(final Activity activity, final String taskID){
-        rootRef.child("tasks").child(taskID).child("employeeComments").addValueEventListener(new ValueEventListener() {
+    void getEmployeeComments(final Activity activity, final View content, final String taskID){
+        rootRef.child("tasks").child(taskID).child("employeeComments").addValueEventListener(employeeCommentsValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<EmployeeComment> comments = new ArrayList<>();
@@ -1051,11 +1057,12 @@ public class FirebaseHelper {
                     EmployeeComment currentComment = postSnapshot.getValue(EmployeeComment.class);
                     Log.d(TAG, "onDataChange: Called snapshot");
 
+                    Log.d(TAG, "onDataChange: got comment");
                     comments.add(currentComment);
                 }
 
                 if (comments.size() > 0)
-                    callEmployeeCommentListViewAdapter(activity, comments);
+                    callEmployeeCommentListViewAdapter(activity, content, comments);
             }
 
             @Override
@@ -1065,11 +1072,25 @@ public class FirebaseHelper {
         });
     }
 
-    private void callEmployeeCommentListViewAdapter(Activity activity, List<EmployeeComment> comments){
-        EmployeeCommentListViewAdapter adapter = new EmployeeCommentListViewAdapter(activity, comments);
-        ListView employeeCommentsListView = activity.findViewById(R.id.employeeCommentsListView);
-        employeeCommentsListView.setAdapter(adapter);
-        setEmployeeCommentsListViewHeightBasedOnChildren(employeeCommentsListView);
+    private void callEmployeeCommentListViewAdapter(Activity activity, View content, List<EmployeeComment> comments){
+        ListView employeeCommentsListView;
+
+        if (content != null) {
+            EmployeeCommentListViewAdapter adapter = new EmployeeCommentListViewAdapter(content.getContext(), comments);
+            employeeCommentsListView = content.findViewById(R.id.employeeCommentsListView);
+            employeeCommentsListView.setAdapter(adapter);
+
+            Log.d(TAG, "callEmployeeCommentListViewAdapter: listView is " + employeeCommentsListView.getAdapter());
+        }
+        else {
+
+            EmployeeCommentListViewAdapter adapter = new EmployeeCommentListViewAdapter(activity, comments);
+            employeeCommentsListView = activity.findViewById(R.id.employeeCommentsListView);
+
+            employeeCommentsListView.setAdapter(adapter);
+            setEmployeeCommentsListViewHeightBasedOnChildren(employeeCommentsListView);
+        }
+
     }
 
     // Reference: https://stackoverflow.com/questions/18367522/android-list-view-inside-a-scroll-view/26998840
@@ -1095,7 +1116,7 @@ public class FirebaseHelper {
     }
 
     // function that saves a comment to the specified task
-    public void postComment(final String taskID, final String comment){
+    void postComment(final String taskID, final String comment){
         // generate an id for comments
 
         rootRef.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("name").addValueEventListener(new ValueEventListener() {
@@ -1121,6 +1142,11 @@ public class FirebaseHelper {
             }
         });
     }
+
+    void detatchEmployeeCommentsListView(String taskID){
+        rootRef.child("users").child(taskID).child("employeeComments").removeEventListener(employeeCommentsValueEventListener);
+    }
+
 
     /*
     ---------------------------------------------- Create Work Block -------------------------------------------------------
