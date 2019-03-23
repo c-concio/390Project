@@ -73,16 +73,16 @@ public class MainActivity extends AppCompatActivity {
         // ------------------------------ Testing --------------------------------
         PdfHelper pdfHelper = new PdfHelper(3300 , 2550 , this);
         pdfHelper.startPage(3);
-        pdfHelper.createBakingLayout();
+        pdfHelper.createPrePaintLayout();
         //pdfHelper.createPaintLayout();
         //pdfHelper.startPage(1);
         //pdfHelper.createPaintLayout();
         //pdfHelper.createInspectionLayout(10, 2, 20);
 
-        pdfHelper.getComments("O1n5WvJzFshCBKsm");
+        //pdfHelper.getComments("O1n5WvJzFshCBKsm");
 
         //pdfHelper.endPage();
-        //pdfHelper.generatePdf();
+        pdfHelper.generatePdf();
     }
 
     private void updateUI(FirebaseUser currentUser) {

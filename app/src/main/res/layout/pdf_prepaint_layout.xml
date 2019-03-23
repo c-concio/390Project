@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/prePaintTitleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pre-Paint"
+        android:textColor="@color/common_google_signin_btn_text_dark_focused"
+        android:textSize="18sp" />
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/darker_gray"
+            android:paddingLeft="2dp"
+            android:paddingTop="2dp"
+            android:paddingRight="2dp">
+
+            <TextView
+                android:id="@+id/prePaintTaskTitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="1dp"
+                android:background="@android:color/darker_gray"
+                android:padding="8dp"
+                android:text="Task"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+
+            <TextView
+                android:id="@+id/hoursTitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="1dp"
+                android:background="@android:color/darker_gray"
+                android:padding="8dp"
+                android:text="Hours"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/sandBlastingTableRow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/darker_gray"
+            android:paddingLeft="2dp"
+            android:paddingTop="2dp"
+            android:paddingRight="2dp"
+            android:paddingBottom="2dp">
+
+            <TextView
+                android:id="@+id/sandBlastingTitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="1dp"
+                android:background="@color/common_google_signin_btn_text_dark_default"
+                android:padding="8dp"
+                android:text="Sand Blasting"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+
+            <TextView
+                android:id="@+id/sandBlastingTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="1dp"
+                android:background="@color/common_google_signin_btn_text_dark_default"
+                android:padding="8dp"
+                android:text="Value"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/sandingTableRow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/darker_gray"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp">
+
+            <TextView
+                android:id="@+id/sandingTitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="1dp"
+                android:background="@color/common_google_signin_btn_text_dark_default"
+                android:padding="8dp"
+                android:text="Sanding"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+
+            <TextView
+                android:id="@+id/sandingTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="1dp"
+                android:background="@color/common_google_signin_btn_text_dark_default"
+                android:padding="8dp"
+                android:text="Value"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/manualSolventCleaningTableRow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/darker_gray"
+            android:paddingLeft="2dp"
+            android:paddingTop="2dp"
+            android:paddingRight="2dp"
+            android:paddingBottom="2dp">
+
+            <TextView
+                android:id="@+id/manualSolventCleaningTitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="1dp"
+                android:background="@color/common_google_signin_btn_text_dark_default"
+                android:padding="8dp"
+                android:text="Manual Solvent Cleaning"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+
+            <TextView
+                android:id="@+id/manualSolventCleaningTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="1dp"
+                android:background="@color/common_google_signin_btn_text_dark_default"
+                android:padding="8dp"
+                android:text="Value"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/iriditeTableRow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/darker_gray"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp">
+
+            <TextView
+                android:id="@+id/iriditeTitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="1dp"
+                android:background="@color/common_google_signin_btn_text_dark_default"
+                android:padding="8dp"
+                android:text="Iridite"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+
+            <TextView
+                android:id="@+id/iriditeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="1dp"
+                android:background="@color/common_google_signin_btn_text_dark_default"
+                android:padding="8dp"
+                android:text="value"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/maskingTableRow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/darker_gray"
+            android:paddingLeft="2dp"
+            android:paddingTop="2dp"
+            android:paddingRight="2dp"
+            android:paddingBottom="2dp">
+
+            <TextView
+                android:id="@+id/maskingTitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="1dp"
+                android:background="@color/common_google_signin_btn_text_dark_default"
+                android:padding="8dp"
+                android:text="Masking"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+
+            <TextView
+                android:id="@+id/maskingTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="1dp"
+                android:background="@color/common_google_signin_btn_text_dark_default"
+                android:padding="8dp"
+                android:text="Value"
+                android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+        </TableRow>
+
+    </TableLayout>
+</LinearLayout>

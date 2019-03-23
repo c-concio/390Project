@@ -66,6 +66,7 @@ class PdfHelper {
 
     // header (outputs info of project and customer
 
+    // ----------------------------------- Inspection -----------------------------------
     // receive the parts received, parts accepted, and parts rejected and create the inspection layout
     public void createInspectionLayout(int partsReceived, int partsAccepted, int partsRejected){
 
@@ -87,42 +88,47 @@ class PdfHelper {
         content.draw(page.getCanvas());
     }
 
-    // prepaint task
+    // ----------------------------------- Prepaint -----------------------------------
+    public void createPrePaintLayout(){
+        // get the layout view
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View content = inflater.inflate(R.layout.pdf_prepaint_layout, null);
+
+        // find views for the prepaint values
+        measureLayout(content);
+
+        content.draw(page.getCanvas());
+        document.finishPage(page);
+    }
 
 
-    // paint task
+    // ----------------------------------- Painting -----------------------------------
     public void createPaintLayout(){
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View content = inflater.inflate(R.layout.pdf_paint_layout, null);
 
-        int measureWidth = View.MeasureSpec.makeMeasureSpec(page.getCanvas().getWidth(), View.MeasureSpec.EXACTLY);
-        int measuredHeight = View.MeasureSpec.makeMeasureSpec(page.getCanvas().getHeight(), View.MeasureSpec.EXACTLY);
-        content.measure(measureWidth, measuredHeight);
-        content.layout(0, 0, page.getCanvas().getWidth(), page.getCanvas().getHeight());
+        measureLayout(content);
 
         content.draw(page.getCanvas());
         document.finishPage(page);
 
     }
 
-    // baking
+    // ----------------------------------- Baking -----------------------------------
     public void createBakingLayout(){
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View content = inflater.inflate(R.layout.pdf_baking_layout, null);
 
-        int measureWidth = View.MeasureSpec.makeMeasureSpec(page.getCanvas().getWidth(), View.MeasureSpec.EXACTLY);
-        int measuredHeight = View.MeasureSpec.makeMeasureSpec(page.getCanvas().getHeight(), View.MeasureSpec.EXACTLY);
-        content.measure(measureWidth, measuredHeight);
-        content.layout(0, 0, page.getCanvas().getWidth(), page.getCanvas().getHeight());
+        measureLayout(content);
 
         content.draw(page.getCanvas());
         document.finishPage(page);
 
     }
 
-    // comment takes in the taskId
+    // ----------------------------------- Comments -----------------------------------
     public void createCommentsLayout(String taskID){
         // create a view for the employee layout
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

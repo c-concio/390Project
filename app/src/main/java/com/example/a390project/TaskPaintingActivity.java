@@ -81,7 +81,7 @@ public class TaskPaintingActivity extends AppCompatActivity {
         setActionBar("Painting");
 
         Log.d(TAG, "onCreate: getting all comments");
-        firebaseHelper.getEmployeeComments(this, null, paintingTaskID);
+        firebaseHelper.getEmployeeComments(this, paintingTaskID);
     }
 
     @Override

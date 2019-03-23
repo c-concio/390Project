@@ -582,10 +582,10 @@ public class FirebaseHelper {
                 EditText employeeCommentEditText = activity.findViewById(R.id.employeeCommentEditText);
 
                 SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-                String date = formatter.format(currentTask.getDate());
+                //String date = formatter.format(currentTask.getDate());
 
                 descriptionEditText.setText(currentTask.getDescription());
-                dateEditText.setText(String.valueOf(date));
+                //dateEditText.setText(String.valueOf(date));
 
                 employeeCommentEditText.setText(currentTask.getEmployeeComment());
 
@@ -1056,7 +1056,7 @@ public class FirebaseHelper {
     // ------------------------------------------------ Firebase Employee Comments ------------------------------------------------
 
     // function that gets all the comments of the specified task
-    void getEmployeeComments(final Activity activity, final View content, final String taskID){
+    void getEmployeeComments(final Activity activity, final String taskID){
         rootRef.child("tasks").child(taskID).child("employeeComments").addValueEventListener(employeeCommentsValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -1071,7 +1071,7 @@ public class FirebaseHelper {
                 }
 
                 if (comments.size() > 0)
-                    callEmployeeCommentListViewAdapter(activity, content, comments);
+                    callEmployeeCommentListViewAdapter(activity, comments);
             }
 
             @Override
@@ -1081,24 +1081,15 @@ public class FirebaseHelper {
         });
     }
 
-    private void callEmployeeCommentListViewAdapter(Activity activity, View content, List<EmployeeComment> comments){
+    private void callEmployeeCommentListViewAdapter(Activity activity, List<EmployeeComment> comments){
         ListView employeeCommentsListView;
 
-        if (content != null) {
-            EmployeeCommentListViewAdapter adapter = new EmployeeCommentListViewAdapter(content.getContext(), comments);
-            employeeCommentsListView = content.findViewById(R.id.employeeCommentsListView);
-            employeeCommentsListView.setAdapter(adapter);
-
-            Log.d(TAG, "callEmployeeCommentListViewAdapter: listView is " + employeeCommentsListView.getAdapter());
-        }
-        else {
 
             EmployeeCommentListViewAdapter adapter = new EmployeeCommentListViewAdapter(activity, comments);
             employeeCommentsListView = activity.findViewById(R.id.employeeCommentsListView);
 
             employeeCommentsListView.setAdapter(adapter);
             setEmployeeCommentsListViewHeightBasedOnChildren(employeeCommentsListView);
-        }
 
     }
 
