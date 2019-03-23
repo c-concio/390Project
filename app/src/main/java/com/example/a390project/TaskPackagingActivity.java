@@ -21,6 +21,7 @@ public class TaskPackagingActivity extends AppCompatActivity {
     EditText employeeCommentEditText;
     Button startTimeButton;
     Button endTimeButton;
+    Button completeButton;
     FirebaseHelper firebaseHelper;
     TextView hoursTextView;
 
@@ -39,8 +40,8 @@ public class TaskPackagingActivity extends AppCompatActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         setupUI();
-
         firebaseHelper.setTaskPackagingActivityListener(packagingTaskID, this);
+        firebaseHelper.setStartTimeEndTimeButtons(startTimeButton,endTimeButton,packagingTaskID);
     }
 
     private void setupUI(){
@@ -50,10 +51,12 @@ public class TaskPackagingActivity extends AppCompatActivity {
         employeeCommentEditText = findViewById(R.id.employeeCommentEditText);
         startTimeButton = findViewById(R.id.startTimeButton);
         endTimeButton = findViewById(R.id.endTimeButton);
+        completeButton = findViewById(R.id.completed_packaging_task);
         hoursTextView = findViewById(R.id.hoursTextView);
 
         startTimeButton.setOnClickListener(startTimeOnClickListener);
         endTimeButton.setOnClickListener(endTimeOnClickListener);
+        completeButton.setOnClickListener(completeOnClickListener);
 
         /*descriptionEditText.setFocusable(false);
         dateEditText.setFocusable(false);
@@ -71,7 +74,7 @@ public class TaskPackagingActivity extends AppCompatActivity {
     View.OnClickListener startTimeOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            firebaseHelper.checkIfCanStart(packagingTaskID, getApplicationContext(), "Packaging", TaskPackagingActivity.this);
+            firebaseHelper.checkIfCanStart(packagingTaskID, getApplicationContext(), "Packaging", TaskPackagingActivity.this,startTimeButton,endTimeButton);
         }
     };
 
@@ -80,6 +83,14 @@ public class TaskPackagingActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             firebaseHelper.checkIfCanEnd(packagingTaskID, getApplicationContext());
+        }
+    };
+
+    // onClickListener for the complete button
+    View.OnClickListener completeOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            firebaseHelper.completeTask(packagingTaskID);
         }
     };
 

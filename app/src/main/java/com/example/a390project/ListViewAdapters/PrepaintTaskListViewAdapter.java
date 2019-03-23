@@ -72,10 +72,13 @@ public class PrepaintTaskListViewAdapter extends BaseAdapter {
 
 
         final FirebaseHelper firebaseHelper = new FirebaseHelper();
+
+        firebaseHelper.setStartTimeEndTimeButtons(startTimeButton,endTimeButton,currentItem.getTaskID());
+
         startTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firebaseHelper.checkIfCanStart(currentItem.getTaskID(), context, subTasks.get(position).getSubTaskType(), activity);
+                firebaseHelper.checkIfCanStart(currentItem.getTaskID(), context, subTasks.get(position).getSubTaskType(), activity, startTimeButton, endTimeButton);
             }
         });
 

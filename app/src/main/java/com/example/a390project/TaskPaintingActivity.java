@@ -51,12 +51,13 @@ public class TaskPaintingActivity extends AppCompatActivity {
         employeeCommentsListView = findViewById(R.id.employeeCommentsListView);
 
         paintingTaskID = getIntent().getStringExtra("paintingTaskID");
+        firebaseHelper.setStartTimeEndTimeButtons(mStartTime,mEndTime,paintingTaskID);
         firebaseHelper.setPaintingValues(mPaintCode, mBakeTemp, mBakeTime, mDescription, mPaintDescription, paintingTaskID);
 
         mStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firebaseHelper.checkIfCanStart(paintingTaskID, getApplicationContext(), "Painting", TaskPaintingActivity.this);
+                firebaseHelper.checkIfCanStart(paintingTaskID, getApplicationContext(), "Painting", TaskPaintingActivity.this,mStartTime,mEndTime);
                 Toast.makeText(TaskPaintingActivity.this, "Task Started!" , Toast.LENGTH_SHORT).show();
             }
         });
@@ -72,7 +73,7 @@ public class TaskPaintingActivity extends AppCompatActivity {
         mCompletedTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(TaskPaintingActivity.this, "Painting Completed!", Toast.LENGTH_SHORT).show();
+                firebaseHelper.completeTask(paintingTaskID);
                 employeeComment = mComment.getText().toString().trim();
             }
         });
