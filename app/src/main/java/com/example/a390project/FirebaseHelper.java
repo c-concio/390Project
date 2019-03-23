@@ -7,8 +7,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -1155,30 +1157,74 @@ public class FirebaseHelper {
     }
 
     public void createWorkBlock(final String taskID, final String taskTitle, final Context context, final Activity activity) {
-        //boolean isCompleted, String workBlockID, long startTime, long endTime, long workingTime, String taskID, String employeeID
-        rootRef.child("tasks").child(taskID).child("projectPO").addValueEventListener(new ValueEventListener() {
+        //check if workBlockLimitHasBeenReached (limit of 3 running blocks concurrently)
+        rootRef.child("users").child(uId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                final String projectPO = dataSnapshot.getValue(String.class);
-                final String workBlockID = WorkBlock.generateRandomChars();
-                final long timeNow = System.currentTimeMillis();
+                rootRef.child("users").child(uId).removeEventListener(this);
+                int count = 0;
+                if (dataSnapshot.hasChild("workBlockLimitCount")) {
+                    count = dataSnapshot.child("workBlockLimitCount").getValue(int.class);
+                }
+                if (count < 3) {
+                    rootRef.child("tasks").child(taskID).child("projectPO").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            rootRef.child("tasks").child(taskID).child("projectPO").removeEventListener(this);
+                            final String projectPO = dataSnapshot.getValue(String.class);
+                            final String workBlockID = WorkBlock.generateRandomChars();
+                            final long timeNow = System.currentTimeMillis();
 
-                WorkBlock workBlock = new WorkBlock(workBlockID, timeNow, 0, 0, taskID, uId, taskTitle, projectPO);
-                rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").child(workBlockID).setValue(workBlock);
+                            WorkBlock workBlock = new WorkBlock(workBlockID, timeNow, 0, 0, taskID, uId, taskTitle, projectPO);
+                            rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").child(workBlockID).setValue(workBlock);
 
-                rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("workBlocks").child(workBlockID).setValue(true);
-                rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canStart").setValue(false);
-                rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canEnd").setValue(true);
-                rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("currentWorkBlock").setValue(workBlockID);
+                            rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("workBlocks").child(workBlockID).setValue(true);
+                            rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canStart").setValue(false);
+                            rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canEnd").setValue(true);
+                            rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("workBlockLimitCount").setValue(1);
+                            rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("currentWorkBlock").setValue(workBlockID);
 
-                rootRef.child("tasks").child(taskID).child("workBlocks").child(workBlockID).setValue(true);
+                            rootRef.child("tasks").child(taskID).child("workBlocks").child(workBlockID).setValue(true);
 
-                Log.d(TAG, "WORKBLOCK CREATED: " + workBlockID + " " + taskTitle + " " + projectPO);
+                            Log.d(TAG, "WORKBLOCK CREATED: " + workBlockID + " " + taskTitle + " " + projectPO);
 
-                //UPON CREATION OF WORKBLOCK, ALSO CREATE PERSISTING NOTIFICATION
-                createNotification(timeNow,context,taskTitle,projectPO,taskID);
+                            //UPON CREATION OF WORKBLOCK, ALSO CREATE PERSISTING NOTIFICATION
+                            //createNotification(timeNow,context,taskTitle,projectPO,taskID);
 
-                //startService(timeNow,context,activity,taskTitle,projectPO,taskID);
+                            startService(timeNow,context,activity,taskTitle,projectPO,taskID);
+
+                            //manage workBlockLimitCount
+                            rootRef.child("users").child(uId).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    rootRef.child("users").child(uId).removeEventListener(this);
+                                    if (dataSnapshot.hasChild("workBlockLimitCount")) {
+                                        int count = dataSnapshot.child("workBlockLimitCount").getValue(int.class);
+                                        rootRef.child("users").child(uId).child("workBlockLimitCount").setValue(count+1);
+                                    }
+                                    else {
+                                        rootRef.child("users").child(uId).child("workBlockLimitCount").setValue(1);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+                else {
+                    Toast.makeText(context, "You have reached the limit of concurrent workblocks; 3", Toast.LENGTH_SHORT).show();
+                }
 
             }
 
@@ -1187,6 +1233,8 @@ public class FirebaseHelper {
 
             }
         });
+
+
     }
 
     public void checkIfCanEnd(final String taskID, final Context context) {
@@ -1240,9 +1288,28 @@ public class FirebaseHelper {
                         rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("currentWorkBlock").setValue("none");
 
                         //UPON ENDING TIME, REMOVE THE PERSISTING NOTIFICATION
-                        removeNotification(startTime, context);
+                        //removeNotification(startTime, context);
 
-                        //stopService(context);
+                        stopService(context);
+
+                        //manage workBlockLimitCount
+                        rootRef.child("users").child(uId).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                rootRef.child("users").child(uId).removeEventListener(this);
+                                if (dataSnapshot.hasChild("workBlockLimitCount")) {
+                                    int count = dataSnapshot.child("workBlockLimitCount").getValue(int.class);
+                                    rootRef.child("users").child(uId).child("workBlockLimitCount").setValue(count-1);
+                                }
+                                else {
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
 
 
                     }
@@ -1448,7 +1515,7 @@ public class FirebaseHelper {
     }
 
     private void startService(final long timeNow, final Context context, Activity activity, final String taskTitle, final String projectPO, String taskID) {
-        Intent serviceIntent = new Intent(context,new ForegroundService().getClass());
+        final Intent serviceIntent = new Intent(context, ForegroundService.class);
         long idLong = (timeNow % 10000000);
         final int NOTIFICATION_ID = (int)idLong;
 
@@ -1457,11 +1524,20 @@ public class FirebaseHelper {
         serviceIntent.putExtra("taskID",taskID);
         serviceIntent.putExtra("timeNow",timeNow);
         serviceIntent.putExtra("projectPO",projectPO);
-        context.startService(serviceIntent);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(serviceIntent);
+            Log.d(TAG, "startService: FOREGROUND_SERVICE");
+        }
+        else {
+            context.startService(serviceIntent);
+            Log.d(TAG, "startService: SERVICE");
+        }
+
     }
 
     private void stopService(Context context) {
-        Intent serviceIntent = new Intent(context,new ForegroundService().getClass());
+        Intent serviceIntent = new Intent(context, ForegroundService.class);
         context.stopService(serviceIntent);
     }
 

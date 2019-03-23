@@ -7,8 +7,17 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Timer;
@@ -16,19 +25,43 @@ import java.util.TimerTask;
 
 public class ForegroundService extends Service {
     public static final String CHANNEL_ID = "NotificationChannel";
+    private static final String TAG = "ForegroundService";
+    private int NOTIFICATION_ID = 0;
+    private String taskTitle;
+    private String taskID;
+    private String projectPO;
+    private long timeNow;
+
+
+    private NotificationCompat.Builder builder = null;
 
     @Override
     public void onCreate() {
+        builder = null;
+        NOTIFICATION_ID = 0;
         super.onCreate();
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    if(builder != null && NOTIFICATION_ID !=0) {
+                        startForeground(NOTIFICATION_ID, builder.build());
+                        Log.d(TAG, "run: FOREGROUND STARTED");
+                        break;
+                    }
+                }
+            }
+        });
+        t.start();
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        final String taskTitle = intent.getStringExtra("taskTitle");
-        final String taskID = intent.getStringExtra("taskID");
-        final int NOTIFICATION_ID = intent.getIntExtra("NOTIFICATION_ID",0);
-        final String projectPO = intent.getStringExtra("projectPO");
-        final long timeNow = intent.getLongExtra("timeNow",0);
+    public int onStartCommand(final Intent intent, int flags, int startId) {
+        taskTitle = intent.getStringExtra("taskTitle");
+        taskID = intent.getStringExtra("taskID");
+        NOTIFICATION_ID = intent.getIntExtra("NOTIFICATION_ID",0);
+        projectPO = intent.getStringExtra("projectPO");
+        timeNow = intent.getLongExtra("timeNow",0);
 
         Intent intent2;
         if(taskTitle.equals("Inspection") || taskTitle.equals("Final-Inspection")) {
@@ -55,37 +88,84 @@ public class ForegroundService extends Service {
         }
 
         final PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), NOTIFICATION_ID, intent2, 0);
+        final NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         final long timeAtNotificationCreation = System.currentTimeMillis();
 
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
+        builder = new NotificationCompat.Builder(this,CHANNEL_ID)
+                .setContentTitle(taskTitle + " - " + projectPO)
+                .setSubText("Start Time: " + getDate(timeNow))
+                .setSmallIcon(R.drawable.ic_work_block)
+                .setContentIntent(pendingIntent)
+                .setOngoing(true);
+
+        final TimerTask[] timerTask = new TimerTask[1];
+        Thread t2 = new Thread(new Runnable() {
             @Override
-            public void run()
-            {
-                // TODO do your thing
+            public void run() {
+                timerTask[0] = new TimerTask() {
+                    @Override
+                    public void run() {
+                        long timeElapsed = System.currentTimeMillis() - timeAtNotificationCreation;
 
-                long timeElapsed = System.currentTimeMillis() - timeAtNotificationCreation;
+                        long sec = (timeElapsed/1000) % 60;
+                        long min = ((timeElapsed/1000) / 60) % 60;
+                        long hour = ((timeElapsed/1000) / 60) / 60;
 
-                long sec = (timeElapsed/1000) % 60;
-                long min = ((timeElapsed/1000) / 60) % 60;
-                long hour = ((timeElapsed/1000) / 60) / 60;
+                        taskTitle = intent.getStringExtra("taskTitle");
+                        taskID = intent.getStringExtra("taskID");
+                        NOTIFICATION_ID = intent.getIntExtra("NOTIFICATION_ID",0);
+                        projectPO = intent.getStringExtra("projectPO");
+                        timeNow = intent.getLongExtra("timeNow",0);
 
-                Notification notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
-                        .setContentTitle("WorkBlock - " + projectPO + " - " + taskTitle)
-                        .setSubText("Start Time: " + getDate(timeNow))
-                        .setContentText("Time Elapsed: " + hour+":"+min+":"+sec)
-                        .setSmallIcon(R.drawable.ic_work_block)
-                        .setContentIntent(pendingIntent)
-                        .setOngoing(true)
-                        .build();
 
-                NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-                notificationManager.notify(NOTIFICATION_ID, notification);
-                startForeground(NOTIFICATION_ID,notification);
+                        builder.setContentText("Time Elapsed: " + hour+":"+min+":"+sec)
+                                .setContentTitle(taskTitle + " - " + projectPO)
+                                .setSubText("Start Time: " + getDate(timeNow))
+                                .setSmallIcon(R.drawable.ic_work_block)
+                                .setContentIntent(pendingIntent)
+                                .setOngoing(true);
 
+                        notificationManager.notify(NOTIFICATION_ID, builder.build());
+                        Log.d(TAG, "updateNotification: " + taskTitle);
+
+                    }
+                };
+                Timer timer = new Timer(NOTIFICATION_ID+"");
+                timer.scheduleAtFixedRate(timerTask[0], 0, 1000);
             }
-        }, 0, 1000);
-        return START_NOT_STICKY;
+        });
+
+
+        final DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        final String uId = FirebaseAuth.getInstance().getUid();
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("canEnd").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        boolean canEnd = dataSnapshot.getValue(boolean.class);
+                        if (!canEnd) {
+                            long idLong = (timeNow % 10000000);
+                            int NOTIFICATION_ID = (int)idLong;
+                            notificationManager.cancel(NOTIFICATION_ID);
+                            Log.d(TAG, "removeNotification: " + NOTIFICATION_ID);
+                            timerTask[0].cancel();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        });
+
+        t.start();
+        t2.start();
+
+        return START_STICKY;
     }
 
     private String getDate(long time) {
