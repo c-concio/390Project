@@ -577,17 +577,9 @@ public class FirebaseHelper {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Task currentTask = dataSnapshot.getValue(Task.class);
 
-                EditText descriptionEditText = activity.findViewById(R.id.descriptionEditText);
-                EditText dateEditText = activity.findViewById(R.id.dateEditText);
-                EditText employeeCommentEditText = activity.findViewById(R.id.employeeCommentEditText);
+                TextView packagingDescriptionTextView = activity.findViewById(R.id.descriptionTextView);
 
-                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-                //String date = formatter.format(currentTask.getDate());
-
-                descriptionEditText.setText(currentTask.getDescription());
-                //dateEditText.setText(String.valueOf(date));
-
-                employeeCommentEditText.setText(currentTask.getEmployeeComment());
+                packagingDescriptionTextView.setText(currentTask.getDescription());
 
                 // get the material used
                 LinearLayout materialUsedLinearLayout = activity.findViewById(R.id.materialUsedLinearLayout);

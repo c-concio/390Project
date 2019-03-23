@@ -10,20 +10,20 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 // Todo: input set firebase
 
 public class TaskPackagingActivity extends AppCompatActivity {
 
     // activity widgets
-    EditText descriptionEditText;
-    EditText dateEditText;
+    TextView descriptionTextView;
     EditText employeeCommentEditText;
     Button startTimeButton;
     Button endTimeButton;
     Button completeButton;
+    Button postCommentButton;
     FirebaseHelper firebaseHelper;
-    TextView hoursTextView;
 
     String packagingTaskID;
 
@@ -42,26 +42,23 @@ public class TaskPackagingActivity extends AppCompatActivity {
         setupUI();
         firebaseHelper.setTaskPackagingActivityListener(packagingTaskID, this);
         firebaseHelper.setStartTimeEndTimeButtons(startTimeButton,endTimeButton,packagingTaskID);
+        firebaseHelper.getEmployeeComments(this, packagingTaskID);
+
     }
 
     private void setupUI(){
         // find the ids of the widgets
-        descriptionEditText = findViewById(R.id.descriptionEditText);
-        dateEditText = findViewById(R.id.dateEditText);
+        descriptionTextView = findViewById(R.id.descriptionTextView);
         employeeCommentEditText = findViewById(R.id.employeeCommentEditText);
         startTimeButton = findViewById(R.id.startTimeButton);
         endTimeButton = findViewById(R.id.endTimeButton);
         completeButton = findViewById(R.id.completed_packaging_task);
-        hoursTextView = findViewById(R.id.hoursTextView);
+        postCommentButton = findViewById(R.id.postCommentButton);
 
         startTimeButton.setOnClickListener(startTimeOnClickListener);
         endTimeButton.setOnClickListener(endTimeOnClickListener);
         completeButton.setOnClickListener(completeOnClickListener);
-
-        /*descriptionEditText.setFocusable(false);
-        dateEditText.setFocusable(false);
-        employeeCommentEditText.setFocusable(false);*/
-        hoursTextView.setVisibility(View.GONE);
+        postCommentButton.setOnClickListener(postCommentOnClickListener);
 
 
         // setup the firebaseHelper
@@ -91,6 +88,21 @@ public class TaskPackagingActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             firebaseHelper.completeTask(packagingTaskID);
+        }
+    };
+
+    View.OnClickListener postCommentOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            String commentString = employeeCommentEditText.getText().toString();
+            if (commentString.isEmpty()){
+                employeeCommentEditText.setError("Field is empty");
+            }
+            else{
+                firebaseHelper.postComment(packagingTaskID, commentString);
+                employeeCommentEditText.getText().clear();
+                Toast.makeText(TaskPackagingActivity.this, "Comment posted", Toast.LENGTH_SHORT).show();
+            }
         }
     };
 
