@@ -1122,7 +1122,6 @@ public class FirebaseHelper {
         });
     }
 
-
     /*
     ---------------------------------------------- Create Work Block -------------------------------------------------------
      */
@@ -1340,7 +1339,6 @@ public class FirebaseHelper {
                             rootRef.child("workHistory").child("workingTasks").child(taskData.getKey()).child("workBlocks").child(workBlockData.getKey()).addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    rootRef.child("workHistory").child("workingTasks").child(taskData.getKey()).child("workBlocks").child(workBlockData.getKey()).removeEventListener(this);
                                     String workBlockID = dataSnapshot.child("workBlockID").getValue(String.class);
                                     long startTime = dataSnapshot.child("startTime").getValue(long.class);
                                     long endTime = dataSnapshot.child("endTime").getValue(long.class);

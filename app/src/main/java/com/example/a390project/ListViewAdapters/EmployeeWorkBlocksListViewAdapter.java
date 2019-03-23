@@ -76,13 +76,22 @@ public class EmployeeWorkBlocksListViewAdapter extends BaseAdapter {
         String dateStringstartTime = df.format(currentItem.getStartTime());
         String dateStringendTime = df.format(currentItem.getEndTime());
 
-        mStartTime.setText(dateStringstartTime);
-        mEndTime.setText(dateStringendTime);
-        long milliSec = currentItem.getWorkingTime();
-        long sec = (milliSec/1000) % 60;
-        long min = ((milliSec/1000) / 60) % 60;
-        long hour = ((milliSec/1000) / 60) / 60;
-        mDurationTime.setText(hour+"h"+min+"m"+sec+"s");
+        if(currentItem.getEndTime() == 0 && currentItem.getWorkingTime() == 0) {
+            mStartTime.setText(dateStringstartTime);
+            mEndTime.setText("-");
+            mDurationTime.setText("-");
+        }
+        else {
+            mStartTime.setText(dateStringstartTime);
+            mEndTime.setText(dateStringendTime);
+            long milliSec = currentItem.getWorkingTime();
+            long sec = (milliSec/1000) % 60;
+            long min = ((milliSec/1000) / 60) % 60;
+            long hour = ((milliSec/1000) / 60) / 60;
+            mDurationTime.setText(hour+"h"+min+"m"+sec+"s");
+        }
+
+
 
         return convertView;
     }
