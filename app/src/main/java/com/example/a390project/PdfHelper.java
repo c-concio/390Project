@@ -128,6 +128,18 @@ class PdfHelper {
 
     }
 
+    // ----------------------------------- Packaging -----------------------------------
+    public void createPackagingLayout(){
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View content = inflater.inflate(R.layout.pdf_packaging_layout, null);
+
+        measureLayout(content);
+
+        content.draw(page.getCanvas());
+        document.finishPage(page);
+    }
+
     // ----------------------------------- Comments -----------------------------------
     public void createCommentsLayout(String taskID){
         // create a view for the employee layout

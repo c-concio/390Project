@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
 
         // ------------------------------ Testing --------------------------------
         PdfHelper pdfHelper = new PdfHelper(3300 , 2550 , this);
+        pdfHelper.startPage(1);
+        pdfHelper.createPackagingLayout();
         pdfHelper.startPage(3);
         pdfHelper.createPrePaintLayout();
         //pdfHelper.createPaintLayout();
