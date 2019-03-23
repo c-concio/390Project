@@ -623,19 +623,19 @@ public class FirebaseHelper {
         rootRef.child("tasks").child(taskID).addValueEventListener(inspectionValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild("partCounted") && dataSnapshot.hasChild("partAccepted") && dataSnapshot.hasChild("partRejected")) {
+                if (dataSnapshot.hasChild("partCounted")) {
                     int partCounted = dataSnapshot.child("partCounted").getValue(int.class);
-                    int partAccepted = dataSnapshot.child("partAccepted").getValue(int.class);
-                    int partRejected = dataSnapshot.child("partRejected").getValue(int.class);
-
-
                     EditText partCountedEditText = activity.findViewById(R.id.partCountedEditText);
-                    EditText partAcceptedEditText = activity.findViewById(R.id.partAcceptedEditText);
-                    EditText partRejectedEditText = activity.findViewById(R.id.partRejectedEditText);
-
-
                     partCountedEditText.setText(Integer.toString(partCounted));
+                }
+                if (dataSnapshot.hasChild("partAccepted")) {
+                    int partAccepted = dataSnapshot.child("partAccepted").getValue(int.class);
+                    EditText partAcceptedEditText = activity.findViewById(R.id.partAcceptedEditText);
                     partAcceptedEditText.setText(Integer.toString(partAccepted));
+                }
+                if (dataSnapshot.hasChild("partRejected")) {
+                    int partRejected = dataSnapshot.child("partRejected").getValue(int.class);
+                    EditText partRejectedEditText = activity.findViewById(R.id.partRejectedEditText);
                     partRejectedEditText.setText(Integer.toString(partRejected));
                 }
             }
