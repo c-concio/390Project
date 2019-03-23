@@ -120,6 +120,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        mFabOpenDialogFragmentProject.show();
+        mFabOpenDialogFragmentControlDevice.hide();
+        mFabOpenDialogFragmentMachine.hide();
+        mFabOpenDialogFragmentInventory.hide();
+
         //Initializing viewPager
         viewPager = findViewById(R.id.viewpager);
         viewPager.setOffscreenPageLimit(5); // <---- .setOffscreenPageLimit controls the max amount of tabs
