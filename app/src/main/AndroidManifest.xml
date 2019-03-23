@@ -31,7 +31,7 @@
         <activity android:name=".MachineActivity" />
         <activity android:name=".ProjectActivity" />
 
-        <service android:name=".ForegroundService"
+        <service android:name=".ForegroundServices.NotificationForegroundService"
             android:exported="true"
             android:enabled="true" />
     </application>

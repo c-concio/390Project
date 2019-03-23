@@ -1,5 +1,6 @@
-package com.example.a390project;
+package com.example.a390project.ForegroundServices;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -12,6 +13,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.example.a390project.R;
+import com.example.a390project.TaskBakingActivity;
+import com.example.a390project.TaskInspectionActivity;
+import com.example.a390project.TaskPackagingActivity;
+import com.example.a390project.TaskPaintingActivity;
+import com.example.a390project.TaskPrePaintingActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,9 +30,9 @@ import java.text.SimpleDateFormat;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ForegroundService extends Service {
+public class NotificationForegroundService extends Service {
     public static final String CHANNEL_ID = "NotificationChannel";
-    private static final String TAG = "ForegroundService";
+    private static final String TAG = "NotificationForegroundService";
     private int NOTIFICATION_ID = 0;
     private String taskTitle;
     private String taskID;
@@ -41,6 +48,7 @@ public class ForegroundService extends Service {
         NOTIFICATION_ID = 0;
         super.onCreate();
         Thread t = new Thread(new Runnable() {
+            @SuppressLint("LongLogTag")
             @Override
             public void run() {
                 while(true) {
