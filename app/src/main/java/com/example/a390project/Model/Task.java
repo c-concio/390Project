@@ -13,11 +13,8 @@ public class Task {
     private long createdTime;
     private long startTime;
     private long endTime;
-    private long date;
-    private int partCounted = 0;
-    private int partAccepted = 0;
-    private int partRejected = 0;
     private List<SubTask> subTasks;
+    private boolean completed;
 
 
     // prepaint variables
@@ -29,16 +26,18 @@ public class Task {
 
     public Task(){}
 
-    public Task(String taskID, String projectPO, String taskType, String description, long createdTime) {
+    //constructor to use when creating/populating
+    public Task(String taskID, String projectPO, String taskType, String description, long createdTime, boolean completed) {
         this.taskID = taskID;
         this.projectPO = projectPO;
         this.taskType = taskType;
         this.description = description;
         this.createdTime = createdTime;
+        this.completed = completed;
     }
 
     //constructor to use when creating a prepaint task
-    public Task(String taskID, String projectPO, String taskType, String description, long createdTime, List<SubTask> subTasks) {
+    public Task(String taskID, String projectPO, String taskType, String description, long createdTime, List<SubTask> subTasks, boolean completed) {
         this.taskID = taskID;
         this.projectPO = projectPO;
         this.taskType = taskType;
@@ -59,6 +58,14 @@ public class Task {
         }
 
         return sb.toString();
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 
     public String getProjectPO() {
@@ -101,14 +108,6 @@ public class Task {
         this.taskID = taskID;
     }
 
-    public long getDate() {
-        return date;
-    }
-
-    public void setDate(long date) {
-        this.date = date;
-    }
-
     public String getEmployeeComment() {
         return employeeComment;
     }
@@ -123,30 +122,6 @@ public class Task {
 
     public void setPrepaintName(String prepaintName) {
         this.prepaintName = prepaintName;
-    }
-
-    public int getPartCounted() {
-        return partCounted;
-    }
-
-    public void setPartCounted(int partCounted) {
-        this.partCounted = partCounted;
-    }
-
-    public int getPartAccepted() {
-        return partAccepted;
-    }
-
-    public void setPartAccepted(int partAccepted) {
-        this.partAccepted = partAccepted;
-    }
-
-    public int getPartRejected() {
-        return partRejected;
-    }
-
-    public void setPartRejected(int partRejected) {
-        this.partRejected = partRejected;
     }
 
     public String getPaintCode() {

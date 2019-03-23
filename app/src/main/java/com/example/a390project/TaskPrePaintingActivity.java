@@ -19,6 +19,7 @@ public class TaskPrePaintingActivity extends AppCompatActivity {
     private String taskId;
     private Button postCommentButton;
     private EditText newEmployeeCommentEdtText;
+    private Button mComplete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +67,14 @@ public class TaskPrePaintingActivity extends AppCompatActivity {
                 }
 
 
+            }
+        });
+
+        mComplete = findViewById(R.id.prepaintingCompletedButton);
+        mComplete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                firebaseHelper.completeTask(taskId);
             }
         });
     }

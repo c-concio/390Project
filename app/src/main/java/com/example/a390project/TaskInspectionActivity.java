@@ -36,6 +36,7 @@ public class TaskInspectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_task_inspection);
         setupUI();
         firebaseHelper.setTaskInspectionActivityListener(inspectionTaskID, TaskInspectionActivity.this);
+        firebaseHelper.setStartTimeEndTimeButtons(mStartTime,mEndTime,inspectionTaskID);
 
 
         //Text changed listener
@@ -108,7 +109,7 @@ public class TaskInspectionActivity extends AppCompatActivity {
                 Intent intent = getIntent();
                 inspectionType = intent.getStringExtra("taskType");
                 Log.d(TAG, "onClick: " + inspectionType);
-                firebaseHelper.checkIfCanStart(inspectionTaskID, getApplicationContext(), inspectionType, TaskInspectionActivity.this);
+                firebaseHelper.checkIfCanStart(inspectionTaskID, getApplicationContext(), inspectionType, TaskInspectionActivity.this,mStartTime,mEndTime);
             }
         });
 
@@ -116,6 +117,13 @@ public class TaskInspectionActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 firebaseHelper.checkIfCanEnd(inspectionTaskID, getApplicationContext());
+            }
+        });
+
+        mCompleteTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                firebaseHelper.completeTask(inspectionTaskID);
             }
         });
 
