@@ -6,6 +6,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
@@ -141,7 +143,23 @@ public class ProjectActivity extends AppCompatActivity {
                 this.finish();
                 return true;
             }
+            case R.id.generatePdfItem:{
+                // generate the pdf for the current project
+                PdfHelper pdfHelper = new PdfHelper(1000, 1000, this);
+                pdfHelper.generatePdf(projectPO);
+
+
+            }
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
+    }
+
+    // create the a menu item for pdf generation
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_project, menu);
+        return true;
     }
 }

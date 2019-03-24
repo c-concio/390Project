@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         //pdfHelper.getComments("O1n5WvJzFshCBKsm");
 
         //pdfHelper.endPage();
-        pdfHelper.generatePdf();
+        //pdfHelper.generatePdf();
     }
 
     private void updateUI(FirebaseUser currentUser) {

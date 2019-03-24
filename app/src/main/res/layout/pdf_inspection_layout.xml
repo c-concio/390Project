@@ -30,7 +30,7 @@
                 android:layout_marginRight="20dp"
                 android:layout_weight="1"
                 android:padding="8dp"
-                android:text="Parts Received"
+                android:text="Parts Counted"
                 android:textColor="@color/common_google_signin_btn_text_dark_focused"
                 android:textSize="14sp" />
 
@@ -63,7 +63,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/receivedTextView"
+                android:id="@+id/countedTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="2dp"
