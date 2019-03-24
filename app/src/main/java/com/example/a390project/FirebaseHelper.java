@@ -1681,7 +1681,7 @@ public class FirebaseHelper {
     --------------------------------GRAPHABLE PROJECTS METHODS ---------------------------------------------------------------
      */
 
-    public void populateGraphableProjects(final View view, final Activity activity, final FloatingActionButton mFab) {
+    public void populateGraphableProjects(final View view, final Activity activity, final FloatingActionButton mFab, final Dialog dialog, final String machineTitle, final boolean machineStatus) {
         final List<String> projectPOs = new ArrayList<>();
         rootRef.child("projects").addValueEventListener(new ValueEventListener() {
             @Override
@@ -1689,7 +1689,7 @@ public class FirebaseHelper {
                 for (DataSnapshot ds: dataSnapshot.getChildren()) {
                     projectPOs.add(ds.getKey());
                 }
-                callGraphableProjectsListViewAdapter(view, activity, projectPOs, mFab);
+                callGraphableProjectsListViewAdapter(view, activity, projectPOs, mFab, dialog, machineTitle, machineStatus);
             }
 
             @Override
@@ -1699,8 +1699,8 @@ public class FirebaseHelper {
         });
     }
 
-    private void callGraphableProjectsListViewAdapter(View view, Activity activity, List<String> projectPOs, FloatingActionButton mFab) {
-        GraphableProjectsListViewAdapter graphableProjectsListViewAdapter = new GraphableProjectsListViewAdapter(activity,projectPOs,mFab);
+    private void callGraphableProjectsListViewAdapter(View view, Activity activity, List<String> projectPOs, FloatingActionButton mFab, Dialog dialog, String machineTitle, boolean machineStatus) {
+        GraphableProjectsListViewAdapter graphableProjectsListViewAdapter = new GraphableProjectsListViewAdapter(activity,projectPOs,mFab, dialog, machineTitle, machineStatus);
         ListView itemsListView  = (ListView) view.findViewById(R.id.graphable_projects_list_view);
         itemsListView.setAdapter(graphableProjectsListViewAdapter);
 

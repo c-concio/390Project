@@ -1,5 +1,6 @@
 package com.example.a390project.DialogFragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,9 +13,18 @@ import android.view.ViewGroup;
 import com.example.a390project.FirebaseHelper;
 import com.example.a390project.R;
 
+@SuppressLint("ValidFragment")
 public class GraphDialogFragment extends DialogFragment {
 
     FloatingActionButton mFab;
+
+    private String machineTitle;
+    private boolean machineStatus;
+
+    public GraphDialogFragment(String machineTitle, boolean machineStatus) {
+        this.machineTitle = machineTitle;
+        this.machineStatus = machineStatus;
+    }
 
     @Nullable
     @Override
@@ -24,7 +34,7 @@ public class GraphDialogFragment extends DialogFragment {
         mFab = view.findViewById(R.id.fab_graphable_project);
 
         FirebaseHelper firebaseHelper = new FirebaseHelper();
-        firebaseHelper.populateGraphableProjects(view, getActivity(), mFab);
+        firebaseHelper.populateGraphableProjects(view, getActivity(), mFab, getDialog(), machineTitle, machineStatus);
 
         return view;
     }

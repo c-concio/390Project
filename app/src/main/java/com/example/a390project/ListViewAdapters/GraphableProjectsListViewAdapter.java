@@ -1,5 +1,7 @@
 package com.example.a390project.ListViewAdapters;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -33,12 +35,20 @@ public class GraphableProjectsListViewAdapter extends BaseAdapter {
     private TextView projectPO;
     private CheckBox checkBox;
     private FloatingActionButton mFab;
+    private Dialog dialog;
+
+    //variables
+    private String machineTitle;
+    private boolean machineStatus;
 
     //public constructor
-    public GraphableProjectsListViewAdapter(Context context, List<String> items, FloatingActionButton mFab) {
+    public GraphableProjectsListViewAdapter(Context context, List<String> items, FloatingActionButton mFab, Dialog dialog, String machineTitle, boolean machineStatus) {
         this.context = context;
         this.items = items;
         this.mFab = mFab;
+        this.dialog = dialog;
+        this.machineTitle = machineTitle;
+        this.machineStatus = machineStatus;
         checkedProjectPOs = new ArrayList<>();
     }
 
@@ -91,14 +101,18 @@ public class GraphableProjectsListViewAdapter extends BaseAdapter {
             public void onClick(View v) {
                 //process checked project and create graphs
                 final Intent serviceIntent = new Intent(context, GraphForegroundService.class);
+                int GRAPH_NOTIFICATION_ID = generateRandomInteger();
+
                 //values passed to foreground service
                 serviceIntent.putStringArrayListExtra("checkedProjectPOs",(ArrayList<String>)checkedProjectPOs);
-                int GRAPH_NOTIFICATION_ID = generateRandomInteger();
                 serviceIntent.putExtra("GRAPH_NOTIFICATION_ID", GRAPH_NOTIFICATION_ID);
+                serviceIntent.putExtra("machineTitle", machineTitle);
+                serviceIntent.putExtra("machineStatus", machineStatus);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     Toast.makeText(context, "Starting GraphForegroundService.", Toast.LENGTH_SHORT).show();
-                    //context.startForegroundService(serviceIntent);
+                    context.startForegroundService(serviceIntent);
+                    dialog.dismiss();
                 }
                 else {
                     //context.startService(serviceIntent);

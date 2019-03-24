@@ -12,8 +12,8 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        createNotificationChannel(NOTIFICATION_CHANNEL_ID,"WorkBlock Service Channel");
         createNotificationChannel(GRAPH_CHANNEL_ID, "Graph Service Channel");
+        createNotificationChannel(NOTIFICATION_CHANNEL_ID,"WorkBlock Service Channel");
     }
 
     private void createNotificationChannel(String channelID, String name) {

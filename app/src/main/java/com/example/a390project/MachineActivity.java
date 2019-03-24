@@ -28,6 +28,10 @@ public class MachineActivity extends AppCompatActivity {
     private Button mStartTemperatureGraph;
     private Button mEndTemperatureGraph;
 
+    //variables
+    private String machineTitle;
+    private boolean machineStatus;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +60,7 @@ public class MachineActivity extends AppCompatActivity {
     }
 
     private void openGraphDialogFragment() {
-        GraphDialogFragment dialog = new GraphDialogFragment();
+        GraphDialogFragment dialog = new GraphDialogFragment(machineTitle, machineStatus);
         dialog.show(getSupportFragmentManager(), "Graphable Projects");
     }
 
@@ -66,8 +70,8 @@ public class MachineActivity extends AppCompatActivity {
         mStartTemperatureGraph = findViewById(R.id.open_graphable_projects);
         mEndTemperatureGraph = findViewById(R.id.end_graph_graphable);
 
-        String machineTitle = getIntent().getStringExtra("machine_title");
-        boolean machineStatus = getIntent().getBooleanExtra("machine_status", false);
+        machineTitle = getIntent().getStringExtra("machine_title");
+        machineStatus = getIntent().getBooleanExtra("machine_status", false);
         Log.d(TAG, "Machine Fetched: " + machineTitle + " " + machineStatus);
 
         Machine machine = new Machine(machineTitle, machineStatus);

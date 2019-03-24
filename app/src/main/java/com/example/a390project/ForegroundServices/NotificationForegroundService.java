@@ -135,6 +135,7 @@ public class NotificationForegroundService extends Service {
                                 .setOngoing(true);
 
                         notificationManager.notify(NOTIFICATION_ID, builder.build());
+                        startForeground(NOTIFICATION_ID,builder.build());
                         Log.d(TAG, "updateNotification: " + taskTitle);
 
                     }
