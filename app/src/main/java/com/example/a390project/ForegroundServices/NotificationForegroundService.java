@@ -1,7 +1,6 @@
 package com.example.a390project.ForegroundServices;
 
 import android.annotation.SuppressLint;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -31,8 +30,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class NotificationForegroundService extends Service {
-    public static final String CHANNEL_ID = "NotificationChannel";
-    private static final String TAG = "NotificationForegroundService";
+    public static final String NOTIFICATION_CHANNEL_ID = "NotificationChannel";
+    private static final String TAG = "WorkBlockForegroundService";
+
+    //variables from Intent
     private int NOTIFICATION_ID = 0;
     private String taskTitle;
     private String taskID;
@@ -99,7 +100,7 @@ public class NotificationForegroundService extends Service {
         final NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         final long timeAtNotificationCreation = System.currentTimeMillis();
 
-        builder = new NotificationCompat.Builder(this,CHANNEL_ID)
+        builder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(taskTitle + " - " + projectPO)
                 .setSubText("Start Time: " + getDate(timeNow))
                 .setSmallIcon(R.drawable.ic_work_block)

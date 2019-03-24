@@ -1510,7 +1510,7 @@ public class FirebaseHelper {
 //                long min = ((timeElapsed/1000) / 60) % 60;
 //                long hour = ((timeElapsed/1000) / 60) / 60;
 //
-//                Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
+//                Notification notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
 //                        .setContentTitle(taskTitle + " - " + projectPO)
 //                        .setSubText("Start Time: " + getDate(timeNow))
 //                        .setContentText("Time Elapsed: " + hour+":"+min+":"+sec)
