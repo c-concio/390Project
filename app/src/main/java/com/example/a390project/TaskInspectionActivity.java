@@ -21,9 +21,11 @@ public class TaskInspectionActivity extends AppCompatActivity {
     EditText mCounted;
     EditText mAccepted;
     EditText mRejected;
+    EditText mEmployeeCommentEditText;
     Button mStartTime;
     Button mEndTime;
     Button mCompleteTime;
+    Button mPostCommentButton;
 
     FirebaseHelper firebaseHelper;
     String inspectionTaskID;
@@ -127,6 +129,22 @@ public class TaskInspectionActivity extends AppCompatActivity {
             }
         });
 
+        mPostCommentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String commentString = mEmployeeCommentEditText.getText().toString();
+                if (commentString.isEmpty()){
+                    mEmployeeCommentEditText.setError("Field is empty");
+                }
+                else{
+                    firebaseHelper.postComment(inspectionTaskID, commentString);
+                    mEmployeeCommentEditText.getText().clear();
+                    Toast.makeText(TaskInspectionActivity.this, "Comment posted", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        firebaseHelper.getEmployeeComments(this, inspectionTaskID);
 
     }
 
@@ -144,9 +162,11 @@ public class TaskInspectionActivity extends AppCompatActivity {
         mCounted = findViewById(R.id.partCountedEditText);
         mAccepted = findViewById(R.id.partAcceptedEditText);
         mRejected = findViewById(R.id.partRejectedEditText);
+        mEmployeeCommentEditText = findViewById(R.id.employeeCommentEditText);
         mCompleteTime = findViewById(R.id.completeButton);
         mStartTime = findViewById(R.id.startTimeButton_inspection);
         mEndTime = findViewById(R.id.endTimeButton_inspection);
+        mPostCommentButton = findViewById(R.id.postCommentButton);
 
         firebaseHelper = new FirebaseHelper();
         Intent intent = getIntent();

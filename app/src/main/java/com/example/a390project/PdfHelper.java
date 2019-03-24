@@ -171,16 +171,15 @@ class PdfHelper {
 
     // generate pdf
     void generatePdf(){
-        String directory_path = Environment.getExternalStorageDirectory().getPath() + "/mypdf/";
+        String directory_path = Environment.getExternalStorageDirectory().getPath() + "/Pdf Reports/";
+        File filePath = new File(directory_path);
+        if (!filePath.exists()){
+            filePath.mkdirs();
+        }
 
         try {
-            File pdfDirPath = new File(context.getFilesDir(), "pdfs");
-            pdfDirPath.mkdirs();
-
-
-
             // --------------------------------- pdf directory change ---------------------------------
-            File file = new File(pdfDirPath, "pdfsend.pdf");
+            File file = new File(directory_path, "pdfsend.pdf");
 
             Log.d(TAG, "onStart: location here: " + file.getAbsolutePath());
 
