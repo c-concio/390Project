@@ -35,9 +35,10 @@
         <service android:name=".ForegroundServices.NotificationForegroundService"
             android:exported="true"
             android:enabled="true" />
-        <service android:name=".ForegroundServices.GraphForegroundService"
+        <service android:name=".ForegroundServices.BigOvenGraphForegroundService"
             android:exported="true"
             android:enabled="true"/>
+        <service android:name=".ForegroundServices.GFSOvenGraphForegroundService" />
     </application>
 
 </manifest>

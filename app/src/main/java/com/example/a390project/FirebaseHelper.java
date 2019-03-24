@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.widget.AppCompatEditText;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -508,40 +509,6 @@ public class FirebaseHelper {
         ListView itemsListView  = activity.findViewById(R.id.project_tasks_list_view);
         if (itemsListView!= null)
             itemsListView.setAdapter(adapter);
-    }
-//-----------------------------------------GraphFragment Methods----------------------------------------------
-
-    public void populateGraphs(final Activity activity, final View view, String projectPO, final Context context) {
-        rootRef.child("graphs").child(projectPO).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<GraphData> graphs = new ArrayList<>();
-                for (DataSnapshot graph:dataSnapshot.getChildren()) {
-                    List<Float> y = new ArrayList<>();
-                    List<Float> x = new ArrayList<>();
-                    String graphTitle = graph.child("graphTitle").getValue(String.class);
-                    for (DataSnapshot TempSnapshot : graph.child("temperatures").getChildren()) {
-                        String time = TempSnapshot.getKey();
-                        int timei = parseInt(time);
-                        x.add((float) (timei));
-                        Float temp = TempSnapshot.getValue(float.class);
-                        y.add(temp);
-                    }
-                    graphs.add(new GraphData(x,y,graphTitle));
-                }
-                callGraphListViewAdapter(activity, view, graphs);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-    public void callGraphListViewAdapter(Activity activity, View view, List<GraphData> graphs) {
-        GraphsListViewAdapter adapter = new GraphsListViewAdapter(activity, graphs);
-        ListView itemsListView  = view.findViewById(R.id.graph_list_view);
-        itemsListView.setAdapter(adapter);
     }
 
     // --------------------------------------- Packaging Task Methods ---------------------------------------
@@ -1703,7 +1670,8 @@ public class FirebaseHelper {
     --------------------------------GRAPHABLE PROJECTS METHODS ---------------------------------------------------------------
      */
 
-    public void populateGraphableProjects(final View view, final Activity activity, final FloatingActionButton mFab, final Dialog dialog, final String machineTitle, final boolean machineStatus) {
+    public void populateGraphableProjects(final View view, final Activity activity, final FloatingActionButton mFab,
+                                          final Dialog dialog, final String machineTitle, final boolean machineStatus, final AppCompatEditText mTitle) {
         final List<String> projectPOs = new ArrayList<>();
         rootRef.child("projects").addValueEventListener(new ValueEventListener() {
             @Override
@@ -1711,7 +1679,7 @@ public class FirebaseHelper {
                 for (DataSnapshot ds: dataSnapshot.getChildren()) {
                     projectPOs.add(ds.getKey());
                 }
-                callGraphableProjectsListViewAdapter(view, activity, projectPOs, mFab, dialog, machineTitle, machineStatus);
+                callGraphableProjectsListViewAdapter(view, activity, projectPOs, mFab, dialog, machineTitle, machineStatus, mTitle);
             }
 
             @Override
@@ -1721,10 +1689,133 @@ public class FirebaseHelper {
         });
     }
 
-    private void callGraphableProjectsListViewAdapter(View view, Activity activity, List<String> projectPOs, FloatingActionButton mFab, Dialog dialog, String machineTitle, boolean machineStatus) {
-        GraphableProjectsListViewAdapter graphableProjectsListViewAdapter = new GraphableProjectsListViewAdapter(activity,projectPOs,mFab, dialog, machineTitle, machineStatus);
+    private void callGraphableProjectsListViewAdapter(View view, Activity activity, List<String> projectPOs, FloatingActionButton mFab,
+                                                      Dialog dialog, String machineTitle, boolean machineStatus, AppCompatEditText mTitle) {
+        GraphableProjectsListViewAdapter graphableProjectsListViewAdapter = new GraphableProjectsListViewAdapter(activity,projectPOs,mFab, dialog, machineTitle, machineStatus, mTitle);
         ListView itemsListView  = (ListView) view.findViewById(R.id.graphable_projects_list_view);
         itemsListView.setAdapter(graphableProjectsListViewAdapter);
 
+    }
+
+    //-----------------------------------------Populating/Fetching Graphs----------------------------------------------
+
+    public void createGraphsForCheckedProjects(ArrayList<String> checkedProjectPOs, final String machineTitle, String graphTitle) {
+        final String graphID = Task.generateRandomChars();
+        final long startTime = System.currentTimeMillis();
+        rootRef.child("graphs").child(graphID).child("graphTitle").setValue(graphTitle);
+        rootRef.child("graphs").child(graphID).child("startTime").setValue(startTime);
+        rootRef.child("graphs").child(graphID).child("graphingStatus").setValue(true);
+        rootRef.child("graphs").child(graphID).child("machineTitle").setValue(machineTitle);
+        rootRef.child("machines").child(machineTitle).child("graphingStatus").setValue(true);
+        for (String projectPO:checkedProjectPOs) {
+            rootRef.child("projects").child(projectPO).child("graphs").child(graphID).setValue(true);
+        }
+        rootRef.child("machines").child(machineTitle).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull final DataSnapshot machineDataSnapshot) {
+                if (machineDataSnapshot.child("graphingStatus").getValue(boolean.class)) {
+                    long timeNow = System.currentTimeMillis();
+                    long timeStamp = (timeNow - startTime) / 1000;
+                    rootRef.child("graphs").child(graphID).child("temperatures").child(Long.toString(timeStamp)).setValue(machineDataSnapshot.child("temperature").getValue());
+                }
+                else {
+                    rootRef.child("graphs").child(graphID).child("startTime").removeEventListener(this);
+                    rootRef.child("machines").child(machineTitle).removeEventListener(this);
+                    rootRef.child("graphs").child(graphID).child("graphingStatus").setValue(false);
+                    rootRef.child("machines").child(machineTitle).child("graphingStatus").setValue(false);
+                    final long endTime = System.currentTimeMillis();
+                    rootRef.child("graphs").child(graphID).child("endTime").setValue(endTime);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void populateGraphs(final Activity activity, final View view, String projectPO) {
+        rootRef.child("projects").child(projectPO).child("graphs").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    final List<String> graphIDs = new ArrayList<>();
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        graphIDs.add(ds.getKey());
+                    }
+                    rootRef.child("graphs").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            List<GraphData> graphs = new ArrayList<>();
+                            for (String graphID : graphIDs) {
+                                List<Float> y = new ArrayList<>();
+                                List<Float> x = new ArrayList<>();
+                                String machineTitle = dataSnapshot.child(graphID).child("machineTitle").getValue(String.class);
+                                String graphTitle =  machineTitle + " - " + dataSnapshot.child(graphID).child("graphTitle").getValue(String.class);
+                                for (DataSnapshot TempSnapshot : dataSnapshot.child(graphID).child("temperatures").getChildren()) {
+                                    String time = TempSnapshot.getKey();
+                                    int timei = parseInt(time);
+                                    x.add((float) (timei));
+                                    Float temp = TempSnapshot.getValue(float.class);
+                                    y.add(temp);
+                                }
+                                graphs.add(new GraphData(x, y, graphTitle));
+                            }
+                            callGraphListViewAdapter(activity, view, graphs);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+//    public void populateGraphs(final Activity activity, final View view, String projectPO, final Context context) {
+//        rootRef.child("graphs").child(projectPO).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                List<GraphData> graphs = new ArrayList<>();
+//                for (DataSnapshot graph:dataSnapshot.getChildren()) {
+//                    List<Float> y = new ArrayList<>();
+//                    List<Float> x = new ArrayList<>();
+//                    String graphTitle = graph.child("graphTitle").getValue(String.class);
+//                    for (DataSnapshot TempSnapshot : graph.child("temperatures").getChildren()) {
+//                        String time = TempSnapshot.getKey();
+//                        int timei = parseInt(time);
+//                        x.add((float) (timei));
+//                        Float temp = TempSnapshot.getValue(float.class);
+//                        y.add(temp);
+//                    }
+//                    graphs.add(new GraphData(x,y,graphTitle));
+//                }
+//                callGraphListViewAdapter(activity, view, graphs);
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+//    }
+    public void callGraphListViewAdapter(Activity activity, View view, List<GraphData> graphs) {
+        GraphsListViewAdapter adapter = new GraphsListViewAdapter(activity, graphs);
+        ListView itemsListView  = view.findViewById(R.id.graph_list_view);
+        itemsListView.setAdapter(adapter);
+    }
+
+    public void stopGraphing(String machineTitle) {
+        rootRef.child("machines").child(machineTitle).child("graphingStatus").setValue(false);
     }
 }

@@ -31,6 +31,6 @@ public class ProjectGraphFragment extends Fragment {
         // setup the adapters and make the height of the list views dynamic
 
         FirebaseHelper firebaseHelper = new FirebaseHelper();
-        firebaseHelper.populateGraphs(getActivity(),view, projectPO, getContext());
+        firebaseHelper.populateGraphs(getActivity(),view, projectPO);
     }
 }

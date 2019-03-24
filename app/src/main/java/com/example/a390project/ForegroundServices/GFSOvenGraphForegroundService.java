@@ -11,20 +11,22 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.example.a390project.FirebaseHelper;
 import com.example.a390project.MachineActivity;
 import com.example.a390project.R;
 
 import java.util.ArrayList;
 
-public class GraphForegroundService extends Service {
+public class GFSOvenGraphForegroundService extends Service {
     public static final String GRAPH_CHANNEL_ID = "GraphChannel";
-    private static final String TAG = "GraphForegroundService";
+    private static final String TAG = "GFSOvenService";
 
     //variables from intent
     private ArrayList<String> checkedProjectPOs;
     private int GRAPH_NOTIFICATION_ID;
     private String machineTitle;
     private boolean machineStatus;
+    private String graphTitle;
 
     private NotificationCompat.Builder builder = null;
 
@@ -53,6 +55,7 @@ public class GraphForegroundService extends Service {
         GRAPH_NOTIFICATION_ID = intent.getIntExtra("GRAPH_NOTIFICATION_ID",0);
         machineTitle = intent.getStringExtra("machineTitle");
         machineStatus = intent.getBooleanExtra("machineStatus",false);
+        graphTitle = intent.getStringExtra("graphTitle");
 
         //create intent to be put as a pending intent activated when notification clicked
         Intent intent2 = new Intent(getApplicationContext(), MachineActivity.class);
@@ -78,19 +81,19 @@ public class GraphForegroundService extends Service {
 
             builder = new NotificationCompat.Builder(this, GRAPH_CHANNEL_ID)
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(list_of_projects_POs))
+                    .setContentTitle(machineTitle + ": " + graphTitle)
                     .setContentText(list_of_projects_POs)
-                    .setContentTitle("Graphing Projects")
                     .setSmallIcon(R.drawable.ic_temp_chart)
                     .setContentIntent(pendingIntent)
                     .setOngoing(true);
 
             notificationManager.notify(GRAPH_NOTIFICATION_ID, builder.build());
             startForeground(GRAPH_NOTIFICATION_ID,builder.build());
+
+            //Firebase graph creation
+            FirebaseHelper firebaseHelper = new FirebaseHelper();
+            firebaseHelper.createGraphsForCheckedProjects(checkedProjectPOs,machineTitle,graphTitle);
         }
-
-
-
-
 
         return START_STICKY;
     }

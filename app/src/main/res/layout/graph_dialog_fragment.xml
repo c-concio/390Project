@@ -17,6 +17,20 @@
         android:gravity="center_horizontal"
         android:layout_marginBottom="8dp"/>
 
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/graph_title_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Graph Title"
+            android:inputType="text"
+            android:padding="10dp"
+            android:layout_marginTop="30dp"
+            android:singleLine="true"/>
+    </android.support.design.widget.TextInputLayout>
+
     <ListView
         android:id="@+id/graphable_projects_list_view"
         android:layout_width="wrap_content"
