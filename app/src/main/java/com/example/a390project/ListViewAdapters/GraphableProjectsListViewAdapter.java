@@ -21,6 +21,7 @@ import com.jjoe64.graphview.GraphView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class GraphableProjectsListViewAdapter extends BaseAdapter {
 
@@ -90,6 +91,11 @@ public class GraphableProjectsListViewAdapter extends BaseAdapter {
             public void onClick(View v) {
                 //process checked project and create graphs
                 final Intent serviceIntent = new Intent(context, GraphForegroundService.class);
+                //values passed to foreground service
+                serviceIntent.putStringArrayListExtra("checkedProjectPOs",(ArrayList<String>)checkedProjectPOs);
+                int GRAPH_NOTIFICATION_ID = generateRandomInteger();
+                serviceIntent.putExtra("GRAPH_NOTIFICATION_ID", GRAPH_NOTIFICATION_ID);
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     Toast.makeText(context, "Starting GraphForegroundService.", Toast.LENGTH_SHORT).show();
                     //context.startForegroundService(serviceIntent);
@@ -101,5 +107,18 @@ public class GraphableProjectsListViewAdapter extends BaseAdapter {
         });
 
         return convertView;
+    }
+
+    public int generateRandomInteger() {
+        int length = 8;
+        String candidateChars = "123456789";
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+        for (int i = 0; i < length; i++) {
+            sb.append(candidateChars.charAt(random.nextInt(candidateChars
+                    .length())));
+        }
+
+        return Integer.parseInt(sb.toString());
     }
 }
