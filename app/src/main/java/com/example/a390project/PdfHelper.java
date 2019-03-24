@@ -70,7 +70,7 @@ class PdfHelper {
     }
 
     // start a page with the specified page number
-    void startPage(int pageNumber){
+    private void startPage(int pageNumber){
         pageInfo = new PdfDocument.PageInfo.Builder(canvasWidth, canvasHeight, pageNumber).create();
         page = document.startPage(pageInfo);
     }
@@ -79,7 +79,7 @@ class PdfHelper {
 
     // ----------------------------------- Inspection -----------------------------------
     // receive the parts received, parts accepted, and parts rejected and create the inspection layout
-    public void createInspectionLayout(InspectionTask inspectionTask, Boolean isFinal){
+    private void createInspectionLayout(InspectionTask inspectionTask, Boolean isFinal){
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View content = inflater.inflate(R.layout.pdf_inspection_layout, null);
@@ -105,7 +105,7 @@ class PdfHelper {
     }
 
     // ----------------------------------- Prepaint -----------------------------------
-    public void createPrePaintLayout(){
+    private void createPrePaintLayout(){
         // get the layout view
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View content = inflater.inflate(R.layout.pdf_prepaint_layout, null);
@@ -118,7 +118,7 @@ class PdfHelper {
 
 
     // ----------------------------------- Painting -----------------------------------
-    public void createPaintLayout(){
+    private void createPaintLayout(){
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View content = inflater.inflate(R.layout.pdf_paint_layout, null);
@@ -142,7 +142,7 @@ class PdfHelper {
     }
 
     // ----------------------------------- Packaging -----------------------------------
-    public void createPackagingLayout(){
+    private void createPackagingLayout(){
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View content = inflater.inflate(R.layout.pdf_packaging_layout, null);
@@ -153,21 +153,27 @@ class PdfHelper {
     }
 
     // ----------------------------------- Comments -----------------------------------
-    public void createCommentsLayout(String taskID){
+    private void createCommentsLayout(DataSnapshot dataSnapshot, String taskId){
         // create a view for the employee layout
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View content = inflater.inflate(R.layout.pdf_comments_layout, null);
-        Activity activity = (Activity) content.getContext();
-
-
-
-
-        // call the getEmployees function in FirebaseHelper to get all the employees
-        Log.d(TAG, "createCommentsLayout: --------------------------------------------------------------------- calling get Employee comments");
-        //firebaseHelper.getEmployeeComments(activity, content, taskID);
 
         ListView employeeCommentsListView = content.findViewById(R.id.employeeCommentsListView);
-        Log.d(TAG, "createCommentsLayout: listView is " + employeeCommentsListView);
+        List<EmployeeComment> employeeComments = new ArrayList<>();
+
+
+
+        // get all the comments for the given taskIds
+        for(DataSnapshot postSnapshot : dataSnapshot.child(taskId).child("employeeComments").getChildren()){
+            EmployeeComment comment;
+            comment = postSnapshot.getValue(EmployeeComment.class);
+            employeeComments.add(comment);
+        }
+
+        // set the adapter of the employeeCommentsListView
+        EmployeeCommentListViewAdapter adapter = new EmployeeCommentListViewAdapter(content.getContext(), employeeComments);
+        employeeCommentsListView.setAdapter(adapter);
+
 
         // measure the layout
         measureLayout(content);
@@ -184,10 +190,6 @@ class PdfHelper {
     // generate pdf
     void generatePdf(final String projectPO){
         List<Boolean> taskTypes = new ArrayList<>();
-
-
-
-
 
         rootRef.child("projects").child(projectPO).child("tasks").addValueEventListener(projectValueEventListener = new ValueEventListener() {
             @Override
@@ -212,6 +214,7 @@ class PdfHelper {
                             DataSnapshot currentSnapshot = dataSnapshot.child(taskId);
                             String taskType = currentSnapshot.child("taskType").getValue(String.class);
 
+                            Log.d(TAG, "onDataChange: task type " + taskId);
                             // check taskType and set boolean array to true
                             checkTaskType(taskTypesInProject, sortedTaskIds, taskType, taskId);
                         }
@@ -223,13 +226,21 @@ class PdfHelper {
                         // if inspection task is available, create the inspection page
                         if (taskTypesInProject[0]){
                             InspectionTask inspectionTask = dataSnapshot.child(sortedTaskIds[0]).getValue(InspectionTask.class);
-                            startPage(pageNumber);
-                            createInspectionLayout(inspectionTask, false);
-                            endPage();
-                            pageNumber++;
+                            if (inspectionTask != null) {
+                                startPage(pageNumber);
+                                createInspectionLayout(inspectionTask, false);
+                                endPage();
+                                pageNumber++;
+
+                                // Inspection task comments
+                                if (dataSnapshot.child(sortedTaskIds[0]).child("employeeComments").exists()) {
+                                    startPage(pageNumber);
+                                    createCommentsLayout(dataSnapshot, sortedTaskIds[0]);
+                                    endPage();
+                                    pageNumber++;
+                                }
+                            }
                         }
-
-
 
                         // --------------------------------------------- 2. Pre-paint Task ---------------------------------------------
                         if (taskTypesInProject[1]){
@@ -238,6 +249,14 @@ class PdfHelper {
                             createPrePaintLayout();
                             endPage();
                             pageNumber++;
+
+                            // Inspection task comments
+                            if (dataSnapshot.child(sortedTaskIds[1]).child("employeeComments").exists()) {
+                                startPage(pageNumber);
+                                createCommentsLayout(dataSnapshot, sortedTaskIds[1]);
+                                endPage();
+                                pageNumber++;
+                            }
                         }
 
 
@@ -248,6 +267,14 @@ class PdfHelper {
                             createPaintLayout();
                             endPage();
                             pageNumber++;
+
+                            // Inspection task comments
+                            if (dataSnapshot.child(sortedTaskIds[2]).child("employeeComments").exists()) {
+                                startPage(pageNumber);
+                                createCommentsLayout(dataSnapshot, sortedTaskIds[2]);
+                                endPage();
+                                pageNumber++;
+                            }
 
                             // --------------------------------------------- 4. Baking Task ---------------------------------------------
 
@@ -260,6 +287,14 @@ class PdfHelper {
                             createPackagingLayout();
                             endPage();
                             pageNumber++;
+
+                            // Inspection task comments
+                            if (dataSnapshot.child(sortedTaskIds[3]).child("employeeComments").exists()) {
+                                startPage(pageNumber);
+                                createCommentsLayout(dataSnapshot, sortedTaskIds[3]);
+                                endPage();
+                                pageNumber++;
+                            }
                         }
 
                         // --------------------------------------------- 6. Final Inspection ---------------------------------------------
@@ -269,6 +304,14 @@ class PdfHelper {
                             createInspectionLayout(inspectionTask, true);
                             endPage();
                             pageNumber++;
+
+                            // Inspection task comments
+                            if (dataSnapshot.child(sortedTaskIds[4]).child("employeeComments").exists()) {
+                                startPage(pageNumber);
+                                createCommentsLayout(dataSnapshot, sortedTaskIds[4]);
+                                endPage();
+                                pageNumber++;
+                            }
                         }
 
 
