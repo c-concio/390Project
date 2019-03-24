@@ -883,7 +883,7 @@ public class FirebaseHelper {
         });
     }
 
-    public void setPaintingValues(final TextView mPaintCode, final TextView mBakeTemp, final TextView mBakeTime, final TextView mDescription, final TextView mPaintDescription, String paintingTaskID) {
+    public void setPaintingValues(final TextView mPaintCode, final TextView mBakeTemp, final TextView mBakeTime, final TextView mDescription, final TextView mPaintDescription, String paintingTaskID, final Activity activity) {
         rootRef.child("tasks").child(paintingTaskID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -912,6 +912,28 @@ public class FirebaseHelper {
 
                     }
                 });
+
+                // check if paintType is powder or liquid
+                // if powder paint, then make the linearLayout for liquid gone and vice versa
+                switch (paintType) {
+                    case "powder": {
+                        LinearLayout liquidLinearLayout = activity.findViewById(R.id.liquidLinearLayout);
+                        liquidLinearLayout.setVisibility(View.GONE);
+                        break;
+                    }
+                    case "liquid": {
+                        LinearLayout powderLinearLayout = activity.findViewById(R.id.powderLinearLayout);
+                        powderLinearLayout.setVisibility(View.GONE);
+                        break;
+                    }
+                    default: {
+                        LinearLayout powderLinearLayout = activity.findViewById(R.id.powderLinearLayout);
+                        powderLinearLayout.setVisibility(View.GONE);
+                        LinearLayout liquidLinearLayout = activity.findViewById(R.id.liquidLinearLayout);
+                        liquidLinearLayout.setVisibility(View.GONE);
+                        break;
+                    }
+                }
 
 
             }

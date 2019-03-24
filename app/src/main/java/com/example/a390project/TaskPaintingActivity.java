@@ -8,9 +8,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class TaskPaintingActivity extends AppCompatActivity {
 
@@ -25,6 +30,19 @@ public class TaskPaintingActivity extends AppCompatActivity {
     private Button mPostCommentButton;
     private EditText mComment;
     private ListView employeeCommentsListView;
+
+    // views for liquid paint
+    LinearLayout liquidLinearLayout;
+    EditText viscosityEditText;
+    EditText tupSizeEditText;
+    EditText pressureLiquidEditText;
+
+    // views for powder paint
+    LinearLayout powderLinearLayout;
+    EditText amountEditText;
+    EditText spreadEditText;
+    Switch reCoatSwitch;
+    EditText pressurePowderEditText;
 
     private String employeeComment;
     private String paintingTaskID;
@@ -46,13 +64,13 @@ public class TaskPaintingActivity extends AppCompatActivity {
         mStartTime = findViewById(R.id.start_time_painting_task);
         mEndTime = findViewById(R.id.end_time_painting_task);
         mCompletedTime = findViewById(R.id.completed_painting_task);
-        mComment = findViewById(R.id.newEmployeeCommentEditText);
+        mComment = findViewById(R.id.newCommentsEditText);
         mPostCommentButton = findViewById(R.id.postCommentButton);
         employeeCommentsListView = findViewById(R.id.employeeCommentsListView);
 
         paintingTaskID = getIntent().getStringExtra("paintingTaskID");
         firebaseHelper.setStartTimeEndTimeButtons(mStartTime,mEndTime,paintingTaskID);
-        firebaseHelper.setPaintingValues(mPaintCode, mBakeTemp, mBakeTime, mDescription, mPaintDescription, paintingTaskID);
+        firebaseHelper.setPaintingValues(mPaintCode, mBakeTemp, mBakeTime, mDescription, mPaintDescription, paintingTaskID, this);
 
         mStartTime.setOnClickListener(new View.OnClickListener() {
             @Override

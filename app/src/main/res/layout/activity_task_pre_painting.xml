@@ -68,7 +68,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/divider3">
 
                         <EditText
-                            android:id="@+id/newEmployeeCommentEditText"
+                            android:id="@+id/newCommentsEditText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
@@ -88,7 +88,7 @@
                             android:layout_marginLeft="4dp"
                             android:layout_marginTop="8dp"
                             android:text="Post"
-                            app:layout_constraintStart_toEndOf="@+id/newEmployeeCommentEditText"
+                            app:layout_constraintStart_toEndOf="@+id/newCommentsEditText"
                             app:layout_constraintTop_toBottomOf="@+id/divider3" />
                 </LinearLayout>
 

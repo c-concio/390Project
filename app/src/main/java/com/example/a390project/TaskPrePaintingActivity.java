@@ -48,7 +48,7 @@ public class TaskPrePaintingActivity extends AppCompatActivity {
 
         // comment function
         postCommentButton = findViewById(R.id.postCommentButton);
-        newEmployeeCommentEdtText = findViewById(R.id.newEmployeeCommentEditText);
+        newEmployeeCommentEdtText = findViewById(R.id.newCommentsEditText);
 
         postCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
