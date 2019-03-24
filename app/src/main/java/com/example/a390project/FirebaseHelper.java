@@ -850,6 +850,8 @@ public class FirebaseHelper {
         });
     }
 
+    // ------------------------------------------------ Firebase Painting Methods ------------------------------------------------
+
     public void setPaintingValues(final TextView mPaintCode, final TextView mBakeTemp, final TextView mBakeTime, final TextView mDescription, final TextView mPaintDescription, String paintingTaskID, final Activity activity) {
         rootRef.child("tasks").child(paintingTaskID).addValueEventListener(new ValueEventListener() {
             @Override
@@ -886,11 +888,38 @@ public class FirebaseHelper {
                     case "powder": {
                         LinearLayout liquidLinearLayout = activity.findViewById(R.id.liquidLinearLayout);
                         liquidLinearLayout.setVisibility(View.GONE);
+
+                        EditText amountEditText = activity.findViewById(R.id.amountEditText);
+                        EditText spreadEditText = activity.findViewById(R.id.spreadEditText);
+                        Switch reCoatSwitch = activity.findViewById(R.id.reCoatSwitch);
+                        EditText pressurePowderEditText = activity.findViewById(R.id.pressurePowderEditText);
+
+                        if (dataSnapshot.hasChild("amount"))
+                            amountEditText.setText(String.valueOf(dataSnapshot.child("amount").getValue(Long.class)));
+                        if (dataSnapshot.hasChild("spread"))
+                            spreadEditText.setText(String.valueOf(dataSnapshot.child("spread").getValue(Long.class)));
+                        if (dataSnapshot.hasChild("reCoat"))
+                            reCoatSwitch.setChecked(dataSnapshot.child("reCoat").getValue(Boolean.class));
+                        if (dataSnapshot.hasChild("pressure"))
+                            pressurePowderEditText.setText(String.valueOf(dataSnapshot.child("pressure").getValue(Long.class)));
+
                         break;
                     }
                     case "liquid": {
                         LinearLayout powderLinearLayout = activity.findViewById(R.id.powderLinearLayout);
                         powderLinearLayout.setVisibility(View.GONE);
+
+                        EditText viscosityEditText = activity.findViewById(R.id.viscosityEditText);
+                        EditText tipSizeEditText = activity.findViewById(R.id.tipSizeEditText);
+                        EditText pressureLiquidEditText = activity.findViewById(R.id.pressureLiquidEditText);
+
+                        if (dataSnapshot.hasChild("viscosity"))
+                            viscosityEditText.setText(String.valueOf(dataSnapshot.child("viscosity").getValue(Long.class)));
+                        if (dataSnapshot.hasChild("tipSize"))
+                            tipSizeEditText.setText(String.valueOf(dataSnapshot.child("tipSize").getValue(Long.class)));
+                        if (dataSnapshot.hasChild("pressure"))
+                            pressureLiquidEditText.setText(String.valueOf(dataSnapshot.child("pressure").getValue(Long.class)));
+
                         break;
                     }
                     default: {
@@ -911,6 +940,39 @@ public class FirebaseHelper {
             }
         });
     }
+
+    // setters
+    // set viscosity
+    void setViscosity(String taskId, long viscosity){
+        rootRef.child("tasks").child(taskId).child("viscosity").setValue(viscosity);
+    }
+
+    // set tipSize
+    void setTipSize(String taskId, long tipSize){
+        rootRef.child("tasks").child(taskId).child("tipSize").setValue(tipSize);
+    }
+
+    // set pressure
+    void setPressure(String taskId, long pressure){
+        rootRef.child("tasks").child(taskId).child("pressure").setValue(pressure);
+    }
+
+    // set ammount
+    void setAmount(String taskId, long amount){
+        rootRef.child("tasks").child(taskId).child("amount").setValue(amount);
+    }
+
+    // set spread
+    void setSpread(String taskId, long spread){
+        rootRef.child("tasks").child(taskId).child("spread").setValue(spread);
+    }
+
+    // set reCoat
+    void setReCoat(String taskId, Boolean reCoat){
+        rootRef.child("tasks").child(taskId).child("reCoat").setValue(reCoat);
+    }
+
+
 
     /*
        ------------------------------------------------ Firebase PrePaintingTask Methods ------------------------------------------------

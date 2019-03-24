@@ -3,10 +3,13 @@ package com.example.a390project;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -30,11 +33,12 @@ public class TaskPaintingActivity extends AppCompatActivity {
     private Button mPostCommentButton;
     private EditText mComment;
     private ListView employeeCommentsListView;
+    private Button saveButton;
 
     // views for liquid paint
     LinearLayout liquidLinearLayout;
     EditText viscosityEditText;
-    EditText tupSizeEditText;
+    EditText tipSizeEditText;
     EditText pressureLiquidEditText;
 
     // views for powder paint
@@ -50,6 +54,7 @@ public class TaskPaintingActivity extends AppCompatActivity {
     private static final String TAG = "TaskPaintingActivity";
 
     private FirebaseHelper firebaseHelper = new FirebaseHelper();
+    DatabaseReference dbRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +111,8 @@ public class TaskPaintingActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+        setupEditTexts();
+
         // if post button is clicked, checks if the editText is empty or not. If it is empty, get the string in the editText and save it to firebase
         mPostCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,6 +148,58 @@ public class TaskPaintingActivity extends AppCompatActivity {
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setupEditTexts(){
+        // liquid
+        liquidLinearLayout = findViewById(R.id.liquidLinearLayout);
+        viscosityEditText = findViewById(R.id.viscosityEditText);
+        tipSizeEditText = findViewById(R.id.tipSizeEditText);
+        pressureLiquidEditText = findViewById(R.id.pressureLiquidEditText);
+
+        // views for powder paint
+        powderLinearLayout = findViewById(R.id.powderLinearLayout);
+        amountEditText = findViewById(R.id.amountEditText);
+        spreadEditText = findViewById(R.id.spreadEditText);
+        reCoatSwitch = findViewById(R.id.reCoatSwitch);
+        pressurePowderEditText = findViewById(R.id.pressurePowderEditText);
+
+        // button
+        saveButton = findViewById(R.id.saveButton);
+
+        dbRef = FirebaseDatabase.getInstance().getReference().child("tasks").child(paintingTaskID).child("paintType");
+
+        reCoatSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                firebaseHelper.setReCoat(paintingTaskID, reCoatSwitch.isChecked());
+            }
+        });
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // if liquid layout is gone, then task is powder
+                if (liquidLinearLayout.getVisibility() == View.GONE){
+                    if (!amountEditText.getText().toString().equals(""))
+                        firebaseHelper.setAmount(paintingTaskID, Long.parseLong(amountEditText.getText().toString()));
+                    if (!spreadEditText.getText().toString().equals(""))
+                        firebaseHelper.setSpread(paintingTaskID, Long.parseLong(spreadEditText.getText().toString()));
+                    if (!pressurePowderEditText.getText().toString().equals(""))
+                        firebaseHelper.setPressure(paintingTaskID, Long.parseLong(pressurePowderEditText.getText().toString()));
+                }
+                if (powderLinearLayout.getVisibility() == View.GONE){
+                    if (!viscosityEditText.getText().toString().equals(""))
+                        firebaseHelper.setViscosity(paintingTaskID, Long.parseLong(viscosityEditText.getText().toString()));
+                    if (!tipSizeEditText.getText().toString().equals(""))
+                        firebaseHelper.setTipSize(paintingTaskID, Long.parseLong(tipSizeEditText.getText().toString()));
+                    if (!pressureLiquidEditText.getText().toString().equals(""))
+                        firebaseHelper.setPressure(paintingTaskID, Long.parseLong(pressureLiquidEditText.getText().toString()));
+                }
+            }
+        });
+
+
     }
 
 }
