@@ -10,6 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.example.a390project.Model.Task;
+import com.example.a390project.Model.fragmentInListView;
 import com.example.a390project.R;
 import com.example.a390project.TaskBakingActivity;
 import com.example.a390project.TaskInspectionActivity;
@@ -111,9 +112,19 @@ public class TaskListViewAdapter extends BaseAdapter {
             }
         });
 
+        convertView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                fragmentInListView filv = new fragmentInListView();
+                filv.deletetaskfragment();
+                return true;
+            }
+        });
+
 
         return convertView;
     }
+
 
     private String getDate(long time) {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
