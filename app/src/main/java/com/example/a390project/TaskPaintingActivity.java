@@ -187,6 +187,7 @@ public class TaskPaintingActivity extends AppCompatActivity {
                         firebaseHelper.setSpread(paintingTaskID, Long.parseLong(spreadEditText.getText().toString()));
                     if (!pressurePowderEditText.getText().toString().equals(""))
                         firebaseHelper.setPressure(paintingTaskID, Long.parseLong(pressurePowderEditText.getText().toString()));
+                    Toast.makeText(TaskPaintingActivity.this, "Saved", Toast.LENGTH_SHORT).show();
                 }
                 if (powderLinearLayout.getVisibility() == View.GONE){
                     if (!viscosityEditText.getText().toString().equals(""))
@@ -195,6 +196,7 @@ public class TaskPaintingActivity extends AppCompatActivity {
                         firebaseHelper.setTipSize(paintingTaskID, Long.parseLong(tipSizeEditText.getText().toString()));
                     if (!pressureLiquidEditText.getText().toString().equals(""))
                         firebaseHelper.setPressure(paintingTaskID, Long.parseLong(pressureLiquidEditText.getText().toString()));
+                    Toast.makeText(TaskPaintingActivity.this, "Saved", Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -325,10 +325,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
-                        android:text="Baking Time (min): "
+                        android:text="Pressure:"
                         android:textColor="@color/colorPrimaryDark"
-                        android:textSize="20dp"
-                        tools:text="Pressure: " />
+                        android:textSize="20dp" />
 
                     <EditText
                         android:id="@+id/pressurePowderEditText"
