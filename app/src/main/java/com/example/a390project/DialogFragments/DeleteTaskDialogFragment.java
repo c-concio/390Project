@@ -16,9 +16,8 @@ public class DeleteTaskDialogFragment extends DialogFragment {
     private Button Yesbutton;
     private Button Nobutton;
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.delete_dialog_fragment, container, false);
         Yesbutton = view.findViewById(R.id.Yes_button);
         Nobutton = view.findViewById(R.id.No_button);
