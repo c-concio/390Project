@@ -655,6 +655,29 @@ public class FirebaseHelper {
     public void changeInspectionRejected(String taskID, int partCounted){
         rootRef.child("tasks").child(taskID).child("partRejected").setValue(partCounted);
     }
+    //delete task method
+
+    public void deleteTask(String TaskID){
+        rootRef.child("tasks").child(TaskID).child("subTasks").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds:dataSnapshot.getChildren()) {
+                            String subkey = ds.getKey();
+                            DatabaseReference SubTaskindb = FirebaseDatabase.getInstance().getReference("subTasks").child(subkey);
+                            SubTaskindb.removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+        DatabaseReference Taskindb = FirebaseDatabase.getInstance().getReference("tasks").child(TaskID);
+        Taskindb.removeValue();
+
+
+    }
     //end of Inspection Controllers
 
     //------------------------------ Firebase Control Device Methods --------------------------------------------------------

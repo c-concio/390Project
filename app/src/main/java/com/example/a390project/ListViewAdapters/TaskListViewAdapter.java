@@ -115,7 +115,8 @@ public class TaskListViewAdapter extends BaseAdapter {
         convertView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                fragmentInListView filv = new fragmentInListView();
+                String Taskid =currentItem.getTaskID();
+                fragmentInListView filv = new fragmentInListView(Taskid);
                 filv.deletetaskfragment(context);
                 return true;
             }
