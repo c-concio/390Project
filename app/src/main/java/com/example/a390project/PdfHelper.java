@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,6 +73,11 @@ class PdfHelper {
     // start a page with the specified page number
     private void startPage(int pageNumber){
         pageInfo = new PdfDocument.PageInfo.Builder(canvasWidth, canvasHeight, pageNumber).create();
+        page = document.startPage(pageInfo);
+    }
+
+    private void startPage(int pageNumber, int height){
+        pageInfo = new PdfDocument.PageInfo.Builder(canvasWidth, height, pageNumber).create();
         page = document.startPage(pageInfo);
     }
 
@@ -153,7 +159,7 @@ class PdfHelper {
     }
 
     // ----------------------------------- Comments -----------------------------------
-    private void createCommentsLayout(DataSnapshot dataSnapshot, String taskId){
+    private void createCommentsLayout(DataSnapshot dataSnapshot, String taskId, String taskType, int pageNumber){
         // create a view for the employee layout
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View content = inflater.inflate(R.layout.pdf_comments_layout, null);
@@ -161,7 +167,9 @@ class PdfHelper {
         ListView employeeCommentsListView = content.findViewById(R.id.employeeCommentsListView);
         List<EmployeeComment> employeeComments = new ArrayList<>();
 
-
+        TextView commentsTitleTextView = content.findViewById(R.id.commentsTitleTextView);
+        String commentTitle = taskType + " Comments";
+        commentsTitleTextView.setText(commentTitle);
 
         // get all the comments for the given taskIds
         for(DataSnapshot postSnapshot : dataSnapshot.child(taskId).child("employeeComments").getChildren()){
@@ -174,6 +182,38 @@ class PdfHelper {
         EmployeeCommentListViewAdapter adapter = new EmployeeCommentListViewAdapter(content.getContext(), employeeComments);
         employeeCommentsListView.setAdapter(adapter);
 
+        // ---------------------------------------------------
+
+        // measure the height of the listView of comments
+        int totalHeight = 0;
+
+        for (int i = 0; i < adapter.getCount(); i++) {
+            View mView = adapter.getView(i, null, employeeCommentsListView);
+
+            mView.measure(
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+
+            totalHeight += mView.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = employeeCommentsListView.getLayoutParams();
+        params.height = totalHeight
+                + (employeeCommentsListView.getDividerHeight() * (adapter.getCount() - 1));
+        employeeCommentsListView.setLayoutParams(params);
+        employeeCommentsListView.requestLayout();
+        totalHeight = totalHeight + 150;
+
+
+        Log.d(TAG, "createCommentsLayout: comment height " + totalHeight);
+
+        if (totalHeight > canvasHeight)
+            startPage(pageNumber, totalHeight);
+        else
+           startPage(pageNumber);
+
+        // ---------------------------------------------------
 
         // measure the layout
         measureLayout(content);
@@ -182,10 +222,10 @@ class PdfHelper {
 
     }
 
+
     private void endPage(){
         document.finishPage(page);
     }
-
 
     // generate pdf
     void generatePdf(final String projectPO){
@@ -234,8 +274,7 @@ class PdfHelper {
 
                                 // Inspection task comments
                                 if (dataSnapshot.child(sortedTaskIds[0]).child("employeeComments").exists()) {
-                                    startPage(pageNumber);
-                                    createCommentsLayout(dataSnapshot, sortedTaskIds[0]);
+                                    createCommentsLayout(dataSnapshot, sortedTaskIds[0], "Inspection", pageNumber);
                                     endPage();
                                     pageNumber++;
                                 }
@@ -252,8 +291,7 @@ class PdfHelper {
 
                             // Inspection task comments
                             if (dataSnapshot.child(sortedTaskIds[1]).child("employeeComments").exists()) {
-                                startPage(pageNumber);
-                                createCommentsLayout(dataSnapshot, sortedTaskIds[1]);
+                                createCommentsLayout(dataSnapshot, sortedTaskIds[1], "Pre-Painting", pageNumber);
                                 endPage();
                                 pageNumber++;
                             }
@@ -270,8 +308,7 @@ class PdfHelper {
 
                             // Inspection task comments
                             if (dataSnapshot.child(sortedTaskIds[2]).child("employeeComments").exists()) {
-                                startPage(pageNumber);
-                                createCommentsLayout(dataSnapshot, sortedTaskIds[2]);
+                                createCommentsLayout(dataSnapshot, sortedTaskIds[2], "Painting", pageNumber);
                                 endPage();
                                 pageNumber++;
                             }
@@ -290,8 +327,7 @@ class PdfHelper {
 
                             // Inspection task comments
                             if (dataSnapshot.child(sortedTaskIds[3]).child("employeeComments").exists()) {
-                                startPage(pageNumber);
-                                createCommentsLayout(dataSnapshot, sortedTaskIds[3]);
+                                createCommentsLayout(dataSnapshot, sortedTaskIds[3], "Packaging", pageNumber);
                                 endPage();
                                 pageNumber++;
                             }
@@ -307,17 +343,11 @@ class PdfHelper {
 
                             // Inspection task comments
                             if (dataSnapshot.child(sortedTaskIds[4]).child("employeeComments").exists()) {
-                                startPage(pageNumber);
-                                createCommentsLayout(dataSnapshot, sortedTaskIds[4]);
+                                createCommentsLayout(dataSnapshot, sortedTaskIds[4], "Final Inspection", pageNumber);
                                 endPage();
                                 pageNumber++;
                             }
                         }
-
-
-
-
-
 
                         saveFile(projectPO, this);
                     }
@@ -335,32 +365,6 @@ class PdfHelper {
             }
         });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 
     private void measureLayout(View content){
@@ -371,57 +375,8 @@ class PdfHelper {
         content.layout(0, 0, page.getCanvas().getWidth(), page.getCanvas().getHeight());
     }
 
-    void getComments(String taskID){
-        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-        rootRef.child("tasks").child(taskID).child("employeeComments").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                startPage(1);
-
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View content = inflater.inflate(R.layout.pdf_comments_layout, null);
-                Activity activity = (Activity) content.getContext();
-
-                // call the getEmployees function in FirebaseHelper to get all the employees
-                Log.d(TAG, "createCommentsLayout: --------------------------------------------------------------------- calling get Employee comments");
-                //firebaseHelper.getEmployeeComments(activity, content, taskID);
-
-                ListView employeeCommentsListView = content.findViewById(R.id.employeeCommentsListView);
-                Log.d(TAG, "createCommentsLayout: listView is " + employeeCommentsListView);
-
-                List<EmployeeComment> comments = new ArrayList<>();
-
-                for(DataSnapshot postSnapshot : dataSnapshot.getChildren()){
-                    EmployeeComment currentComment = postSnapshot.getValue(EmployeeComment.class);
-                    Log.d(TAG, "onDataChange: Called snapshot");
-
-                    Log.d(TAG, "onDataChange: got comment");
-                    comments.add(currentComment);
-                }
-
-                // -------------------------- testing
-                employeeCommentsListView.setAdapter(new EmployeeCommentListViewAdapter(content.getContext(), comments));
-
-
-                // measure the layout
-                measureLayout(content);
-
-                content.draw(page.getCanvas());
-
-                endPage();
-
-                //generatePdf();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
     // function checks what type of task is given
-    void checkTaskType(Boolean[] tasksTypesInProject, String[] sortedTaskIds, String taskType, String taskId){
+    private void checkTaskType(Boolean[] tasksTypesInProject, String[] sortedTaskIds, String taskType, String taskId){
         switch(taskType){
             case ("Inspection"):
                 tasksTypesInProject[0] = true;
@@ -446,7 +401,7 @@ class PdfHelper {
         }
     }
 
-    void saveFile(String projectPO, ValueEventListener taskValueEventListener){
+    private void saveFile(String projectPO, ValueEventListener taskValueEventListener){
         // get the directory file of the folder the pdfs will be saved in. If the folder is not present, it is created in the External memory
         String directory_path = Environment.getExternalStorageDirectory().getPath() + "/Pdf Reports/";
         File filePath = new File(directory_path);
