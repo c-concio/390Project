@@ -98,7 +98,7 @@ public class GraphableProjectsListViewAdapter extends BaseAdapter {
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     Toast.makeText(context, "Starting GraphForegroundService.", Toast.LENGTH_SHORT).show();
-                    context.startForegroundService(serviceIntent);
+                    //context.startForegroundService(serviceIntent);
                 }
                 else {
                     //context.startService(serviceIntent);
