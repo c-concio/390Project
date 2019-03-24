@@ -73,7 +73,6 @@
                 android:layout_marginLeft="1dp"
                 android:background="@color/common_google_signin_btn_text_dark_default"
                 android:padding="8dp"
-                android:text="Value"
                 android:textColor="@color/common_google_signin_btn_text_dark_focused" />
         </TableRow>
 
@@ -102,7 +101,6 @@
                 android:layout_marginLeft="1dp"
                 android:background="@color/common_google_signin_btn_text_dark_default"
                 android:padding="8dp"
-                android:text="Value"
                 android:textColor="@color/common_google_signin_btn_text_dark_focused" />
         </TableRow>
 
@@ -133,7 +131,6 @@
                 android:layout_marginLeft="1dp"
                 android:background="@color/common_google_signin_btn_text_dark_default"
                 android:padding="8dp"
-                android:text="Value"
                 android:textColor="@color/common_google_signin_btn_text_dark_focused" />
         </TableRow>
 
@@ -162,7 +159,6 @@
                 android:layout_marginLeft="1dp"
                 android:background="@color/common_google_signin_btn_text_dark_default"
                 android:padding="8dp"
-                android:text="value"
                 android:textColor="@color/common_google_signin_btn_text_dark_focused" />
         </TableRow>
 
@@ -193,7 +189,6 @@
                 android:layout_marginLeft="1dp"
                 android:background="@color/common_google_signin_btn_text_dark_default"
                 android:padding="8dp"
-                android:text="Value"
                 android:textColor="@color/common_google_signin_btn_text_dark_focused" />
         </TableRow>
 

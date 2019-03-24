@@ -145,7 +145,7 @@ public class ProjectActivity extends AppCompatActivity {
             }
             case R.id.generatePdfItem:{
                 // generate the pdf for the current project
-                PdfHelper pdfHelper = new PdfHelper(1000, 1000, this);
+                PdfHelper pdfHelper = new PdfHelper(1700, 2200, this);
                 pdfHelper.generatePdf(projectPO);
 
 

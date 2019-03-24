@@ -16,6 +16,9 @@ import com.example.a390project.ListViewAdapters.EmployeeCommentListViewAdapter;
 import com.example.a390project.Model.EmployeeComment;
 import com.example.a390project.Model.Task;
 import com.example.a390project.Model.TaskClasses.InspectionTask;
+import com.example.a390project.Model.TaskClasses.PackagingTask;
+import com.example.a390project.Model.TaskClasses.PaintingTask;
+import com.example.a390project.Model.TaskClasses.PrePaintingTask;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,6 +48,11 @@ class PdfHelper {
 
     private static final String TAG = "PdfHelper";
 
+
+    // value event listeners
+    private ValueEventListener projectValueEventListener;
+    final DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+
     // instructions on how to use:
     // start a PdfHelper class to start the file
     // start
@@ -71,7 +79,7 @@ class PdfHelper {
 
     // ----------------------------------- Inspection -----------------------------------
     // receive the parts received, parts accepted, and parts rejected and create the inspection layout
-    public void createInspectionLayout(InspectionTask inspectionTask){
+    public void createInspectionLayout(InspectionTask inspectionTask, Boolean isFinal){
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View content = inflater.inflate(R.layout.pdf_inspection_layout, null);
@@ -85,6 +93,11 @@ class PdfHelper {
         receivedTextView.setText(String.valueOf(inspectionTask.getPartCounted()));
         acceptedTextView.setText(String.valueOf(inspectionTask.getPartAccepted()));
         rejectedTextView.setText(String.valueOf(inspectionTask.getPartRejected()));
+
+        if (isFinal){
+            TextView inspectionTitleTextView = content.findViewById(R.id.inspectionTitleTextView);
+            inspectionTitleTextView.setText("Final-Inspection");
+        }
 
         measureLayout(content);
 
@@ -101,7 +114,6 @@ class PdfHelper {
         measureLayout(content);
 
         content.draw(page.getCanvas());
-        document.finishPage(page);
     }
 
 
@@ -114,7 +126,6 @@ class PdfHelper {
         measureLayout(content);
 
         content.draw(page.getCanvas());
-        document.finishPage(page);
 
     }
 
@@ -127,7 +138,6 @@ class PdfHelper {
         measureLayout(content);
 
         content.draw(page.getCanvas());
-        document.finishPage(page);
 
     }
 
@@ -140,7 +150,6 @@ class PdfHelper {
         measureLayout(content);
 
         content.draw(page.getCanvas());
-        document.finishPage(page);
     }
 
     // ----------------------------------- Comments -----------------------------------
@@ -167,7 +176,7 @@ class PdfHelper {
 
     }
 
-    public void endPage(){
+    private void endPage(){
         document.finishPage(page);
     }
 
@@ -176,10 +185,7 @@ class PdfHelper {
     void generatePdf(final String projectPO){
         List<Boolean> taskTypes = new ArrayList<>();
 
-        final DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-        // value event listeners
-        ValueEventListener projectValueEventListener;
-        ValueEventListener taskValueEventListener;
+
 
 
 
@@ -211,17 +217,66 @@ class PdfHelper {
                         }
 
                         int pageNumber = 0;
+
+
+                        // --------------------------------------------- 0. Inspection Task ---------------------------------------------
                         // if inspection task is available, create the inspection page
                         if (taskTypesInProject[0]){
                             InspectionTask inspectionTask = dataSnapshot.child(sortedTaskIds[0]).getValue(InspectionTask.class);
                             startPage(pageNumber);
-                            createInspectionLayout(inspectionTask);
+                            createInspectionLayout(inspectionTask, false);
                             endPage();
                             pageNumber++;
                         }
 
 
-                        saveFile(projectPO);
+
+                        // --------------------------------------------- 2. Pre-paint Task ---------------------------------------------
+                        if (taskTypesInProject[1]){
+                            PrePaintingTask prePaintingTask = dataSnapshot.child(sortedTaskIds[1]).getValue(PrePaintingTask.class);
+                            startPage(pageNumber);
+                            createPrePaintLayout();
+                            endPage();
+                            pageNumber++;
+                        }
+
+
+                        // --------------------------------------------- 3. Paint Task ---------------------------------------------
+                        if (taskTypesInProject[2]){
+                            PaintingTask paintingTask = dataSnapshot.child(sortedTaskIds[2]).getValue(PaintingTask.class);
+                            startPage(pageNumber);
+                            createPaintLayout();
+                            endPage();
+                            pageNumber++;
+
+                            // --------------------------------------------- 4. Baking Task ---------------------------------------------
+
+                        }
+
+                        // --------------------------------------------- 5. Packaging Task ---------------------------------------------
+                        if (taskTypesInProject[3]){
+                            //PackagingTask packagingTask = dataSnapshot.child(sortedTaskIds[3]).getValue(PackagingTask.class);
+                            startPage(pageNumber);
+                            createPackagingLayout();
+                            endPage();
+                            pageNumber++;
+                        }
+
+                        // --------------------------------------------- 6. Final Inspection ---------------------------------------------
+                        if (taskTypesInProject[4]){
+                            InspectionTask inspectionTask = dataSnapshot.child(sortedTaskIds[4]).getValue(InspectionTask.class);
+                            startPage(pageNumber);
+                            createInspectionLayout(inspectionTask, true);
+                            endPage();
+                            pageNumber++;
+                        }
+
+
+
+
+
+
+                        saveFile(projectPO, this);
                     }
 
                     @Override
@@ -238,31 +293,24 @@ class PdfHelper {
         });
 
 
-        // --------------------------------------------- 1. Inspection Task ---------------------------------------------
 
 
 
 
-        // --------------------------------------------- 2. Pre-paint Task ---------------------------------------------
 
 
 
 
-        // --------------------------------------------- 3. Paint Task ---------------------------------------------
 
 
 
 
-        // --------------------------------------------- 4. Baking Task ---------------------------------------------
 
 
 
 
-        // --------------------------------------------- 5. Packaging Task ---------------------------------------------
 
 
-
-        // --------------------------------------------- 6. Final Inspection ---------------------------------------------
 
 
 
@@ -355,7 +403,7 @@ class PdfHelper {
         }
     }
 
-    void saveFile(String projectPO){
+    void saveFile(String projectPO, ValueEventListener taskValueEventListener){
         // get the directory file of the folder the pdfs will be saved in. If the folder is not present, it is created in the External memory
         String directory_path = Environment.getExternalStorageDirectory().getPath() + "/Pdf Reports/";
         File filePath = new File(directory_path);
@@ -379,5 +427,9 @@ class PdfHelper {
         } catch (IOException e) {
             throw new RuntimeException("Error generating file", e);
         }
+
+        // detatch listeners
+        rootRef.child("projects").child(projectPO).child("tasks").removeEventListener(projectValueEventListener);
+        rootRef.child("tasks").removeEventListener(taskValueEventListener);
     }
 }
