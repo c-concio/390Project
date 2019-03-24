@@ -1,121 +1,190 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView3"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".TaskInspectionActivity">
 
-    <TextView
-        android:id="@+id/partCountedTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="24dp"
-        android:textSize="18dp"
-        android:text="Parts Counted:"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/partAcceptedTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="24dp"
-        android:text="Parts Accepted:"
-        android:textSize="18dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/partCountedTextView" />
-
-    <TextView
-        android:id="@+id/partRejectedTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="24dp"
-        android:text="Parts Rejected:"
-        android:textSize="18dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/partAcceptedTextView" />
-
-    <EditText
-        android:id="@+id/partCountedEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toBottomOf="@+id/partCountedTextView"
-        app:layout_constraintStart_toEndOf="@+id/partCountedTextView"
-        app:layout_constraintTop_toTopOf="@+id/partCountedTextView" />
-
-    <EditText
-        android:id="@+id/partAcceptedEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toBottomOf="@+id/partAcceptedTextView"
-        app:layout_constraintStart_toEndOf="@+id/partAcceptedTextView"
-        app:layout_constraintTop_toTopOf="@+id/partAcceptedTextView" />
-
-    <EditText
-        android:id="@+id/partRejectedEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        app:layout_constraintBottom_toBottomOf="@+id/partRejectedTextView"
-        app:layout_constraintStart_toEndOf="@+id/partRejectedTextView"
-        app:layout_constraintTop_toTopOf="@+id/partRejectedTextView" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout4"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/partRejectedEditText">
+        android:padding="15dp"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp">
 
-        <Button
-            android:id="@+id/startTimeButton_inspection"
+        <TextView
+            android:id="@+id/partRejectedTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="30dp"
-            android:text="Start Time" />
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:text="Parts Rejected:"
+            android:textSize="18dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/partAcceptedTextView" />
 
-        <Button
-            android:id="@+id/endTimeButton_inspection"
+        <TextView
+            android:id="@+id/partCountedTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="End Time" />
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:text="Parts Counted:"
+            android:textSize="18dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
+        <Button
+            android:id="@+id/completeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="8dp"
+            android:text="Complete Inspection"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
+
+        <EditText
+            android:id="@+id/partCountedEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            app:layout_constraintBottom_toBottomOf="@+id/partCountedTextView"
+            app:layout_constraintStart_toEndOf="@+id/partCountedTextView"
+            app:layout_constraintTop_toTopOf="@+id/partCountedTextView" />
+
+        <EditText
+            android:id="@+id/partRejectedEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            app:layout_constraintBottom_toBottomOf="@+id/partRejectedTextView"
+            app:layout_constraintStart_toEndOf="@+id/partRejectedTextView"
+            app:layout_constraintTop_toTopOf="@+id/partRejectedTextView" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/partRejectedEditText">
+
+            <Button
+                android:id="@+id/startTimeButton_inspection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="30dp"
+                android:text="Start Time" />
+
+            <Button
+                android:id="@+id/endTimeButton_inspection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="End Time" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/partAcceptedTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:text="Parts Accepted:"
+            android:textSize="18dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/partCountedTextView" />
+
+        <EditText
+            android:id="@+id/partAcceptedEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            app:layout_constraintBottom_toBottomOf="@+id/partAcceptedTextView"
+            app:layout_constraintStart_toEndOf="@+id/partAcceptedTextView"
+            app:layout_constraintTop_toTopOf="@+id/partAcceptedTextView" />
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_marginTop="24dp"
+            android:background="@color/colorPrimaryDark"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/completeButton" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout6"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider2">
+
+            <EditText
+                android:id="@+id/employeeCommentEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="New Comment"
+                android:inputType="textMultiLine|textCapSentences"
+                android:isScrollContainer="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/divider3" />
+
+            <Button
+                android:id="@+id/postCommentButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="8dp"
+                android:text="Post"
+                app:layout_constraintStart_toEndOf="@+id/newEmployeeCommentEditText"
+                app:layout_constraintTop_toBottomOf="@+id/divider3" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/comTextView2"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:text="Comments"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout6" />
+
+        <ListView
+            android:id="@+id/employeeCommentsListView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:listSelector="@android:color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/comTextView2" />
+    </android.support.constraint.ConstraintLayout>
 
 
-    <Button
-        android:id="@+id/completeButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="5dp"
-        android:text="Complete Inspection"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
-</android.support.constraint.ConstraintLayout>
+</ScrollView>
