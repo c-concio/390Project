@@ -559,7 +559,7 @@ public class FirebaseHelper {
                 else {
                     for (DataSnapshot postSnapshot : dataSnapshot.child("materialUsed").getChildren()) {
                         TextView text = new TextView(activity);
-                        text.setText(postSnapshot.getValue(String.class));
+                        text.setText(postSnapshot.getKey());
                         materialUsedLinearLayout.addView(text);
                     }
                 }

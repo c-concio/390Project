@@ -3,6 +3,7 @@ package com.example.a390project;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Environment;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -228,10 +230,29 @@ class PdfHelper {
     }
 
     // ----------------------------------- Packaging -----------------------------------
-    private void createPackagingLayout(){
+    private void createPackagingLayout(PackagingTask packagingTask){
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View content = inflater.inflate(R.layout.pdf_packaging_layout, null);
+
+        // views
+        TextView descriptionTextView = content.findViewById(R.id.descriptionTextView);
+        TextView hoursTextView = content.findViewById(R.id.hoursTextView);
+        LinearLayout materialLinearLayout = content.findViewById(R.id.materialLinearLayout);
+
+        descriptionTextView.setText(packagingTask.getDescription());
+        hoursTextView.setText(String.valueOf(packagingTask.getHours()));
+
+        // set materials
+        List<String> materials = packagingTask.getMaterials();
+        for(String currentMaterial : materials){
+            TextView newMaterial = new TextView(content.getContext());
+            newMaterial.setTextSize((float) 14);
+            newMaterial.setPadding(8,8,8,8);
+            newMaterial.setTextColor(Color.BLACK);
+            newMaterial.setText(currentMaterial);
+            materialLinearLayout.addView(newMaterial);
+        }
 
         measureLayout(content);
 
@@ -536,21 +557,41 @@ class PdfHelper {
                     pageNumber++;
                 }
 
-                /*// --------------------------------------------- 5. Packaging Task ---------------------------------------------
+                // --------------------------------------------- 5. Packaging Task ---------------------------------------------
                 if (!packagingIDs.isEmpty()) {
-                    //PackagingTask packagingTask = taskSnapshot.child(sortedTaskIds[3]).getValue(PackagingTask.class);
-                    startPage(pageNumber);
-                    createPackagingLayout();
-                    endPage();
-                    pageNumber++;
+                    for (String packagingID : packagingIDs) {
+                        PackagingTask packagingTask = taskSnapshot.child(packagingID).getValue(PackagingTask.class);
 
-                    // Inspection task comments
-                    if (taskSnapshot.child(sortedTaskIds[3]).child("employeeComments").exists()) {
-                        createCommentsLayout(taskSnapshot, sortedTaskIds[3], "Packaging", pageNumber);
+                        startPage(pageNumber);
+
+                        // get the materials
+                        List<String> materials = new ArrayList<>();
+                        for (DataSnapshot postSnapshot : taskSnapshot.child(packagingID).child("materialUsed").getChildren()){
+                            materials.add(postSnapshot.getKey());
+                        }
+
+                        packagingTask.setMaterials(materials);
+
+                        long hours = 0;
+                        // go through all the working blocks and add up the working hours
+                        for(DataSnapshot postSnapshot : workSnapshot.child(packagingID).child("workBlocks").getChildren()){
+                            hours += postSnapshot.child("workingTime").getValue(long.class);
+                        }
+                        packagingTask.setHours(hours);
+
+
+                        createPackagingLayout(packagingTask);
                         endPage();
                         pageNumber++;
+
+                        // Inspection task comments
+                        if (taskSnapshot.child(packagingID).child("employeeComments").exists()) {
+                            createCommentsLayout(taskSnapshot, packagingID, "Packaging", pageNumber);
+                            endPage();
+                            pageNumber++;
+                        }
                     }
-                }*/
+                }
 
                 // --------------------------------------------- 6. Final Inspection ---------------------------------------------
                 if (finalInspectionID != null) {

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -11,6 +12,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 // Todo: input set firebase
 
@@ -26,6 +30,14 @@ public class TaskPackagingActivity extends AppCompatActivity {
     FirebaseHelper firebaseHelper;
 
     String packagingTaskID;
+
+    private static final String TAG = "TaskPackagingActivity";
+
+
+    // ------------------------- temporary ----------------------------
+    Button addMaterialButton;
+    EditText materialEditText;
+    // ------------------------- temporary ----------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +71,26 @@ public class TaskPackagingActivity extends AppCompatActivity {
         endTimeButton.setOnClickListener(endTimeOnClickListener);
         completeButton.setOnClickListener(completeOnClickListener);
         postCommentButton.setOnClickListener(postCommentOnClickListener);
+
+        // ------------------------- temporary ----------------------------
+        materialEditText = findViewById(R.id.materialEditText);
+        addMaterialButton = findViewById(R.id.addMaterialButton);
+        addMaterialButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (materialEditText.getText().toString().isEmpty()){
+                    materialEditText.setError("Please enter a material");
+                }
+                else{
+                    String material = materialEditText.getText().toString();
+                    DatabaseReference taskRef = FirebaseDatabase.getInstance().getReference().child("tasks").child(packagingTaskID);
+                    taskRef.child("materialUsed").child(material).setValue(true);
+                    materialEditText.getText().clear();
+                    Toast.makeText(TaskPackagingActivity.this, "Material added", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        // ------------------------- temporary ----------------------------
 
 
         // setup the firebaseHelper

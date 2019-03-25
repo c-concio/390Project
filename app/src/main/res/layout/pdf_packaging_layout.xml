@@ -33,23 +33,22 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/dateTitleTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="1dp"
                     android:background="@android:color/darker_gray"
                     android:padding="8dp"
-                    android:text="Date"
+                    android:text="Description"
                     android:textColor="@color/common_google_signin_btn_text_dark_focused" />
 
                 <TextView
-                    android:id="@+id/textView10"
+                    android:id="@+id/descriptionTextView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginRight="1dp"
                     android:background="@color/common_google_signin_btn_text_dark_default"
                     android:padding="8dp"
-                    android:text="TextView"
+                    android:text="Description"
                     android:textColor="@color/common_google_signin_btn_text_dark_focused" />
             </LinearLayout>
 
@@ -71,14 +70,13 @@
                     android:text="Material Used"
                     android:textColor="@color/common_google_signin_btn_text_dark_focused" />
 
-                <TextView
-                    android:id="@+id/textView11"
+                <LinearLayout
+                    android:id="@+id/materialLinearLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/common_google_signin_btn_text_dark_default"
-                    android:padding="8dp"
-                    android:text="TextView"
-                    android:textColor="@color/common_google_signin_btn_text_dark_focused" />
+                    android:layout_height="match_parent"
+                    android:background="@color/common_google_signin_btn_text_dark_pressed"
+                    android:orientation="vertical" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -99,12 +97,12 @@
                     android:textColor="@color/common_google_signin_btn_text_dark_focused" />
 
                 <TextView
-                    android:id="@+id/textView12"
+                    android:id="@+id/hoursTextView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:background="@color/common_google_signin_btn_text_dark_default"
                     android:padding="8dp"
-                    android:text="TextView"
+                    android:text="Hours"
                     android:textColor="@color/common_google_signin_btn_text_dark_focused" />
             </LinearLayout>
 
