@@ -1,8 +1,7 @@
 package com.example.a390project.DialogFragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,16 +10,20 @@ import android.widget.Button;
 
 import com.example.a390project.FirebaseHelper;
 import com.example.a390project.R;
-import com.google.firebase.database.FirebaseDatabase;
 
+@SuppressLint("ValidFragment")
 public class DeleteTaskDialogFragment extends DialogFragment {
 
+    private String projectPO;
     private Button Yesbutton;
     private Button Nobutton;
-    private String TaskID;
+    private String taskID;
 
-    public DeleteTaskDialogFragment(String taskid){
-        TaskID = taskid;
+
+
+    public DeleteTaskDialogFragment(String taskID, String projectPO) {
+        this.taskID = taskID;
+        this.projectPO = projectPO;
     }
 
 
@@ -33,7 +36,7 @@ public class DeleteTaskDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 FirebaseHelper FBHelper = new FirebaseHelper();
-                FBHelper.deleteTask(TaskID);
+                FBHelper.deleteTask(taskID, projectPO);
                 getDialog().dismiss();
             }
         });

@@ -464,7 +464,7 @@ public class FirebaseHelper {
 
     }
 
-    public void populateTasks(String projectPO, final Activity activity) {
+    public void populateTasks(final String projectPO, final Activity activity) {
         rootRef.child("projects").child(projectPO).child("tasks").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -487,7 +487,7 @@ public class FirebaseHelper {
                                 tasks.add(new Task(taskID, projectPO, taskType, description, createdTime,completed));
                             }
                         }
-                        callTaskListViewAdapter(activity, tasks);
+                        callTaskListViewAdapter(activity, tasks, projectPO);
                     }
 
                     @Override
@@ -504,8 +504,8 @@ public class FirebaseHelper {
         });
     }
 
-    private void callTaskListViewAdapter(Activity activity, List<Task> tasks) {
-        TaskListViewAdapter adapter = new TaskListViewAdapter(activity,tasks);
+    private void callTaskListViewAdapter(Activity activity, List<Task> tasks, String projectPO) {
+        TaskListViewAdapter adapter = new TaskListViewAdapter(activity, tasks, projectPO);
         ListView itemsListView  = activity.findViewById(R.id.project_tasks_list_view);
         if (itemsListView!= null)
             itemsListView.setAdapter(adapter);
@@ -624,24 +624,31 @@ public class FirebaseHelper {
     }
     //delete task method
 
-    public void deleteTask(String TaskID){
+    public void deleteTask(String TaskID, String projectPO){
+        //remove task from projects
+        rootRef.child("projects").child(projectPO).child("tasks").child(TaskID).removeValue();
+
+        //remove task from tasks
+        rootRef.child("tasks").child(TaskID).removeValue();
+
+        //remove the subtasks if any
         rootRef.child("tasks").child(TaskID).child("subTasks").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot ds:dataSnapshot.getChildren()) {
-                            String subkey = ds.getKey();
-                            DatabaseReference SubTaskindb = FirebaseDatabase.getInstance().getReference("subTasks").child(subkey);
-                            SubTaskindb.removeValue();
-                        }
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        String subkey = ds.getKey();
+                        DatabaseReference SubTaskindb = FirebaseDatabase.getInstance().getReference("subTasks").child(subkey);
+                        SubTaskindb.removeValue();
                     }
+                }
+            }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                    }
-                });
-        DatabaseReference Taskindb = FirebaseDatabase.getInstance().getReference("tasks").child(TaskID);
-        Taskindb.removeValue();
+            }
+        });
 
 
     }

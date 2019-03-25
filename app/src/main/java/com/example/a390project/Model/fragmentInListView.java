@@ -13,15 +13,16 @@ import java.lang.reflect.Field;
 public class fragmentInListView extends AppCompatActivity {
 
     String TAG = "deletetask";
-    private String TASKID;
+    private String taskID;
+    private String projectPO;
 
-    public fragmentInListView(String taskID){
-        TASKID = taskID;
-
+    public fragmentInListView(String taskID, String projectPO){
+        this.taskID = taskID;
+        this.projectPO = projectPO;
     }
 
     public void deletetaskfragment(Context context) {
-        DeleteTaskDialogFragment dialog = new DeleteTaskDialogFragment(TASKID);
+        DeleteTaskDialogFragment dialog = new DeleteTaskDialogFragment(taskID, projectPO);
         dialog.show(((ProjectActivity) context).getSupportFragmentManager(),"delete");
     }
 

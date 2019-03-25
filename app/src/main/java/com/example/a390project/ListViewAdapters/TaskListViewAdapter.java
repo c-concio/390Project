@@ -1,5 +1,6 @@
 package com.example.a390project.ListViewAdapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -31,9 +32,13 @@ public class TaskListViewAdapter extends BaseAdapter {
     private TextView mTaskType;
     private TextView mCreatedTime;
 
-    public TaskListViewAdapter(Context context, List<Task> items) {
+    //variables
+    private String projectPO;
+
+    public TaskListViewAdapter(Context context, List<Task> items, String projectPO) {
         this.context = context;
         this.items = items;
+        this.projectPO = projectPO;
     }
 
     @Override
@@ -115,8 +120,8 @@ public class TaskListViewAdapter extends BaseAdapter {
         convertView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                String Taskid =currentItem.getTaskID();
-                fragmentInListView filv = new fragmentInListView(Taskid);
+                String Taskid = currentItem.getTaskID();
+                fragmentInListView filv = new fragmentInListView(Taskid,projectPO);
                 filv.deletetaskfragment(context);
                 return true;
             }
