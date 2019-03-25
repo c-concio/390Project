@@ -2,9 +2,12 @@ package com.example.a390project;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.pdf.PdfDocument;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -420,6 +423,10 @@ class PdfHelper {
             document.close();
             outputStream.close();
 
+            //also shares pdf
+            Uri contentUri = FileProvider.getUriForFile(context, "com.example.fileprovider", file);
+            shareDocument(contentUri);
+
             Toast.makeText(context, "Pdf Generation Successful", Toast.LENGTH_SHORT).show();
 
         } catch (IOException e) {
@@ -429,5 +436,17 @@ class PdfHelper {
         // detatch listeners
         rootRef.child("projects").child(projectPO).child("tasks").removeEventListener(projectValueEventListener);
         rootRef.child("tasks").removeEventListener(taskValueEventListener);
+    }
+
+    private void shareDocument(Uri uri) {
+        Intent mShareIntent = new Intent();
+        mShareIntent.setAction(Intent.ACTION_SEND);
+        mShareIntent.setType("application/pdf");
+        // Assuming it may go via eMail:
+        mShareIntent.putExtra(Intent.EXTRA_SUBJECT, "Here is a PDF from PdfSend");
+        // Attach the PDf as a Uri, since Android can't take it as bytes yet.
+        mShareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        context.startActivity(mShareIntent);
+        return;
     }
 }
