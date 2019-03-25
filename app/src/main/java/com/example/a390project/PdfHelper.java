@@ -17,9 +17,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.a390project.ListViewAdapters.EmployeeCommentListViewAdapter;
+import com.example.a390project.ListViewAdapters.PrepaintTaskListViewAdapter;
 import com.example.a390project.Model.EmployeeComment;
 import com.example.a390project.Model.Task;
 import com.example.a390project.Model.TaskClasses.InspectionTask;
+import com.example.a390project.Model.TaskClasses.Inventory;
 import com.example.a390project.Model.TaskClasses.PackagingTask;
 import com.example.a390project.Model.TaskClasses.PaintingTask;
 import com.example.a390project.Model.TaskClasses.PrePaintingTask;
@@ -28,6 +30,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -94,12 +98,12 @@ class PdfHelper {
         View content = inflater.inflate(R.layout.pdf_inspection_layout, null);
 
         // find the views for the inspection values
-        TextView receivedTextView = content.findViewById(R.id.countedTextView);
+        TextView countedTextView = content.findViewById(R.id.countedTextView);
         TextView acceptedTextView = content.findViewById(R.id.acceptedTextView);
         TextView rejectedTextView = content.findViewById(R.id.rejectedTextView);
 
         // set the text for the views
-        receivedTextView.setText(String.valueOf(inspectionTask.getPartCounted()));
+        countedTextView.setText(String.valueOf(inspectionTask.getPartCounted()));
         acceptedTextView.setText(String.valueOf(inspectionTask.getPartAccepted()));
         rejectedTextView.setText(String.valueOf(inspectionTask.getPartRejected()));
 
@@ -114,12 +118,27 @@ class PdfHelper {
     }
 
     // ----------------------------------- Prepaint -----------------------------------
-    private void createPrePaintLayout(){
+    private void createPrePaintLayout(PrePaintingTask prePaintingTask){
         // get the layout view
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View content = inflater.inflate(R.layout.pdf_prepaint_layout, null);
 
         // find views for the prepaint values
+        TextView sandBlastingTextView = content.findViewById(R.id.sandBlastingTextView);
+        TextView sandingTextView = content.findViewById(R.id.sandingTextView);
+        TextView manualSolventCleaningTextView = content.findViewById(R.id.manualSolventCleaningTextView);
+        TextView iriditeTextView = content.findViewById(R.id.iriditeTextView);
+        TextView maskingTextView = content.findViewById(R.id.maskingTextView);
+
+        //int minuteConversion = 60000;
+        int minuteConversion = 1000;
+
+        sandBlastingTextView.setText(String.valueOf(prePaintingTask.getSandblastingHours()/minuteConversion) + "s");
+        sandingTextView.setText(String.valueOf(prePaintingTask.getSandingHours()/minuteConversion) + "s");
+        manualSolventCleaningTextView.setText(String.valueOf(prePaintingTask.getCleaningHours()/minuteConversion) + "s");
+        iriditeTextView.setText(String.valueOf(prePaintingTask.getIriditeHours()/minuteConversion) + "s");
+        maskingTextView.setText(String.valueOf(prePaintingTask.getMaskingHours()/minuteConversion) + "s");
+
         measureLayout(content);
 
         content.draw(page.getCanvas());
@@ -234,140 +253,213 @@ class PdfHelper {
     void generatePdf(final String projectPO){
         List<Boolean> taskTypes = new ArrayList<>();
 
-        rootRef.child("projects").child(projectPO).child("tasks").addValueEventListener(projectValueEventListener = new ValueEventListener() {
+        // main listener
+        rootRef.addValueEventListener((projectValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // get all the keys associated with the project
-                final List<String> taskIds = new ArrayList<>();
-                for(DataSnapshot postSnapshot : dataSnapshot.getChildren()){
+
+                // get all the project's tasks
+                // list of taskIds:
+                List<String> taskIds = new ArrayList<>();
+                for (DataSnapshot postSnapshot : dataSnapshot.child("projects").child(projectPO).child("tasks").getChildren()) {
                     taskIds.add(postSnapshot.getKey());
                 }
-                Log.d(TAG, "onDataChange: Task keys checked");
 
-                final List<String> finalTaskIds = taskIds;
+                // -------------------------------------------------- Set ID --------------------------------------------------
+                // go through all the tasks and compute
+                // variables for the inspection IDs
+                String inspectionID = null;
+                List<String> prePaintIDs = new ArrayList<>();
+                List<String> paintingIDs = new ArrayList<>();
+                List<String> packagingIDs = new ArrayList<>();
+                String finalInspectionID = null;
+                int pageNumber = 0;
 
-                rootRef.child("tasks").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (String currentTaskID : taskIds) {
+                    // get the taskType of current taskID
+                    String taskType = dataSnapshot.child("tasks").child(currentTaskID).child("taskType").getValue(String.class);
 
-                        // check the task types of each task to see which tasks will need to be printed on the pdf
-                        Boolean taskTypesInProject[] = {false, false, false, false, false};
-                        String sortedTaskIds[] = {null, null, null, null, null};
-                        for (String taskId : finalTaskIds){
-                            DataSnapshot currentSnapshot = dataSnapshot.child(taskId);
-                            String taskType = currentSnapshot.child("taskType").getValue(String.class);
+                    // check taskType and assign to respective taskID
+                    switch (taskType) {
+                        case ("Inspection"):
+                            inspectionID = currentTaskID;
+                            break;
+                        case ("Pre-Painting"):
+                            prePaintIDs.add(currentTaskID);
+                            break;
+                        case ("Painting"):
+                            paintingIDs.add(currentTaskID);
+                            break;
+                        case ("Packaging"):
+                            packagingIDs.add(currentTaskID);
+                            break;
+                        case ("Final-Inspection"):
+                            finalInspectionID = currentTaskID;
+                            break;
+                    }
+                }
 
-                            Log.d(TAG, "onDataChange: task type " + taskId);
-                            // check taskType and set boolean array to true
-                            checkTaskType(taskTypesInProject, sortedTaskIds, taskType, taskId);
-                        }
+                // task dataSnapshot
+                DataSnapshot taskSnapshot = dataSnapshot.child("tasks");
 
-                        int pageNumber = 0;
+                // --------------------------------------------- 1. Inspection Task ---------------------------------------------
+                // if inspection task is available, create the inspection page
+                if (inspectionID != null) {
+                    InspectionTask inspectionTask = taskSnapshot.child(inspectionID).getValue(InspectionTask.class);
+                    if (inspectionTask != null) {
+                        startPage(pageNumber);
+                        createInspectionLayout(inspectionTask, false);
+                        endPage();
+                        pageNumber++;
 
-
-                        // --------------------------------------------- 0. Inspection Task ---------------------------------------------
-                        // if inspection task is available, create the inspection page
-                        if (taskTypesInProject[0]){
-                            InspectionTask inspectionTask = dataSnapshot.child(sortedTaskIds[0]).getValue(InspectionTask.class);
-                            if (inspectionTask != null) {
-                                startPage(pageNumber);
-                                createInspectionLayout(inspectionTask, false);
-                                endPage();
-                                pageNumber++;
-
-                                // Inspection task comments
-                                if (dataSnapshot.child(sortedTaskIds[0]).child("employeeComments").exists()) {
-                                    createCommentsLayout(dataSnapshot, sortedTaskIds[0], "Inspection", pageNumber);
-                                    endPage();
-                                    pageNumber++;
-                                }
-                            }
-                        }
-
-                        // --------------------------------------------- 2. Pre-paint Task ---------------------------------------------
-                        if (taskTypesInProject[1]){
-                            PrePaintingTask prePaintingTask = dataSnapshot.child(sortedTaskIds[1]).getValue(PrePaintingTask.class);
-                            startPage(pageNumber);
-                            createPrePaintLayout();
+                        // Inspection task comments
+                        if (taskSnapshot.child(inspectionID).child("employeeComments").exists()) {
+                            createCommentsLayout(taskSnapshot, inspectionID, "Inspection", pageNumber);
                             endPage();
                             pageNumber++;
+                        }
+                    }
+                }
 
-                            // Inspection task comments
-                            if (dataSnapshot.child(sortedTaskIds[1]).child("employeeComments").exists()) {
-                                createCommentsLayout(dataSnapshot, sortedTaskIds[1], "Pre-Painting", pageNumber);
-                                endPage();
-                                pageNumber++;
+                // --------------------------------------------- 2. Pre-paint Task ---------------------------------------------
+
+                DataSnapshot workSnapshot = dataSnapshot.child("workHistory").child("workingTasks");
+
+                if (!prePaintIDs.isEmpty()) {
+                    // go through all the prepaint tasks and create and output the layout
+                    long sandBlastingHours = 0;
+                    long sandingHours = 0;
+                    long cleaningHours = 0;
+                    long iriditeHours = 0;
+                    long maskingHours = 0;
+
+                    for (String prePaintID : prePaintIDs) {
+                        startPage(pageNumber);
+
+                        // go through all the working blocks for the task and output the hours
+                        DataSnapshot workBlockSnapshot = workSnapshot.child(prePaintID).child("workBlocks");
+                        for (DataSnapshot postSnapshot : workBlockSnapshot.getChildren()){
+                            String title = postSnapshot.child("title").getValue(String.class);
+                            long workingTime = postSnapshot.child("workingTime").getValue(Long.class);
+
+                            switch(title){
+                                case "SandBlasting":
+                                    sandBlastingHours += workingTime;
+                                    break;
+                                case "Sanding":
+                                    sandingHours += workingTime;
+                                    break;
+                                case "Masking":
+                                    maskingHours += workingTime;
+                                    break;
+                                case "ManualSolventCleaning":
+                                    cleaningHours += workingTime;
+                                    break;
+                                case "Iridite":
+                                    iriditeHours += workingTime;
+                                    break;
                             }
                         }
 
+                        PrePaintingTask prePaintingTask = new PrePaintingTask(sandBlastingHours, sandingHours, cleaningHours, iriditeHours, maskingHours);
 
-                        // --------------------------------------------- 3. Paint Task ---------------------------------------------
-                        if (taskTypesInProject[2]){
-                            PaintingTask paintingTask = dataSnapshot.child(sortedTaskIds[2]).getValue(PaintingTask.class);
-                            startPage(pageNumber);
-                            createPaintLayout();
+
+                        createPrePaintLayout(prePaintingTask);
+
+                        endPage();
+                        pageNumber++;
+
+                        // Inspection task comments
+                        if (taskSnapshot.child(prePaintID).child("employeeComments").exists()) {
+                            createCommentsLayout(taskSnapshot, prePaintID, "Pre-Painting", pageNumber);
                             endPage();
                             pageNumber++;
+                        }
+                    }
+                }
 
-                            // Inspection task comments
-                            if (dataSnapshot.child(sortedTaskIds[2]).child("employeeComments").exists()) {
-                                createCommentsLayout(dataSnapshot, sortedTaskIds[2], "Painting", pageNumber);
-                                endPage();
-                                pageNumber++;
-                            }
+                DataSnapshot inventorySnapshot = dataSnapshot.child("inventory");
+                // --------------------------------------------- 3. Paint Task ---------------------------------------------
+                if (!paintingIDs.isEmpty()) {
+                    for (String currentTaskID : paintingIDs) {
 
-                            // --------------------------------------------- 4. Baking Task ---------------------------------------------
+                        startPage(pageNumber);
+                        createPaintLayout();
+                        endPage();
+                        pageNumber++;
 
+                        // get the paint used information
+                        PaintingTask paintingTask = taskSnapshot.child(currentTaskID).getValue(PaintingTask.class);
+                        String paintType = paintingTask.getPaintType();
+
+                        // get the baking information
+                        Inventory inventoryItem = inventorySnapshot.child(paintType).child(paintingTask.getPaintCode()).getValue(Inventory.class);
+
+                        // if liquid get liquid info
+                        if (paintType.equals("powder")){
+                            
                         }
 
-                        // --------------------------------------------- 5. Packaging Task ---------------------------------------------
-                        if (taskTypesInProject[3]){
-                            //PackagingTask packagingTask = dataSnapshot.child(sortedTaskIds[3]).getValue(PackagingTask.class);
-                            startPage(pageNumber);
-                            createPackagingLayout();
+                        // if powder get powder info
+
+
+
+                        // Inspection task comments
+                        if (taskSnapshot.child(currentTaskID).child("employeeComments").exists()) {
+                            createCommentsLayout(taskSnapshot, currentTaskID, "Painting", pageNumber);
                             endPage();
                             pageNumber++;
-
-                            // Inspection task comments
-                            if (dataSnapshot.child(sortedTaskIds[3]).child("employeeComments").exists()) {
-                                createCommentsLayout(dataSnapshot, sortedTaskIds[3], "Packaging", pageNumber);
-                                endPage();
-                                pageNumber++;
-                            }
                         }
 
-                        // --------------------------------------------- 6. Final Inspection ---------------------------------------------
-                        if (taskTypesInProject[4]){
-                            InspectionTask inspectionTask = dataSnapshot.child(sortedTaskIds[4]).getValue(InspectionTask.class);
-                            startPage(pageNumber);
-                            createInspectionLayout(inspectionTask, true);
-                            endPage();
-                            pageNumber++;
-
-                            // Inspection task comments
-                            if (dataSnapshot.child(sortedTaskIds[4]).child("employeeComments").exists()) {
-                                createCommentsLayout(dataSnapshot, sortedTaskIds[4], "Final Inspection", pageNumber);
-                                endPage();
-                                pageNumber++;
-                            }
-                        }
-
-                        saveFile(projectPO, this);
                     }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // --------------------------------------------- 4. Baking Task ---------------------------------------------
 
+                }
+
+                /*// --------------------------------------------- 5. Packaging Task ---------------------------------------------
+                if (!packagingIDs.isEmpty()) {
+                    //PackagingTask packagingTask = taskSnapshot.child(sortedTaskIds[3]).getValue(PackagingTask.class);
+                    startPage(pageNumber);
+                    createPackagingLayout();
+                    endPage();
+                    pageNumber++;
+
+                    // Inspection task comments
+                    if (taskSnapshot.child(sortedTaskIds[3]).child("employeeComments").exists()) {
+                        createCommentsLayout(taskSnapshot, sortedTaskIds[3], "Packaging", pageNumber);
+                        endPage();
+                        pageNumber++;
                     }
-                });
+                }*/
+
+                // --------------------------------------------- 6. Final Inspection ---------------------------------------------
+                if (finalInspectionID != null) {
+                    InspectionTask inspectionTask = taskSnapshot.child(finalInspectionID).getValue(InspectionTask.class);
+                    startPage(pageNumber);
+                    createInspectionLayout(inspectionTask, true);
+                    endPage();
+                    pageNumber++;
+
+                    // Inspection task comments
+                    if (dataSnapshot.child(finalInspectionID).child("employeeComments").exists()) {
+                        createCommentsLayout(taskSnapshot, finalInspectionID, "Final Inspection", pageNumber);
+                        endPage();
+                        pageNumber++;
+                    }
+                }
+
+                saveFile(projectPO, this);
+
+                // ------------------------------------------------------------------------------------------------------------
             }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
-
+        }));
     }
 
     private void measureLayout(View content){
@@ -376,32 +468,6 @@ class PdfHelper {
         int measuredHeight = View.MeasureSpec.makeMeasureSpec(page.getCanvas().getHeight(), View.MeasureSpec.EXACTLY);
         content.measure(measureWidth, measuredHeight);
         content.layout(0, 0, page.getCanvas().getWidth(), page.getCanvas().getHeight());
-    }
-
-    // function checks what type of task is given
-    private void checkTaskType(Boolean[] tasksTypesInProject, String[] sortedTaskIds, String taskType, String taskId){
-        switch(taskType){
-            case ("Inspection"):
-                tasksTypesInProject[0] = true;
-                sortedTaskIds[0] = taskId;
-                break;
-            case ("Pre-Painting"):
-                tasksTypesInProject[1] = true;
-                sortedTaskIds[1] = taskId;
-                break;
-            case ("Painting"):
-                tasksTypesInProject[2] = true;
-                sortedTaskIds[2] = taskId;
-                break;
-            case ("Packaging"):
-                tasksTypesInProject[3] = true;
-                sortedTaskIds[3] = taskId;
-                break;
-            case ("Final-Inspection"):
-                tasksTypesInProject[4] = true;
-                sortedTaskIds[4] = taskId;
-                break;
-        }
     }
 
     private void saveFile(String projectPO, ValueEventListener taskValueEventListener){
@@ -434,8 +500,7 @@ class PdfHelper {
         }
 
         // detatch listeners
-        rootRef.child("projects").child(projectPO).child("tasks").removeEventListener(projectValueEventListener);
-        rootRef.child("tasks").removeEventListener(taskValueEventListener);
+        rootRef.removeEventListener(projectValueEventListener);
     }
 
     private void shareDocument(Uri uri) {

@@ -8,6 +8,14 @@ public class PrePaintingTask {
     private long iriditeHours;
     private long maskingHours;
 
+    public PrePaintingTask(long sandblastingHours, long sandingHours, long cleaningHours, long iriditeHours, long maskingHours){
+        this.sandblastingHours = sandblastingHours;
+        this.sandingHours = sandingHours;
+        this.cleaningHours = cleaningHours;
+        this.iriditeHours = iriditeHours;
+        this.maskingHours = maskingHours;
+    }
+
     public long getSandblastingHours() {
         return sandblastingHours;
     }

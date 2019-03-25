@@ -1,9 +1,9 @@
 package com.example.a390project.Model.TaskClasses;
 
 public class InspectionTask {
-    private int partCounted;
-    private int partAccepted;
-    private int partRejected;
+    private int partCounted = 0;
+    private int partAccepted = 0;
+    private int partRejected = 0;
 
     InspectionTask(){}
 

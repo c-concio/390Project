@@ -2,20 +2,22 @@ package com.example.a390project.Model.TaskClasses;
 
 public class PaintingTask {
 
+    // paint information
     private String paintCode;
-    private int bakingTime;
     private String paintType;
     private String description;
 
     // liquid
     private long viscosity;
     private long tipSize;
-    private long pressure;
 
     // powder
     private long amount;
     private long spread;
     private Boolean recoat;
+
+    // liquid and powder
+    private long pressure;
 
     public String getPaintCode() {
         return paintCode;
@@ -25,28 +27,12 @@ public class PaintingTask {
         this.paintCode = paintCode;
     }
 
-    public int getBakingTime() {
-        return bakingTime;
-    }
-
-    public void setBakingTime(int bakingTime) {
-        this.bakingTime = bakingTime;
-    }
-
     public String getPaintType() {
         return paintType;
     }
 
     public void setPaintType(String paintType) {
         this.paintType = paintType;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public long getViscosity() {
@@ -95,5 +81,13 @@ public class PaintingTask {
 
     public void setRecoat(Boolean recoat) {
         this.recoat = recoat;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
