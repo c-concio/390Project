@@ -18,8 +18,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.a390project.ListViewAdapters.EmployeeCommentListViewAdapter;
+import com.example.a390project.ListViewAdapters.GraphsListViewAdapter;
 import com.example.a390project.ListViewAdapters.PrepaintTaskListViewAdapter;
 import com.example.a390project.Model.EmployeeComment;
+import com.example.a390project.Model.GraphData;
 import com.example.a390project.Model.Task;
 import com.example.a390project.Model.TaskClasses.InspectionTask;
 import com.example.a390project.Model.TaskClasses.Inventory;
@@ -61,11 +63,6 @@ class PdfHelper {
     // value event listeners
     private ValueEventListener projectValueEventListener;
     final DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-
-    // instructions on how to use:
-    // start a PdfHelper class to start the file
-    // start
-
 
     PdfHelper(int canvasHeight, int canvasWidth, Context context){
         // initialize PdfDocument
@@ -288,9 +285,6 @@ class PdfHelper {
         employeeCommentsListView.requestLayout();
         totalHeight = totalHeight + 150;
 
-
-        Log.d(TAG, "createCommentsLayout: comment height " + totalHeight);
-
         if (totalHeight > canvasHeight)
             startPage(pageNumber, totalHeight);
         else
@@ -303,6 +297,48 @@ class PdfHelper {
 
         content.draw(page.getCanvas());
 
+    }
+
+    private void createGraphLayout(List<GraphData> graphs, int pageNumber){
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View content = inflater.inflate(R.layout.pdf_graph_layout, null);
+
+        GraphsListViewAdapter adapter = new GraphsListViewAdapter(content.getContext(), graphs);
+        ListView graph_list_view = content.findViewById(R.id.graph_list_view);
+        graph_list_view.setAdapter(adapter);
+
+        // measure the height of the listView of comments
+        int totalHeight = 0;
+
+        for (int i = 0; i < adapter.getCount(); i++) {
+            View mView = adapter.getView(i, null, graph_list_view);
+
+            mView.measure(
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+
+            totalHeight += mView.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = graph_list_view.getLayoutParams();
+        params.height = totalHeight
+                + (graph_list_view.getDividerHeight() * (adapter.getCount() - 1));
+        graph_list_view.setLayoutParams(params);
+        graph_list_view.requestLayout();
+        totalHeight = totalHeight + 150;
+
+        if (totalHeight > canvasHeight)
+            startPage(pageNumber, totalHeight);
+        else
+            startPage(pageNumber);
+
+        // ---------------------------------------------------
+
+        // measure the layout
+        measureLayout(content);
+
+        content.draw(page.getCanvas());
     }
 
 
@@ -453,9 +489,6 @@ class PdfHelper {
                         Inventory inventoryItem = inventorySnapshot.child(paintType).child(paintingTask.getPaintCode()).getValue(Inventory.class);
 
                         createPaintLayout(paintingTask, inventoryItem);
-
-
-                        createPaintLayout(paintingTask, inventoryItem);
                         endPage();
                         pageNumber++;
 
@@ -469,9 +502,38 @@ class PdfHelper {
 
 
                     }
+                }
 
-                    // --------------------------------------------- 4. Baking Task ---------------------------------------------
+                // --------------------------------------------- 4. Graphs Task ---------------------------------------------
+                // check if the project has graphs
+                DataSnapshot projectSnapshot = dataSnapshot.child("projects");
+                DataSnapshot graphSnapshot = dataSnapshot.child("graphs");
+                List<String> graphIDs = new ArrayList<>();
+                if (projectSnapshot.child(projectPO).child("graphs").exists()) {
+                    for (DataSnapshot postSnapshot : projectSnapshot.child(projectPO).child("graphs").getChildren()) {
+                        graphIDs.add(postSnapshot.getKey());
+                    }
 
+                    // for all the graphIDs, get the graph information and save into an array
+                    List<GraphData> graphs = new ArrayList<>();
+                    for (String graphID : graphIDs) {
+                        DataSnapshot currentSnapshot = graphSnapshot.child(graphID);
+                        List<Float> x = new ArrayList<>();
+                        List<Float> y = new ArrayList<>();
+
+                        // get the datapoints
+                        for (DataSnapshot postSnapshot : currentSnapshot.child("temperatures").getChildren()) {
+                            x.add(Float.valueOf(postSnapshot.getKey()));
+                            y.add(postSnapshot.getValue(Float.class));
+                        }
+                        String graphTitle = currentSnapshot.child("graphTitle").getValue(String.class) + " - " + currentSnapshot.child("machineTitle").getValue(String.class);
+                        graphs.add(new GraphData(x, y, currentSnapshot.child("graphTitle").getValue(String.class)));
+                    }
+
+
+                    createGraphLayout(graphs, pageNumber);
+                    endPage();
+                    pageNumber++;
                 }
 
                 /*// --------------------------------------------- 5. Packaging Task ---------------------------------------------
