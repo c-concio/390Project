@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -146,10 +147,70 @@ class PdfHelper {
 
 
     // ----------------------------------- Painting -----------------------------------
-    private void createPaintLayout(){
+    private void createPaintLayout(PaintingTask paintingTask, Inventory inventoryItem){
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View content = inflater.inflate(R.layout.pdf_paint_layout, null);
+
+        // get all the views
+        // Paint Views
+        TextView paintCodeTextView = content.findViewById(R.id.paintCodeTextView);
+        paintCodeTextView.setText(paintingTask.getPaintCode());
+
+        TextView paintTypeTextView = content.findViewById(R.id.paintTypeTextView);
+        paintTypeTextView.setText(paintingTask.getPaintType());
+
+        TextView paintDescriptionTextView = content.findViewById(R.id.paintDescriptionTextView);
+        paintDescriptionTextView.setText(inventoryItem.getPaintDescription());
+
+        // Task Description View
+        TextView descriptionTextView = content.findViewById(R.id.descriptionTextView);
+        descriptionTextView.setText(paintingTask.getDescription());
+
+        // check if paint is liquid or powder
+        // if liquid, hide powder table layout and set liquid views
+
+        TableLayout liquidTableLayout = content.findViewById(R.id.liquidTableLayout);
+        TableLayout powderTableLayout = content.findViewById(R.id.powderTableLayout);
+
+        if (paintingTask.getPaintType().equals("liquid")){
+            TextView viscosityTextView = content.findViewById(R.id.viscosityTextView);
+            viscosityTextView.setText(String.valueOf(paintingTask.getViscosity()));
+
+            TextView tipSizeTextView = content.findViewById(R.id.tipSizeTextView);
+            tipSizeTextView.setText(String.valueOf(paintingTask.getTipSize()));
+
+            TextView liquidPressureTextView = content.findViewById(R.id.liquidPressureTextView);
+            liquidPressureTextView.setText(String.valueOf(paintingTask.getPressure()));
+
+            powderTableLayout.setVisibility(View.GONE);
+
+        }
+
+        // if powder, hide liquid table layout and set powder views
+        else if (paintingTask.getPaintType().equals("powder")){
+            TextView amountTextView = content.findViewById(R.id.amountTextView);
+            amountTextView.setText(String.valueOf(paintingTask.getAmount()));
+
+            TextView spreadTextView = content.findViewById(R.id.spreadTextView);
+            spreadTextView.setText(String.valueOf(paintingTask.getSpread()));
+
+            TextView reCoatTextView = content.findViewById(R.id.reCoatTextView);
+            if (paintingTask.getRecoat() == null){
+                reCoatTextView.setText("false");
+            }
+            else
+                reCoatTextView.setText(String.valueOf(paintingTask.getRecoat()));
+
+            TextView powderPressureTextView = content.findViewById(R.id.powderPressureTextView);
+            powderPressureTextView.setText(String.valueOf(paintingTask.getPressure()));
+
+            liquidTableLayout.setVisibility(View.GONE);
+        }
+        else{
+            powderTableLayout.setVisibility(View.GONE);
+            liquidTableLayout.setVisibility(View.GONE);
+        }
 
         measureLayout(content);
 
@@ -382,11 +443,7 @@ class PdfHelper {
                 // --------------------------------------------- 3. Paint Task ---------------------------------------------
                 if (!paintingIDs.isEmpty()) {
                     for (String currentTaskID : paintingIDs) {
-
                         startPage(pageNumber);
-                        createPaintLayout();
-                        endPage();
-                        pageNumber++;
 
                         // get the paint used information
                         PaintingTask paintingTask = taskSnapshot.child(currentTaskID).getValue(PaintingTask.class);
@@ -395,13 +452,12 @@ class PdfHelper {
                         // get the baking information
                         Inventory inventoryItem = inventorySnapshot.child(paintType).child(paintingTask.getPaintCode()).getValue(Inventory.class);
 
-                        // if liquid get liquid info
-                        if (paintType.equals("powder")){
-                            
-                        }
+                        createPaintLayout(paintingTask, inventoryItem);
 
-                        // if powder get powder info
 
+                        createPaintLayout(paintingTask, inventoryItem);
+                        endPage();
+                        pageNumber++;
 
 
                         // Inspection task comments
@@ -410,6 +466,7 @@ class PdfHelper {
                             endPage();
                             pageNumber++;
                         }
+
 
                     }
 
