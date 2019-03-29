@@ -6,10 +6,12 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.AppCompatEditText;
 import android.util.Log;
@@ -43,6 +45,7 @@ import com.example.a390project.ListViewAdapters.TaskListViewAdapter;
 import com.example.a390project.Model.ControlDevice;
 import com.example.a390project.Model.Employee;
 import com.example.a390project.Model.EmployeeComment;
+import com.example.a390project.Model.Graph;
 import com.example.a390project.Model.GraphData;
 import com.example.a390project.Model.Machine;
 import com.example.a390project.Model.Oven;
@@ -62,10 +65,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.jjoe64.graphview.DefaultLabelFormatter;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.DataPointInterface;
+import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.OnDataPointTapListener;
+import com.jjoe64.graphview.series.PointsGraphSeries;
+import com.jjoe64.graphview.series.Series;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -1805,50 +1818,50 @@ public class FirebaseHelper {
         });
     }
 
-    public void populateGraphs(final Activity activity, final View view, String projectPO) {
-        rootRef.child("projects").child(projectPO).child("graphs").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    final List<String> graphIDs = new ArrayList<>();
-                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        graphIDs.add(ds.getKey());
-                    }
-                    rootRef.child("graphs").addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            List<GraphData> graphs = new ArrayList<>();
-                            for (String graphID : graphIDs) {
-                                List<Float> y = new ArrayList<>();
-                                List<Float> x = new ArrayList<>();
-                                String machineTitle = dataSnapshot.child(graphID).child("machineTitle").getValue(String.class);
-                                String graphTitle =  machineTitle + " - " + dataSnapshot.child(graphID).child("graphTitle").getValue(String.class);
-                                for (DataSnapshot TempSnapshot : dataSnapshot.child(graphID).child("temperatures").getChildren()) {
-                                    String time = TempSnapshot.getKey();
-                                    int timei = parseInt(time);
-                                    x.add((float) (timei));
-                                    Float temp = TempSnapshot.getValue(float.class);
-                                    y.add(temp);
-                                }
-                                graphs.add(new GraphData(x, y, graphTitle));
-                            }
-                            callGraphListViewAdapter(activity, view, graphs);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
+//    public void populateGraphs(final Activity activity, final View view, String projectPO) {
+//        rootRef.child("projects").child(projectPO).child("graphs").addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                if (dataSnapshot.exists()) {
+//                    final List<String> graphIDs = new ArrayList<>();
+//                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+//                        graphIDs.add(ds.getKey());
+//                    }
+//                    rootRef.child("graphs").addValueEventListener(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                            List<GraphData> graphs = new ArrayList<>();
+//                            for (String graphID : graphIDs) {
+//                                List<Float> y = new ArrayList<>();
+//                                List<Float> x = new ArrayList<>();
+//                                String machineTitle = dataSnapshot.child(graphID).child("machineTitle").getValue(String.class);
+//                                String graphTitle =  machineTitle + " - " + dataSnapshot.child(graphID).child("graphTitle").getValue(String.class);
+//                                for (DataSnapshot TempSnapshot : dataSnapshot.child(graphID).child("temperatures").getChildren()) {
+//                                    String time = TempSnapshot.getKey();
+//                                    int timei = parseInt(time);
+//                                    x.add((float) (timei));
+//                                    Float temp = TempSnapshot.getValue(float.class);
+//                                    y.add(temp);
+//                                }
+//                                graphs.add(new GraphData(x, y, graphTitle));
+//                            }
+//                            callGraphListViewAdapter(activity, view, graph_names);
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                        }
+//                    });
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+//    }
 
 
 //    public void populateGraphs(final Activity activity, final View view, String projectPO, final Context context) {
@@ -1878,13 +1891,150 @@ public class FirebaseHelper {
 //            }
 //        });
 //    }
-    public void callGraphListViewAdapter(Activity activity, View view, List<GraphData> graphs) {
+
+    public void populateGraphNames(final FragmentActivity activity, final View view, String projectPO) {
+        rootRef.child("projects").child(projectPO).child("graphs").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                //fetch all the graphIDs references using projectPO
+                final List<String> graphIDs = new ArrayList<>();
+                for (DataSnapshot ds:dataSnapshot.getChildren()) {
+                    graphIDs.add(ds.getKey());
+                }
+                //create string names for each graph in the listview
+                rootRef.child("graphs").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        rootRef.child("graphs").removeEventListener(this);
+                        List<Graph> graphs = new ArrayList<>();
+                        for (String graphID:graphIDs) {
+                            String graphTitle = dataSnapshot.child(graphID).child("graphTitle").getValue(String.class);
+                            String machineTitle = dataSnapshot.child(graphID).child("machineTitle").getValue(String.class);
+                            long startTime = dataSnapshot.child(graphID).child("startTime").getValue(long.class);
+                            graphs.add(new Graph(graphTitle, machineTitle, graphID, startTime));
+                        }
+                        callGraphListViewAdapter(activity, view, sortGraphsByLatestCreated(graphs));
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+    //will sort 'graphs' starting with the top row being the latest created one
+    private List<Graph> sortGraphsByLatestCreated(List<Graph> graphs) {
+        Collections.sort(graphs,new Comparator<Graph>(){
+            @Override
+            public int compare(final Graph lhs, Graph rhs) {
+                if (lhs.getStartTime()<rhs.getStartTime()) {
+                    return 1;
+                }
+                else if (lhs.getStartTime()>rhs.getStartTime()) {
+                    return -1;
+                }
+                else {
+                    return 0;
+                }
+            }
+        });
+        return graphs;
+    }
+
+    public void callGraphListViewAdapter(Activity activity, View view, List<Graph> graphs) {
         GraphsListViewAdapter adapter = new GraphsListViewAdapter(activity, graphs);
-        ListView itemsListView  = view.findViewById(R.id.graph_list_view);
+        ListView itemsListView  = view.findViewById(R.id.graph_names_list_view);
         itemsListView.setAdapter(adapter);
     }
 
     public void stopGraphing(String machineTitle) {
         rootRef.child("machines").child(machineTitle).child("graphingStatus").setValue(false);
+    }
+
+    public void populateGraph(String graphID, final GraphView graph, final Context context) {
+        rootRef.child("graphs").child(graphID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Float> y = new ArrayList<>();
+                List<Float> x = new ArrayList<>();
+                String graphTitle = dataSnapshot.child("graphTitle").getValue(String.class);
+                for (DataSnapshot TempSnapshot : dataSnapshot.child("temperatures").getChildren()) {
+                    String time = TempSnapshot.getKey();
+                    int timei = parseInt(time);
+                    x.add((float) (timei));
+                    Float temp = TempSnapshot.getValue(float.class);
+                    y.add(temp);
+                }
+                GraphData graphData = new GraphData(x,y,graphTitle);
+
+                LineGraphSeries<DataPoint> series1 = new LineGraphSeries<>();
+                PointsGraphSeries<DataPoint> series2 = new PointsGraphSeries<>();
+        
+                for(int i = 0; i<graphData.getY().size(); i++){
+                    series1.appendData(new DataPoint(graphData.getX().get(i),graphData.getY().get(i)),true,1000);
+                    series2.appendData(new DataPoint(graphData.getX().get(i),graphData.getY().get(i)),true,1000);
+                }
+                //graphtitle
+                graph.setTitle(graphData.getGraphTitle());
+                //add the line graph and individual points of temps
+                graph.addSeries(series1);
+                graph.addSeries(series2);
+                series2.setShape(PointsGraphSeries.Shape.POINT);
+                series2.setSize((float)8);
+                series2.setColor(Color.RED);
+                //dynamically change size of axis based on max values stored in x and y
+                graph.getViewport().setXAxisBoundsManual(true);
+                graph.getViewport().setYAxisBoundsManual(true);
+                graph.getViewport().setMaxX(getMax(graphData.getX())+10);
+                graph.getViewport().setMinX(0);
+                graph.getViewport().setMaxY(getMax(graphData.getY())+10);
+                graph.getViewport().setMinY(0);
+        
+                graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
+                    @Override
+                    public String formatLabel(double value, boolean isValueX) {
+                        if (isValueX) {
+                            // show normal x values
+                            return super.formatLabel(value, isValueX);
+                        } else {
+                            // show currency for y values
+                            return super.formatLabel(value, isValueX) + " °F";
+                        }
+                    }
+                });
+        
+                //tap listener
+                series2.setOnDataPointTapListener(new OnDataPointTapListener() {
+                    @Override
+                    public void onTap(Series series, DataPointInterface dataPoint) {
+                        Toast.makeText(context, dataPoint+"", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                    
+                    
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public float getMax(List<Float> list){
+        float max = Integer.MIN_VALUE;
+        for(int i=0; i<list.size(); i++){
+            if(list.get(i) > max){
+                max = list.get(i);
+            }
+        }
+        return max;
     }
 }

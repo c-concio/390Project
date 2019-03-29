@@ -320,47 +320,47 @@ class PdfHelper {
 
     }
 
-    private void createGraphLayout(List<GraphData> graphs, int pageNumber){
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View content = inflater.inflate(R.layout.pdf_graph_layout, null);
-
-        GraphsListViewAdapter adapter = new GraphsListViewAdapter(content.getContext(), graphs);
-        ListView graph_list_view = content.findViewById(R.id.graph_list_view);
-        graph_list_view.setAdapter(adapter);
-
-        // measure the height of the listView of comments
-        int totalHeight = 0;
-
-        for (int i = 0; i < adapter.getCount(); i++) {
-            View mView = adapter.getView(i, null, graph_list_view);
-
-            mView.measure(
-                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-
-                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-
-            totalHeight += mView.getMeasuredHeight();
-        }
-
-        ViewGroup.LayoutParams params = graph_list_view.getLayoutParams();
-        params.height = totalHeight
-                + (graph_list_view.getDividerHeight() * (adapter.getCount() - 1));
-        graph_list_view.setLayoutParams(params);
-        graph_list_view.requestLayout();
-        totalHeight = totalHeight + 150;
-
-        if (totalHeight > canvasHeight)
-            startPage(pageNumber, totalHeight);
-        else
-            startPage(pageNumber);
-
-        // ---------------------------------------------------
-
-        // measure the layout
-        measureLayout(content);
-
-        content.draw(page.getCanvas());
-    }
+//    private void createGraphLayout(List<GraphData> graphs, int pageNumber){
+//        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View content = inflater.inflate(R.layout.pdf_graph_layout, null);
+//
+//        GraphsListViewAdapter adapter = new GraphsListViewAdapter(content.getContext(), graphs);
+//        ListView graph_list_view = content.findViewById(R.id.graph_list_view);
+//        graph_list_view.setAdapter(adapter);
+//
+//        // measure the height of the listView of comments
+//        int totalHeight = 0;
+//
+//        for (int i = 0; i < adapter.getCount(); i++) {
+//            View mView = adapter.getView(i, null, graph_list_view);
+//
+//            mView.measure(
+//                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+//
+//                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+//
+//            totalHeight += mView.getMeasuredHeight();
+//        }
+//
+//        ViewGroup.LayoutParams params = graph_list_view.getLayoutParams();
+//        params.height = totalHeight
+//                + (graph_list_view.getDividerHeight() * (adapter.getCount() - 1));
+//        graph_list_view.setLayoutParams(params);
+//        graph_list_view.requestLayout();
+//        totalHeight = totalHeight + 150;
+//
+//        if (totalHeight > canvasHeight)
+//            startPage(pageNumber, totalHeight);
+//        else
+//            startPage(pageNumber);
+//
+//        // ---------------------------------------------------
+//
+//        // measure the layout
+//        measureLayout(content);
+//
+//        content.draw(page.getCanvas());
+//    }
 
 
     private void endPage(){
@@ -552,7 +552,7 @@ class PdfHelper {
                     }
 
 
-                    createGraphLayout(graphs, pageNumber);
+                    //createGraphLayout(graphs, pageNumber);
                     endPage();
                     pageNumber++;
                 }
