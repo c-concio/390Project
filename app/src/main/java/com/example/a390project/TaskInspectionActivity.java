@@ -1,6 +1,8 @@
 package com.example.a390project;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,6 +33,9 @@ public class TaskInspectionActivity extends AppCompatActivity {
     String inspectionTaskID;
     String inspectionType;
 
+    //check if user is manager from sharedpreferences
+    private boolean isManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,7 @@ public class TaskInspectionActivity extends AppCompatActivity {
         firebaseHelper.setTaskInspectionActivityListener(inspectionTaskID, TaskInspectionActivity.this);
         firebaseHelper.setStartTimeEndTimeButtons(mStartTime,mEndTime,inspectionTaskID);
 
+        checkIfManager();
 
         //Text changed listener
         mCounted.addTextChangedListener(new TextWatcher() {
@@ -121,13 +127,17 @@ public class TaskInspectionActivity extends AppCompatActivity {
                 firebaseHelper.checkIfCanEnd(inspectionTaskID, getApplicationContext());
             }
         });
-
-        mCompleteTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                firebaseHelper.completeTask(inspectionTaskID);
-            }
-        });
+        if (isManager) {
+            mCompleteTime.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    firebaseHelper.completeTask(inspectionTaskID);
+                }
+            });
+        }
+        else {
+            mCompleteTime.setVisibility(View.GONE);
+        }
 
         mPostCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -197,6 +207,18 @@ public class TaskInspectionActivity extends AppCompatActivity {
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void checkIfManager() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String manager = preferences.getString("isManager",null);
+        if (manager.equals("true")) {
+            isManager = true;
+        }
+        else {
+            isManager = false;
+        }
+
     }
 
 }

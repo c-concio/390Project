@@ -1,6 +1,8 @@
 package com.example.a390project;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,6 +33,9 @@ public class TaskPackagingActivity extends AppCompatActivity {
 
     String packagingTaskID;
 
+    //check if user is manager from sharedpreferences
+    private boolean isManager;
+
     private static final String TAG = "TaskPackagingActivity";
 
 
@@ -43,6 +48,8 @@ public class TaskPackagingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_packaging);
+
+        checkIfManager();
     }
 
     @Override
@@ -69,7 +76,10 @@ public class TaskPackagingActivity extends AppCompatActivity {
 
         startTimeButton.setOnClickListener(startTimeOnClickListener);
         endTimeButton.setOnClickListener(endTimeOnClickListener);
-        completeButton.setOnClickListener(completeOnClickListener);
+        if (isManager)
+            completeButton.setOnClickListener(completeOnClickListener);
+        else
+            completeButton.setVisibility(View.GONE);
         postCommentButton.setOnClickListener(postCommentOnClickListener);
 
         // ------------------------- temporary ----------------------------
@@ -161,5 +171,17 @@ public class TaskPackagingActivity extends AppCompatActivity {
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void checkIfManager() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String manager = preferences.getString("isManager",null);
+        if (manager.equals("true")) {
+            isManager = true;
+        }
+        else {
+            isManager = false;
+        }
+
     }
 }

@@ -1,7 +1,9 @@
 package com.example.a390project;
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -20,6 +22,9 @@ import com.example.a390project.Fragments.EmployeeWorkBlocksFragment;
 import com.example.a390project.Fragments.ProjectGraphFragment;
 import com.example.a390project.Fragments.ProjectTasksFragment;
 import com.example.a390project.Model.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
@@ -35,25 +40,47 @@ public class ProjectActivity extends AppCompatActivity {
     private FloatingActionButton mFabOpenTaskDialogFragment;
     //variables
     private String projectPO;
+    //check if user is manager from sharedpreferences
+    private boolean isManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project);
 
-        prepareActivity();
+        checkIfManager();
     }
 
-    private void prepareActivity() {
+    private void checkIfManager() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String manager = preferences.getString("isManager",null);
+        if (manager.equals("true")) {
+            isManager = true;
+            prepareActivity(isManager);
+        }
+        else {
+            isManager = false;
+            prepareActivity(isManager);
+        }
+
+    }
+
+    private void prepareActivity(final boolean isManager) {
         upNavigation();
         projectPO = getIntent().getStringExtra("projectPO");
         mFabOpenTaskDialogFragment = findViewById(R.id.fab_open_dialog_fragment_task);
-        mFabOpenTaskDialogFragment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startCreateTaskDialogFragment();
-            }
-        });
+        if (isManager) {
+            mFabOpenTaskDialogFragment.show();
+            mFabOpenTaskDialogFragment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startCreateTaskDialogFragment();
+                }
+            });
+        }
+        else {
+            mFabOpenTaskDialogFragment.hide();
+        }
 
         //Initializing viewPager
         viewPager = findViewById(R.id.viewpager_project);
@@ -72,7 +99,8 @@ public class ProjectActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                animateFab(position);
+                if (isManager)
+                    animateFab(position);
             }
 
             @Override

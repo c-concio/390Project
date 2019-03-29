@@ -2,11 +2,12 @@ package com.example.a390project;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.pdf.PdfDocument;
 import android.os.Build;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
@@ -31,10 +32,19 @@ import com.example.a390project.Fragments.ProjectFragment;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = "MainActivity";
+
+    private DatabaseReference  rootRef = FirebaseDatabase.getInstance().getReference();
+    private String uId = FirebaseAuth.getInstance().getUid();
+    private boolean isManager;
 
     //This is our tab-layout
     private TabLayout tabLayout;
@@ -79,12 +89,54 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
         else {
-            prepareActivity();
+            checkIfManager();
             Toast.makeText(this,"Welcome back",Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void prepareActivity() {
+    private void checkIfManager() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences.Editor editor = preferences.edit();
+        final String manager = preferences.getString("isManager",null);
+
+        rootRef.child("users").child(uId).child("manager").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue(boolean.class)) {
+                    editor.remove("isManager");
+                    editor.putString("isManager","true");
+                    isManager = true;
+                }
+                else {
+                    editor.remove("isManager");
+                    editor.putString("isManager", "false");
+                    isManager = false;
+                }
+                editor.apply();
+                prepareActivity(isManager);
+                Log.d(TAG, "Fetched isManager from Firebase: " + isManager);
+
+                if (manager.equals("true")) {
+                    isManager = true;
+                    prepareActivity(isManager);
+                    Log.d(TAG, "Fetched isManager from SharedPreferences: " + isManager);
+                }
+                else if (manager.equals("false")){
+                    isManager = false;
+                    prepareActivity(isManager);
+                    Log.d(TAG, "Fetched isManager from SharedPreferences: " + isManager);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void prepareActivity(final boolean isManager) {
         //instantiate fragment views
         mFabOpenDialogFragmentProject = findViewById(R.id.fab_open_dialog_fragment_project);
         mFabOpenDialogFragmentProject.setOnClickListener(new View.OnClickListener(){
@@ -114,8 +166,10 @@ public class MainActivity extends AppCompatActivity {
                 startCreateInventoryDialogFragment();
             }
         });
-
-        mFabOpenDialogFragmentProject.show();
+        if (isManager)
+            mFabOpenDialogFragmentProject.show();
+        else
+            mFabOpenDialogFragmentProject.hide();
         mFabOpenDialogFragmentControlDevice.hide();
         mFabOpenDialogFragmentMachine.hide();
         mFabOpenDialogFragmentInventory.hide();
@@ -137,7 +191,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                animateFab(position);
+                if (isManager) {
+                    animateFab(position);
+                }
+                else {
+
+                }
             }
 
             @Override
@@ -166,13 +225,15 @@ public class MainActivity extends AppCompatActivity {
         ProjectFragment projectFragment = new ProjectFragment();
         adapter.addFragment(projectFragment, "PROJECTS");
 
-        // ------------------ EMPLOYEE FRAGMENT ------------------
-        EmployeeFragment employeeFragment = new EmployeeFragment();
-        adapter.addFragment(employeeFragment, "EMPLOYEES");
+        if (isManager) {
+            // ------------------ EMPLOYEE FRAGMENT ------------------
+            EmployeeFragment employeeFragment = new EmployeeFragment();
+            adapter.addFragment(employeeFragment, "EMPLOYEES");
 
-        // ------------------ CONTROL DEVICE FRAGMENT ------------------
-        ControlDeviceFragment controlDeviceFragment = new ControlDeviceFragment();
-        adapter.addFragment(controlDeviceFragment, "DEVICES");
+            // ------------------ CONTROL DEVICE FRAGMENT ------------------
+            ControlDeviceFragment controlDeviceFragment = new ControlDeviceFragment();
+            adapter.addFragment(controlDeviceFragment, "DEVICES");
+        }
 
         // ------------------ MACHINE FRAGMENT ------------------
         MachineFragment machineFragment = new MachineFragment();

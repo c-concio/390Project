@@ -1,5 +1,7 @@
 package com.example.a390project;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,10 +23,16 @@ public class TaskPrePaintingActivity extends AppCompatActivity {
     private EditText newEmployeeCommentEdtText;
     private Button mComplete;
 
+    //check if user is manager from sharedpreferences
+    private boolean isManager;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_pre_painting);
+
+        checkIfManager();
     }
 
     @Override
@@ -71,12 +79,17 @@ public class TaskPrePaintingActivity extends AppCompatActivity {
         });
 
         mComplete = findViewById(R.id.prepaintingCompletedButton);
-        mComplete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                firebaseHelper.completeTask(taskId);
-            }
-        });
+        if(isManager) {
+            mComplete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    firebaseHelper.completeTask(taskId);
+                }
+            });
+        }
+        else {
+            mComplete.setVisibility(View.GONE);
+        }
     }
 
     //custom heading and back button
@@ -96,6 +109,18 @@ public class TaskPrePaintingActivity extends AppCompatActivity {
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void checkIfManager() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String manager = preferences.getString("isManager",null);
+        if (manager.equals("true")) {
+            isManager = true;
+        }
+        else {
+            isManager = false;
+        }
+
     }
 
 }

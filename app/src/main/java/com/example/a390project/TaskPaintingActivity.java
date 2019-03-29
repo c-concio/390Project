@@ -1,5 +1,7 @@
 package com.example.a390project;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -55,11 +57,15 @@ public class TaskPaintingActivity extends AppCompatActivity {
 
     private FirebaseHelper firebaseHelper = new FirebaseHelper();
     DatabaseReference dbRef;
+    //check if user is manager from sharedpreferences
+    private boolean isManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_painting);
+
+        checkIfManager();
 
         mPaintCode = findViewById(R.id.paint_code_painting_task);
         mPaintDescription = findViewById(R.id.paint_description_painting_task);
@@ -92,14 +98,18 @@ public class TaskPaintingActivity extends AppCompatActivity {
                 Toast.makeText(TaskPaintingActivity.this, "Task Ended!" , Toast.LENGTH_SHORT).show();
             }
         });
-
-        mCompletedTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                firebaseHelper.completeTask(paintingTaskID);
-                employeeComment = mComment.getText().toString().trim();
-            }
-        });
+        if (isManager) {
+            mCompletedTime.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    firebaseHelper.completeTask(paintingTaskID);
+                    employeeComment = mComment.getText().toString().trim();
+                }
+            });
+        }
+        else {
+            mCompletedTime.setVisibility(View.GONE);
+        }
 
         setActionBar("Painting");
 
@@ -201,6 +211,18 @@ public class TaskPaintingActivity extends AppCompatActivity {
             }
         });
 
+
+    }
+
+    private void checkIfManager() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String manager = preferences.getString("isManager",null);
+        if (manager.equals("true")) {
+            isManager = true;
+        }
+        else {
+            isManager = false;
+        }
 
     }
 

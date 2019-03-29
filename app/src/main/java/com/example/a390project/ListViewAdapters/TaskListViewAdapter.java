@@ -19,6 +19,7 @@ import com.example.a390project.TaskPackagingActivity;
 import com.example.a390project.TaskPaintingActivity;
 import com.example.a390project.TaskPrePaintingActivity;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -73,7 +74,9 @@ public class TaskListViewAdapter extends BaseAdapter {
         mCreatedTime = convertView.findViewById(R.id.task_created_time_row_item);
 
         mTaskType.setText(currentItem.getTaskType());
-        mCreatedTime.setText(getDate(currentItem.getCreatedTime()));
+        DateFormat df = DateFormat.getDateTimeInstance();
+        String dateStringcreatedTime = df.format(currentItem.getCreatedTime());
+        mCreatedTime.setText(dateStringcreatedTime);
 
         final View finalConvertView = convertView;
         convertView.setOnClickListener(new View.OnClickListener() {

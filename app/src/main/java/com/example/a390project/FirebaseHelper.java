@@ -90,7 +90,7 @@ public class FirebaseHelper {
 
     // ------------------------------------------- FirebaseHelper variables -------------------------------------------
     private static final String TAG = "FirebaseHelper";
-    private DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+    private DatabaseReference rootRef;
     private String uId;
     private boolean check;
     private boolean setStatusOfSwitchControlDevice = true;
@@ -500,6 +500,7 @@ public class FirebaseHelper {
                                 tasks.add(new Task(taskID, projectPO, taskType, description, createdTime,completed));
                             }
                         }
+                        sortTasksByLatestCreatedFirst(tasks);
                         callTaskListViewAdapter(activity, tasks, projectPO);
                     }
 
@@ -515,6 +516,25 @@ public class FirebaseHelper {
 
             }
         });
+    }
+
+    //will sort 'tasks' starting with the top row being the latest created one
+    private List<Task> sortTasksByLatestCreatedFirst(List<Task> tasks) {
+        Collections.sort(tasks,new Comparator<Task>(){
+            @Override
+            public int compare(final Task lhs, Task rhs) {
+                if (lhs.getCreatedTime()<rhs.getCreatedTime()) {
+                    return 1;
+                }
+                else if (lhs.getCreatedTime()>rhs.getCreatedTime()) {
+                    return -1;
+                }
+                else {
+                    return 0;
+                }
+            }
+        });
+        return tasks;
     }
 
     private void callTaskListViewAdapter(Activity activity, List<Task> tasks, String projectPO) {
@@ -1116,7 +1136,7 @@ public class FirebaseHelper {
                         paintBuckets.add(new PaintBucket(paintType, paintCode, paintDescription, bakeTemperature, bakeTime, paintWeight));
                     }
                 }
-                callInventoryListViewAdapter(view,activity,paintBuckets);
+                callInventoryListViewAdapter(view,activity,sortPaintBucketsByFirstLetter(paintBuckets));
             }
 
             @Override
@@ -1124,6 +1144,27 @@ public class FirebaseHelper {
 
             }
         });
+    }
+
+    private List<PaintBucket> sortPaintBucketsByFirstLetter(List<PaintBucket> paintBuckets) {
+        Collections.sort(paintBuckets,new Comparator<PaintBucket>() {
+            @Override
+            public int compare(PaintBucket lhs, PaintBucket rhs) {
+                char first = lhs.getPaintDescription().charAt(0);
+                char second = rhs.getPaintDescription().charAt(0);
+                if (first<second) {
+                    return -1;
+                }
+                else if (first>second) {
+                    return 1;
+                }
+                else {
+                    return 0;
+                }
+            }
+        });
+
+        return paintBuckets;
     }
 
     private void callInventoryListViewAdapter(View view, Activity activity, List<PaintBucket> paintBuckets) {
@@ -1913,7 +1954,7 @@ public class FirebaseHelper {
                             long startTime = dataSnapshot.child(graphID).child("startTime").getValue(long.class);
                             graphs.add(new Graph(graphTitle, machineTitle, graphID, startTime));
                         }
-                        callGraphListViewAdapter(activity, view, sortGraphsByLatestCreated(graphs));
+                        callGraphListViewAdapter(activity, view, sortGraphsByLatestCreatedFirst(graphs));
                     }
 
                     @Override
@@ -1930,7 +1971,7 @@ public class FirebaseHelper {
         });
     }
     //will sort 'graphs' starting with the top row being the latest created one
-    private List<Graph> sortGraphsByLatestCreated(List<Graph> graphs) {
+    private List<Graph> sortGraphsByLatestCreatedFirst(List<Graph> graphs) {
         Collections.sort(graphs,new Comparator<Graph>(){
             @Override
             public int compare(final Graph lhs, Graph rhs) {
