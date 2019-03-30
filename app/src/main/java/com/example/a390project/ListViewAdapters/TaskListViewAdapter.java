@@ -8,8 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.a390project.FirebaseHelper;
 import com.example.a390project.Model.Task;
 import com.example.a390project.Model.fragmentInListView;
 import com.example.a390project.R;
@@ -32,6 +34,7 @@ public class TaskListViewAdapter extends BaseAdapter {
     //views
     private TextView mTaskType;
     private TextView mCreatedTime;
+    private ImageView mIcon;
 
     //variables
     private String projectPO;
@@ -72,11 +75,17 @@ public class TaskListViewAdapter extends BaseAdapter {
         //set views of row item
         mTaskType = convertView.findViewById(R.id.paint_description_row_item);
         mCreatedTime = convertView.findViewById(R.id.task_created_time_row_item);
+        mIcon = convertView.findViewById(R.id.working_icon_tasks);
 
         mTaskType.setText(currentItem.getTaskType());
         DateFormat df = DateFormat.getDateTimeInstance();
         String dateStringcreatedTime = df.format(currentItem.getCreatedTime());
         mCreatedTime.setText(dateStringcreatedTime);
+        mIcon.setVisibility(View.GONE);
+
+        //adjust mIcon based on if task is being currently worked or not by uID
+        FirebaseHelper firebaseHelper = new FirebaseHelper();
+        firebaseHelper.checkIfIconAppliesForTasksListRow(mIcon, currentItem.getTaskID());
 
         final View finalConvertView = convertView;
         convertView.setOnClickListener(new View.OnClickListener() {

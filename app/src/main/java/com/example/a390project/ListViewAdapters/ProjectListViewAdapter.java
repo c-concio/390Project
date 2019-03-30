@@ -2,20 +2,34 @@ package com.example.a390project.ListViewAdapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.a390project.FirebaseHelper;
 import com.example.a390project.Model.Project;
 import com.example.a390project.ProjectActivity;
 import com.example.a390project.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectListViewAdapter extends BaseAdapter {
+
+    //firebase variables
+    private DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+    private String uId = FirebaseAuth.getInstance().getUid();
 
     private Context context;
     private List<Project> projects;
@@ -26,6 +40,7 @@ public class ProjectListViewAdapter extends BaseAdapter {
     private TextView mPO;
     private TextView mStartDate;
     private TextView mDueDate;
+    private ImageView mIcon;
 
     public ProjectListViewAdapter(Context context, List<Project> projects){
         this.context = context;
@@ -61,12 +76,18 @@ public class ProjectListViewAdapter extends BaseAdapter {
         mPO = convertView.findViewById(R.id.paint_type_row_item);
         mStartDate = convertView.findViewById(R.id.bake_temperature_row_item);
         mDueDate = convertView.findViewById(R.id.bake_time_row_item);
+        mIcon = convertView.findViewById(R.id.working_icon_projects);
 
         mClient.setText(currentItem.getClient());
         mTitle.setText(currentItem.getTitle());
         mPO.setText(currentItem.getPo());
         mStartDate.setText(getDate(currentItem.getStartDate()));
         mDueDate.setText(getDate(currentItem.getDueDate()));
+        mIcon.setVisibility(View.GONE);
+
+        //adjust mIcon based on if task is being currently worked in this project or not by uID
+        FirebaseHelper firebaseHelper = new FirebaseHelper();
+        firebaseHelper.checkIfIconAppliesForProjectsListRow(mIcon, currentItem.getPo());
 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override

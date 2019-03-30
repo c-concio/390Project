@@ -21,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -413,7 +414,6 @@ public class FirebaseHelper {
     }
 
     private void callCompletedTasksListViewAdapter(Activity activity, List<Task> completedTasks){
-
         if (!completedTasks.isEmpty()) {
             EmployeeTasksListViewAdapter adapter = new EmployeeTasksListViewAdapter(activity, completedTasks);
             ListView completedTasksListView = activity.findViewById(R.id.completedTasksListView);
@@ -1421,10 +1421,14 @@ public class FirebaseHelper {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 uIdRef.removeEventListener(this);
                 if (dataSnapshot.child("workingTasks").hasChild(taskID)) {
-                    boolean canEnd = dataSnapshot.child("workingTasks").child(taskID).child("canEnd").getValue(boolean.class);
-                    if(canEnd) {
-                        endWorkBlock(taskID,context);
-                        Toast.makeText(context, "Time Ended.", Toast.LENGTH_SHORT).show();
+                    if (dataSnapshot.child("workingTasks").child(taskID).hasChild("canEnd")) {
+                        boolean canEnd = dataSnapshot.child("workingTasks").child(taskID).child("canEnd").getValue(boolean.class);
+                        if (canEnd) {
+                            endWorkBlock(taskID, context);
+                            Toast.makeText(context, "Time Ended.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, "Cannot End.", Toast.LENGTH_SHORT).show();
+                        }
                     }
                     else {
                         Toast.makeText(context, "Cannot End.", Toast.LENGTH_SHORT).show();
@@ -2099,5 +2103,77 @@ public class FirebaseHelper {
             }
         }
         return max;
+    }
+
+    /*
+    -------------------------------------------------------ICON TO DISPLAYING IF EMPLOYEE IS WORKING CURRENTLY ON TASK---------------------------------------------
+     */
+
+    public void checkIfIconAppliesForProjectsListRow(final ImageView mIcon, final String projectPO) {
+        //populate list of projects currently working on
+        rootRef.child("users").child(uId).child("workingTasks").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                final List<String> currentlyWorkingTasks = new ArrayList<>();
+                for (DataSnapshot ds:dataSnapshot.getChildren()) {
+                    if (ds.hasChild("canStart")) {
+                        boolean isNotRunning = ds.child("canStart").getValue(boolean.class);
+                        if (!isNotRunning) {
+                            currentlyWorkingTasks.add(ds.getKey());
+                        }
+                    }
+                }
+                rootRef.child("tasks").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        rootRef.child("tasks").removeEventListener(this);
+                        final List<String> currentlyWorkingProjects = new ArrayList<>();
+                        for(String currentlyWorkingTask:currentlyWorkingTasks) {
+                            String projectPO = dataSnapshot.child(currentlyWorkingTask).child("projectPO").getValue(String.class);
+                            currentlyWorkingProjects.add(projectPO);
+                        }
+                        if (currentlyWorkingProjects.contains(projectPO)) {
+                            mIcon.setVisibility(View.VISIBLE);
+                        }
+                        else {
+                            mIcon.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void checkIfIconAppliesForTasksListRow(final ImageView mIcon, final String taskID) {
+        //populate list of projects currently working on
+        rootRef.child("users").child(uId).child("workingTasks").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.hasChild(taskID)) {
+                    if(dataSnapshot.child(taskID).hasChild("canStart")) {
+                        boolean isNotRunning = dataSnapshot.child(taskID).child("canStart").getValue(boolean.class);
+                        if (!isNotRunning) {
+                            mIcon.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }
