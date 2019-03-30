@@ -24,6 +24,7 @@ public class App extends Application {
                     NotificationManager.IMPORTANCE_DEFAULT
             );
 
+
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(serviceChannel);
         }

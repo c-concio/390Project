@@ -31,7 +31,7 @@ import java.util.TimerTask;
 
 public class NotificationForegroundService extends Service {
     public static final String NOTIFICATION_CHANNEL_ID = "NotificationChannel";
-    private static final String TAG = "WorkBlockForegroundService";
+    private static final String TAG = "WorkBlockFS";
 
     //variables from Intent
     private int NOTIFICATION_ID = 0;
@@ -78,7 +78,7 @@ public class NotificationForegroundService extends Service {
             // send the TaskInspectionActivity the projectPO
             intent2.putExtra("inspectionTaskID", taskID);
         }
-        else if(taskTitle.equals("Sanding") || taskTitle.equals("Sand-Blasting") || taskTitle.equals("Manual Solvent Cleaning") || taskTitle.equals("Iridite") || taskTitle.equals("Masking")) {
+        else if(taskTitle.equals("Sanding") || taskTitle.equals("SandBlasting") || taskTitle.equals("ManualSolventCleaning") || taskTitle.equals("Iridite") || taskTitle.equals("Masking")) {
             intent2 = new Intent(getApplicationContext(), TaskPrePaintingActivity.class);
             intent2.putExtra("prepaintingTaskID", taskID);
         }
@@ -105,6 +105,7 @@ public class NotificationForegroundService extends Service {
                 .setSubText("Start Time: " + getDate(timeNow))
                 .setSmallIcon(R.drawable.ic_work_block)
                 .setContentIntent(pendingIntent)
+                .setOnlyAlertOnce(true)
                 .setOngoing(true);
 
         final TimerTask[] timerTask = new TimerTask[1];
@@ -126,16 +127,17 @@ public class NotificationForegroundService extends Service {
                         projectPO = intent.getStringExtra("projectPO");
                         timeNow = intent.getLongExtra("timeNow",0);
 
-
+                        builder.setDefaults(0);
                         builder.setContentText("Time Elapsed: " + hour+":"+min+":"+sec)
                                 .setContentTitle(taskTitle + " - " + projectPO)
                                 .setSubText("Start Time: " + getDate(timeNow))
                                 .setSmallIcon(R.drawable.ic_work_block)
                                 .setContentIntent(pendingIntent)
+                                .setVibrate(new long[]{0L})
                                 .setOngoing(true);
 
                         notificationManager.notify(NOTIFICATION_ID, builder.build());
-                        startForeground(NOTIFICATION_ID,builder.build());
+                        //startForeground(NOTIFICATION_ID,builder.build());
                         Log.d(TAG, "updateNotification: " + taskTitle);
 
                     }
@@ -158,9 +160,9 @@ public class NotificationForegroundService extends Service {
                         if (!canEnd) {
                             long idLong = (timeNow % 10000000);
                             int NOTIFICATION_ID = (int)idLong;
+                            timerTask[0].cancel();
                             notificationManager.cancel(NOTIFICATION_ID);
                             Log.d(TAG, "removeNotification: " + NOTIFICATION_ID);
-                            timerTask[0].cancel();
                         }
                     }
 

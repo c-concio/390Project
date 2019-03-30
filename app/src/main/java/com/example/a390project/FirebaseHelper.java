@@ -414,11 +414,12 @@ public class FirebaseHelper {
 
     private void callCompletedTasksListViewAdapter(Activity activity, List<Task> completedTasks){
 
-        EmployeeTasksListViewAdapter adapter = new EmployeeTasksListViewAdapter(activity, completedTasks);
-        ListView completedTasksListView = activity.findViewById(R.id.completedTasksListView);
-        completedTasksListView.setAdapter(adapter);
-        setEmployeeTasksListViewHeightBasedOnChildren(completedTasksListView);
-
+        if (!completedTasks.isEmpty()) {
+            EmployeeTasksListViewAdapter adapter = new EmployeeTasksListViewAdapter(activity, completedTasks);
+            ListView completedTasksListView = activity.findViewById(R.id.completedTasksListView);
+            completedTasksListView.setAdapter(adapter);
+            setEmployeeTasksListViewHeightBasedOnChildren(completedTasksListView);
+        }
     }
 
     /*
@@ -571,11 +572,14 @@ public class FirebaseHelper {
 
     }
 
-    public void setTaskPackagingActivityListener(String taskID, final Activity activity){
+    public void setTaskPackagingActivityListener(final String taskID, final Activity activity){
         rootRef.child("tasks").child(taskID).addValueEventListener(packagingValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Task currentTask = dataSnapshot.getValue(Task.class);
+                rootRef.child("tasks").child(taskID).removeEventListener(packagingValueEventListener);
+                //Task currentTask = dataSnapshot.getValue(Task.class);
+                Task currentTask = new Task();
+                currentTask.setDescription(dataSnapshot.child("description").getValue(String.class));
 
                 TextView packagingDescriptionTextView = activity.findViewById(R.id.descriptionTextView);
 
@@ -1325,7 +1329,7 @@ public class FirebaseHelper {
                             if (dataSnapshot.hasChild("workBlockLimitCount")) {
                                 count = dataSnapshot.child("workBlockLimitCount").getValue(int.class);
                             }
-                            if (count < 2) { //<------------specifies how many concurrent tasks and employee can have at the same time
+                            if (count < 3) { //<------------specifies how many concurrent tasks and employee can have at the same time
                                 Toast.makeText(context, "Time Started.", Toast.LENGTH_SHORT).show();
                                 rootRef.child("tasks").child(taskID).child("projectPO").addValueEventListener(new ValueEventListener() {
                                     @Override
@@ -1886,7 +1890,7 @@ public class FirebaseHelper {
 //                                }
 //                                graphs.add(new GraphData(x, y, graphTitle));
 //                            }
-//                            callGraphListViewAdapter(activity, view, graph_names);
+//                            callGraphListViewAdapter(activity, view, graphs);
 //                        }
 //
 //                        @Override
