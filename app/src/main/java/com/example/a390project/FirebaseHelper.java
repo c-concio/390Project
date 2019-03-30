@@ -1528,7 +1528,7 @@ public class FirebaseHelper {
                                     employeeWorkBlocks.add(new WorkBlock(workBlockID, startTime, endTime, workingTime, taskID, employeeID, title, projectPO));
                                     Log.d(TAG, "WORKBLOCK: " + workBlockID + " " + startTime + " " + endTime + " " + workingTime
                                             + " " + taskID + " " + workBlockID + " " + employeeID + " " + title + " " + projectPO);
-                                    callEmployeeWorkBlocksListViewAdapter(view, activity, employeeWorkBlocks);
+                                    callEmployeeWorkBlocksListViewAdapter(view, activity, sortWorkBlocksByLatestCreatedFirst(employeeWorkBlocks));
                                 }
 
                                 @Override
@@ -1547,6 +1547,24 @@ public class FirebaseHelper {
 
             }
         });
+    }
+
+    private List<WorkBlock> sortWorkBlocksByLatestCreatedFirst(List<WorkBlock> employeeWorkBlocks) {
+        Collections.sort(employeeWorkBlocks,new Comparator<WorkBlock>(){
+            @Override
+            public int compare(final WorkBlock lhs, WorkBlock rhs) {
+                if (lhs.getStartTime()<rhs.getStartTime()) {
+                    return 1;
+                }
+                else if (lhs.getStartTime()>rhs.getStartTime()) {
+                    return -1;
+                }
+                else {
+                    return 0;
+                }
+            }
+        });
+        return employeeWorkBlocks;
     }
 
     /*
