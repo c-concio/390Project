@@ -2156,13 +2156,12 @@ public class FirebaseHelper {
 
     public void checkIfIconAppliesForTasksListRow(final ImageView mIcon, final String taskID) {
         //populate list of projects currently working on
-        rootRef.child("users").child(uId).child("workingTasks").addValueEventListener(new ValueEventListener() {
+        rootRef.child("users").child(uId).child("workingTasks").child(taskID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                if (dataSnapshot.hasChild(taskID)) {
-                    if(dataSnapshot.child(taskID).hasChild("canStart")) {
-                        boolean isNotRunning = dataSnapshot.child(taskID).child("canStart").getValue(boolean.class);
+                if (dataSnapshot.exists()) {
+                    if (dataSnapshot.hasChild("canStart")) {
+                        boolean isNotRunning = dataSnapshot.child("canStart").getValue(boolean.class);
                         if (!isNotRunning) {
                             mIcon.setVisibility(View.VISIBLE);
                         }

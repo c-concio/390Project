@@ -36,5 +36,10 @@ public class ProjectTasksFragment extends Fragment {
         firebaseHelper.populateTasks(projectPO, getActivity());
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        FirebaseHelper firebaseHelper = new FirebaseHelper();
+        firebaseHelper.populateTasks(projectPO, getActivity());
+    }
 }
