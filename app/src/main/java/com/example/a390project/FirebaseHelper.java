@@ -38,6 +38,7 @@ import com.example.a390project.ListViewAdapters.EmployeeTasksListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeWorkBlocksListViewAdapter;
 import com.example.a390project.ListViewAdapters.GraphableProjectsListViewAdapter;
 import com.example.a390project.ListViewAdapters.GraphsListViewAdapter;
+import com.example.a390project.ListViewAdapters.InventoryMaterialListViewAdapter;
 import com.example.a390project.ListViewAdapters.InventoryPaintListViewAdapter;
 import com.example.a390project.ListViewAdapters.MachineListViewAdapter;
 import com.example.a390project.ListViewAdapters.PrepaintTaskListViewAdapter;
@@ -49,6 +50,7 @@ import com.example.a390project.Model.EmployeeComment;
 import com.example.a390project.Model.Graph;
 import com.example.a390project.Model.GraphData;
 import com.example.a390project.Model.Machine;
+import com.example.a390project.Model.Material;
 import com.example.a390project.Model.Oven;
 import com.example.a390project.Model.PaintBucket;
 import com.example.a390project.Model.Paintbooth;
@@ -1193,11 +1195,61 @@ public class FirebaseHelper {
         return paintBuckets;
     }
 
-    public void createInventoryItem(String paintType, String paintCode, String paintDescription, int paintBakeTemperature, int paintBakeTime, float paintWeight) {
+    public void createInventoryPaintItem(String paintType, String paintCode, String paintDescription, int paintBakeTemperature, int paintBakeTime, float paintWeight) {
         rootRef.child("inventory").child(paintType).child(paintCode).setValue(new PaintBucket(paintType,paintCode,paintDescription,paintBakeTemperature,paintBakeTime,paintWeight));
     }
 
+    public void createInventoryMaterialItem(String materialName, Material newMaterial){
+        rootRef.child("inventory").child("material").child(materialName).setValue(newMaterial);
+        Log.d(TAG, "createInventoryMaterialItem: started inventory material");
+    }
 
+    public ValueEventListener populateMaterialInventory(final Activity activity){
+        ValueEventListener materialValueEventListener;
+
+        rootRef.child("inventory").child("material").addValueEventListener(materialValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Material> materials = new ArrayList<>();
+                for (DataSnapshot currentSnapshot : dataSnapshot.getChildren()){
+                    Material newMaterial = currentSnapshot.getValue(Material.class);
+                    newMaterial.setMaterialName(currentSnapshot.getKey());
+                    materials.add(newMaterial);
+                }
+
+                // set adapter
+                materials = sortMaterialsByFirstLetter(materials);
+                InventoryMaterialListViewAdapter adapter = new InventoryMaterialListViewAdapter(activity, materials);
+                ListView materialListView = activity.findViewById(R.id.materialListView);
+                materialListView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        return materialValueEventListener;
+    }
+
+    private List<Material> sortMaterialsByFirstLetter(List<Material> materials) {
+        Collections.sort(materials, new Comparator<Material>() {
+            @Override
+            public int compare(Material o1, Material o2) {
+                char first = o1.getMaterialName().charAt(0);
+                char second = o2.getMaterialName().charAt(0);
+                if (first < second)
+                    return -1;
+                else if (first > second)
+                    return 1;
+                else
+                    return 0;
+            }
+        });
+
+        return materials;
+    }
 
     // ------------------------------------------------ Firebase Employee Comments ------------------------------------------------
 

@@ -27,83 +27,148 @@
             android:text="Paint Type"
             android:textSize="18dp"
             android:textColor="@color/colorPrimaryDark"/>
+
         <Spinner
             android:id="@+id/paint_type_inventory_df"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true">
-        </Spinner>
+            android:layout_alignParentRight="true"></Spinner>
     </RelativeLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <LinearLayout
+        android:id="@+id/paintDetailsLinearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <EditText
-            android:id="@+id/paint_description_inventory_df"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Paint Description"
-            android:inputType=""
-            android:padding="10dp"
-            android:layout_marginTop="8dp"
-            android:focusedByDefault="false"/>
-    </android.support.design.widget.TextInputLayout>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <EditText
-            android:id="@+id/paint_code_inventory_df"
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Paint Code"
-            android:inputType=""
-            android:padding="10dp"
-            android:layout_marginTop="8dp"
-            android:focusedByDefault="false"/>
-    </android.support.design.widget.TextInputLayout>
+            android:layout_height="wrap_content">
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <EditText
-            android:id="@+id/bake_temperature_inventory_df"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Bake Temperature (°C)"
-            android:inputType=""
-            android:padding="10dp"
-            android:layout_marginTop="8dp"
-            android:focusedByDefault="false"/>
-    </android.support.design.widget.TextInputLayout>
+            <EditText
+                android:id="@+id/paint_code_inventory_df"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:focusedByDefault="false"
+                android:hint="Paint Code"
+                android:inputType=""
+                android:padding="10dp" />
+        </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <EditText
-            android:id="@+id/bake_time_inventory_df"
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Bake Time (min)"
-            android:inputType=""
-            android:padding="10dp"
-            android:layout_marginTop="8dp"
-            android:focusedByDefault="false"/>
-    </android.support.design.widget.TextInputLayout>
+            android:layout_height="wrap_content">
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <EditText
-            android:id="@+id/paint_weight_inventory_df"
+            <EditText
+                android:id="@+id/paint_weight_inventory_df"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:focusedByDefault="false"
+                android:hint="Paint Weight (kg)"
+                android:inputType=""
+                android:padding="10dp" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Paint Weight (kg)"
-            android:inputType=""
-            android:padding="10dp"
-            android:layout_marginTop="8dp"
-            android:focusedByDefault="false"/>
-    </android.support.design.widget.TextInputLayout>
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/bake_time_inventory_df"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:focusedByDefault="false"
+                android:hint="Bake Time (min)"
+                android:inputType=""
+                android:padding="10dp" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/bake_temperature_inventory_df"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:focusedByDefault="false"
+                android:hint="Bake Temperature (°C)"
+                android:inputType=""
+                android:padding="10dp" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/paint_description_inventory_df"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:focusedByDefault="false"
+                android:hint="Paint Description"
+                android:inputType=""
+                android:padding="10dp" />
+        </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/materialLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/materialNameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:focusedByDefault="false"
+                android:hint="Material Name"
+                android:inputType=""
+                android:padding="10dp" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/materialDescriptionEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:focusedByDefault="false"
+                android:hint="Material Description"
+                android:inputType=""
+                android:padding="10dp" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/materialQuantityEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:focusedByDefault="false"
+                android:hint="Material Quantity"
+                android:inputType=""
+                android:padding="10dp" />
+        </android.support.design.widget.TextInputLayout>
+
+    </LinearLayout>
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"

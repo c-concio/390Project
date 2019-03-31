@@ -23,7 +23,7 @@ public class LiquidPaintActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_liquid_paint);
+        setContentView(R.layout.activity_inventory_liquid_paint);
         Log.d(TAG, "onCreate: created Liquid");
         setActionBar("Liquid Paint Inventory");
     }

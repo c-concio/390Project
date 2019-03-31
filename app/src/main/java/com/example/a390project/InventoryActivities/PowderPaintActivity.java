@@ -18,7 +18,7 @@ public class PowderPaintActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_powder_paint);
+        setContentView(R.layout.activity_inventory_powder_paint);
         setActionBar("Powder Paint Inventory");
     }
 

@@ -45,7 +45,7 @@ public class InventoryPaintListViewAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.row_item_inventory, parent, false);
+            convertView = LayoutInflater.from(context).inflate(R.layout.row_item_paint_inventory, parent, false);
         }
 
         // get current item to be displayed

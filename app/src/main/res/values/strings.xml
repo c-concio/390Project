@@ -20,6 +20,7 @@
     <string-array name="paint_type">
         <item>Liquid</item>
         <item>Powder</item>
+        <item>Material</item>
     </string-array>
 
 </resources>
