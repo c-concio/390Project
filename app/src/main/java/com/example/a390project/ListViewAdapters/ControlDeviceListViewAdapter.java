@@ -22,6 +22,7 @@ public class ControlDeviceListViewAdapter extends BaseAdapter {
     private static final String TAG = "CDeviceListViewAdapter";
     private Context context;
     private List<ControlDevice> cDevice;
+    private int i = 0;
 
     //views
     private TextView textControlDevice;
@@ -56,7 +57,9 @@ public class ControlDeviceListViewAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.row_item_control_device, parent, false);
         }
 
-        setupUI(convertView);
+        textControlDevice = convertView.findViewById(R.id.control_device_title_text_view_row);
+        switchControlDevice = convertView.findViewById(R.id.control_device_switch);
+
         final FirebaseHelper firebaseHelper = new FirebaseHelper();
         final ControlDevice currentItem = (ControlDevice) getItem(position);
         textControlDevice.setText(currentItem.getcDeviceTitle());
@@ -68,23 +71,23 @@ public class ControlDeviceListViewAdapter extends BaseAdapter {
         switchControlDevice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    firebaseHelper.changeDeviceStatus(currentItem.getcDeviceTitle(), true);
-                } else {
-                    firebaseHelper.changeDeviceStatus(currentItem.getcDeviceTitle(), false);
+                if (i > 2) {
+                    if (isChecked) {
+                        firebaseHelper.changeDeviceStatus(currentItem.getcDeviceTitle(), true);
+                    } else {
+                        firebaseHelper.changeDeviceStatus(currentItem.getcDeviceTitle(), false);
+                    }
                 }
+                else {
+                    i++;
+                }
+                Log.d(TAG, "onCheckedChanged: " + i);
             }
         });
 
         return convertView;
 
     }
-
-    private void setupUI(View view){
-        textControlDevice = view.findViewById(R.id.control_device_title_text_view_row);
-        switchControlDevice = view.findViewById(R.id.control_device_switch);
-    }
-
 
 
 }

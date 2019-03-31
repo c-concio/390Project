@@ -14,8 +14,6 @@ import android.widget.TextView;
 import com.example.a390project.FirebaseHelper;
 import com.example.a390project.Model.SubTask;
 import com.example.a390project.R;
-import com.example.a390project.TaskInspectionActivity;
-import com.example.a390project.TaskPrePaintingActivity;
 
 import java.util.List;
 
@@ -33,11 +31,16 @@ public class PrepaintTaskListViewAdapter extends BaseAdapter {
     private Button startTimeButton;
     private Button endTimeButton;
     private EditText employeeCommentEditText;
+    private TextView mTimeElapsed;
+    private boolean backPressed;
+    private PrepaintTaskListViewAdapter adapter;
 
-    public PrepaintTaskListViewAdapter(Context context, List<SubTask> subTasks, Activity activity){
+    public PrepaintTaskListViewAdapter(Context context, List<SubTask> subTasks, Activity activity, boolean backPressed){
         this.context = context;
         this.subTasks = subTasks;
         this.activity = activity;
+        this.backPressed = backPressed;
+        adapter = this;
         Log.d(TAG, "PrepaintTaskListViewAdapter: task size: " + this.subTasks.size());
     }
 
@@ -69,23 +72,27 @@ public class PrepaintTaskListViewAdapter extends BaseAdapter {
         startTimeButton = convertView.findViewById(R.id.startTimeButton);
         endTimeButton = convertView.findViewById(R.id.endTimeButton);
         employeeCommentEditText = convertView.findViewById(R.id.employeeCommentEditText);
-
+        mTimeElapsed = convertView.findViewById(R.id.elapsed_time_since_pressed_start_time_prepaint);
+        mTimeElapsed.setVisibility(View.GONE);
 
         final FirebaseHelper firebaseHelper = new FirebaseHelper();
 
         firebaseHelper.setStartTimeEndTimeButtons(startTimeButton,endTimeButton,currentItem.getTaskID());
 
+        firebaseHelper.checkIfTaskStartedAlready(currentItem.getTaskID(), mTimeElapsed, activity, backPressed, convertView);
+
+        final View finalConvertView = convertView;
         startTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firebaseHelper.checkIfCanStart(currentItem.getTaskID(), context, subTasks.get(position).getSubTaskType(), activity, startTimeButton, endTimeButton);
+                firebaseHelper.checkIfCanStart(currentItem.getTaskID(), context, subTasks.get(position).getSubTaskType(), activity, startTimeButton, endTimeButton, mTimeElapsed, backPressed, finalConvertView);
             }
         });
 
         endTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firebaseHelper.checkIfCanEnd(currentItem.getTaskID(), context);
+                firebaseHelper.checkIfCanEnd(currentItem.getTaskID(), context, mTimeElapsed);
             }
         });
 

@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -30,6 +29,8 @@ public class TaskPackagingActivity extends AppCompatActivity {
     Button completeButton;
     Button postCommentButton;
     FirebaseHelper firebaseHelper;
+    TextView mTimeElapsed;
+    private boolean backPressed = false;
 
     String packagingTaskID;
 
@@ -73,6 +74,8 @@ public class TaskPackagingActivity extends AppCompatActivity {
         endTimeButton = findViewById(R.id.endTimeButton);
         completeButton = findViewById(R.id.completed_packaging_task);
         postCommentButton = findViewById(R.id.postCommentButton);
+        mTimeElapsed = findViewById(R.id.elapsed_time_since_pressed_start_time_packaging);
+        mTimeElapsed.setVisibility(View.GONE);
 
         startTimeButton.setOnClickListener(startTimeOnClickListener);
         endTimeButton.setOnClickListener(endTimeOnClickListener);
@@ -107,13 +110,17 @@ public class TaskPackagingActivity extends AppCompatActivity {
         firebaseHelper = new FirebaseHelper();
         Intent intent = getIntent();
         packagingTaskID = intent.getStringExtra("packagingTaskID");
+
+        //check if workblock already running for this task and display the timer
+        firebaseHelper.checkIfTaskStartedAlready(packagingTaskID, mTimeElapsed, TaskPackagingActivity.this, backPressed, null);
     }
+
 
     // onClickListener for the startTime button
     View.OnClickListener startTimeOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            firebaseHelper.checkIfCanStart(packagingTaskID, getApplicationContext(), "Packaging", TaskPackagingActivity.this,startTimeButton,endTimeButton);
+            firebaseHelper.checkIfCanStart(packagingTaskID, getApplicationContext(), "Packaging", TaskPackagingActivity.this,startTimeButton,endTimeButton, mTimeElapsed, backPressed, null);
         }
     };
 
@@ -121,9 +128,13 @@ public class TaskPackagingActivity extends AppCompatActivity {
     View.OnClickListener endTimeOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            firebaseHelper.checkIfCanEnd(packagingTaskID, getApplicationContext());
+            firebaseHelper.checkIfCanEnd(packagingTaskID, getApplicationContext(), mTimeElapsed);
         }
     };
+
+    /*
+        -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    */
 
     // onClickListener for the complete button
     View.OnClickListener completeOnClickListener = new View.OnClickListener() {
@@ -166,6 +177,8 @@ public class TaskPackagingActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home: {
+                mTimeElapsed.setVisibility(View.GONE);
+                backPressed = true;
                 this.finish();
                 return true;
             }
@@ -183,5 +196,12 @@ public class TaskPackagingActivity extends AppCompatActivity {
             isManager = false;
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        mTimeElapsed.setVisibility(View.GONE);
+        backPressed = true;
     }
 }

@@ -5,8 +5,6 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +34,8 @@ public class TaskPaintingActivity extends AppCompatActivity {
     private EditText mComment;
     private ListView employeeCommentsListView;
     private Button saveButton;
+    private TextView mTimeElapsed;
+    private boolean backPressed = false;
 
     // views for liquid paint
     LinearLayout liquidLinearLayout;
@@ -78,15 +78,23 @@ public class TaskPaintingActivity extends AppCompatActivity {
         mComment = findViewById(R.id.newCommentsEditText);
         mPostCommentButton = findViewById(R.id.postCommentButton);
         employeeCommentsListView = findViewById(R.id.employeeCommentsListView);
+        mTimeElapsed = findViewById(R.id.elapsed_time_since_pressed_start_time_painting);
+        mTimeElapsed.setVisibility(View.GONE);
 
         paintingTaskID = getIntent().getStringExtra("paintingTaskID");
         firebaseHelper.setStartTimeEndTimeButtons(mStartTime,mEndTime,paintingTaskID);
         firebaseHelper.setPaintingValues(mPaintCode, mBakeTemp, mBakeTime, mDescription, mPaintDescription, paintingTaskID, this);
 
+        /*
+            -------------------------- Start and End time buttons creating workblocks, updating persistent notification and updating mTimeElapsed textview-------------------------
+         */
+
+        firebaseHelper.checkIfTaskStartedAlready(paintingTaskID, mTimeElapsed, TaskPaintingActivity.this, backPressed, null);
+
         mStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firebaseHelper.checkIfCanStart(paintingTaskID, getApplicationContext(), "Painting", TaskPaintingActivity.this,mStartTime,mEndTime);
+                firebaseHelper.checkIfCanStart(paintingTaskID, getApplicationContext(), "Painting", TaskPaintingActivity.this,mStartTime,mEndTime, mTimeElapsed, backPressed, null);
                 Toast.makeText(TaskPaintingActivity.this, "Task Started!" , Toast.LENGTH_SHORT).show();
             }
         });
@@ -94,10 +102,14 @@ public class TaskPaintingActivity extends AppCompatActivity {
         mEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firebaseHelper.checkIfCanEnd(paintingTaskID, getApplicationContext());
+                firebaseHelper.checkIfCanEnd(paintingTaskID, getApplicationContext(), mTimeElapsed);
                 Toast.makeText(TaskPaintingActivity.this, "Task Ended!" , Toast.LENGTH_SHORT).show();
             }
         });
+
+        /*
+        -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+         */
         if (isManager) {
             mCompletedTime.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -153,6 +165,8 @@ public class TaskPaintingActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home: {
+                mTimeElapsed.setVisibility(View.GONE);
+                backPressed = true;
                 this.finish();
                 return true;
             }
@@ -226,4 +240,10 @@ public class TaskPaintingActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        mTimeElapsed.setVisibility(View.GONE);
+        backPressed = true;
+    }
 }

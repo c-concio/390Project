@@ -41,12 +41,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="5dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginTop="10dp"
             android:text="Complete Inspection"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
+            app:layout_constraintTop_toBottomOf="@+id/elapsed_time_since_pressed_start_time" />
 
         <EditText
             android:id="@+id/partCountedEditText"
@@ -95,6 +95,18 @@
                 android:text="End Time" />
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/elapsed_time_since_pressed_start_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toEndOf="@+id/linearLayout4"
+            app:layout_constraintStart_toStartOf="@+id/linearLayout4"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
 
         <TextView
             android:id="@+id/partAcceptedTextView"

@@ -22,6 +22,7 @@ public class TaskPrePaintingActivity extends AppCompatActivity {
     private Button postCommentButton;
     private EditText newEmployeeCommentEdtText;
     private Button mComplete;
+    private boolean backPressed = false;
 
     //check if user is manager from sharedpreferences
     private boolean isManager;
@@ -42,7 +43,7 @@ public class TaskPrePaintingActivity extends AppCompatActivity {
 
         setupUI();
 
-        firebaseHelper.populateSubTasks(taskId, this);
+        firebaseHelper.populateSubTasks(taskId, this, backPressed);
         firebaseHelper.getEmployeeComments(this, taskId);
     }
 
@@ -104,6 +105,7 @@ public class TaskPrePaintingActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home: {
+                backPressed = true;
                 this.finish();
                 return true;
             }
@@ -123,4 +125,9 @@ public class TaskPrePaintingActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        backPressed = true;
+    }
 }

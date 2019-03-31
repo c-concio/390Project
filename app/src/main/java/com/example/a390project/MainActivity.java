@@ -95,9 +95,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkIfManager() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         final SharedPreferences.Editor editor = preferences.edit();
-        final String manager = preferences.getString("isManager",null);
 
         rootRef.child("users").child(uId).child("manager").addValueEventListener(new ValueEventListener() {
             @Override
@@ -113,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
                     isManager = false;
                 }
                 editor.apply();
-                prepareActivity(isManager);
+                final String manager = preferences.getString("isManager",null);
                 Log.d(TAG, "Fetched isManager from Firebase: " + isManager);
 
                 if (manager.equals("true")) {

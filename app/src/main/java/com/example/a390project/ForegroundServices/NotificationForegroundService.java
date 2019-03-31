@@ -121,6 +121,22 @@ public class NotificationForegroundService extends Service {
                         long min = ((timeElapsed/1000) / 60) % 60;
                         long hour = ((timeElapsed/1000) / 60) / 60;
 
+                        String s,m,h;
+                        if (sec < 10)
+                            s = "0" + Long.toString(sec);
+                        else
+                            s = Long.toString(sec);
+                        if (min < 10)
+                            m = "0" + Long.toString(min);
+                        else
+                            m = Long.toString(min);
+                        if (hour < 10)
+                            h = "0" + Long.toString(hour);
+                        else
+                            h = Long.toString(hour);
+
+                        String elapsedTime = h + ":" + m + ":" + s;
+
                         taskTitle = intent.getStringExtra("taskTitle");
                         taskID = intent.getStringExtra("taskID");
                         NOTIFICATION_ID = intent.getIntExtra("NOTIFICATION_ID",0);
@@ -128,7 +144,7 @@ public class NotificationForegroundService extends Service {
                         timeNow = intent.getLongExtra("timeNow",0);
 
                         builder.setDefaults(0);
-                        builder.setContentText("Time Elapsed: " + hour+":"+min+":"+sec)
+                        builder.setContentText("Time Elapsed: " + elapsedTime)
                                 .setContentTitle(taskTitle + " - " + projectPO)
                                 .setSubText("Start Time: " + getDate(timeNow))
                                 .setSmallIcon(R.drawable.ic_work_block)

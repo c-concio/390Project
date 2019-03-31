@@ -36,4 +36,15 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/elapsed_time_since_pressed_start_time_prepaint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="-"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold"
+        android:gravity="center_horizontal" />
+
+
 </LinearLayout>

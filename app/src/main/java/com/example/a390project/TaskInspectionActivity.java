@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class TaskInspectionActivity extends AppCompatActivity {
@@ -28,6 +29,8 @@ public class TaskInspectionActivity extends AppCompatActivity {
     Button mEndTime;
     Button mCompleteTime;
     Button mPostCommentButton;
+    TextView mTimeElapsed;
+    boolean backPressed = false;
 
     FirebaseHelper firebaseHelper;
     String inspectionTaskID;
@@ -44,6 +47,7 @@ public class TaskInspectionActivity extends AppCompatActivity {
         setupUI();
         firebaseHelper.setTaskInspectionActivityListener(inspectionTaskID, TaskInspectionActivity.this);
         firebaseHelper.setStartTimeEndTimeButtons(mStartTime,mEndTime,inspectionTaskID);
+        final Thread classThread = Thread.currentThread();
 
         checkIfManager();
 
@@ -111,22 +115,33 @@ public class TaskInspectionActivity extends AppCompatActivity {
             }
         });
 
+        /*
+            -------------------------- Start and End time buttons creating workblocks, updating persistent notification and updating mTimeElapsed textview-------------------------
+         */
+
+        firebaseHelper.checkIfTaskStartedAlready(inspectionTaskID, mTimeElapsed, TaskInspectionActivity.this, backPressed, null);
+
         mStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = getIntent();
                 inspectionType = intent.getStringExtra("taskType");
                 Log.d(TAG, "onClick: " + inspectionType);
-                firebaseHelper.checkIfCanStart(inspectionTaskID, getApplicationContext(), inspectionType, TaskInspectionActivity.this,mStartTime,mEndTime);
+                firebaseHelper.checkIfCanStart(inspectionTaskID, getApplicationContext(), inspectionType, TaskInspectionActivity.this,mStartTime,mEndTime, mTimeElapsed,backPressed, null);
             }
         });
 
         mEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firebaseHelper.checkIfCanEnd(inspectionTaskID, getApplicationContext());
+                firebaseHelper.checkIfCanEnd(inspectionTaskID, getApplicationContext(), mTimeElapsed);
             }
         });
+
+        /*
+        -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+         */
+
         if (isManager) {
             mCompleteTime.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -156,6 +171,7 @@ public class TaskInspectionActivity extends AppCompatActivity {
 
         firebaseHelper.getEmployeeComments(this, inspectionTaskID);
 
+
     }
 
     @Override
@@ -177,6 +193,8 @@ public class TaskInspectionActivity extends AppCompatActivity {
         mStartTime = findViewById(R.id.startTimeButton_inspection);
         mEndTime = findViewById(R.id.endTimeButton_inspection);
         mPostCommentButton = findViewById(R.id.postCommentButton);
+        mTimeElapsed = findViewById(R.id.elapsed_time_since_pressed_start_time);
+        mTimeElapsed.setVisibility(View.GONE);
 
         firebaseHelper = new FirebaseHelper();
         Intent intent = getIntent();
@@ -202,6 +220,8 @@ public class TaskInspectionActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home: {
+                mTimeElapsed.setVisibility(View.GONE);
+                backPressed = true;
                 this.finish();
                 return true;
             }
@@ -221,4 +241,10 @@ public class TaskInspectionActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        mTimeElapsed.setVisibility(View.GONE);
+        backPressed = true;
+    }
 }
