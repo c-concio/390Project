@@ -32,8 +32,6 @@ import com.example.a390project.Model.Task;
 import java.util.ArrayList;
 import java.util.List;
 
-// Todo: Create Assigned tasks in Firebase
-// Todo: Create Completed tasks in Firebase
 
 public class EmployeeActivity extends AppCompatActivity{
 

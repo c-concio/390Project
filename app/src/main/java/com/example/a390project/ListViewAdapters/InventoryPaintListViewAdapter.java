@@ -12,7 +12,7 @@ import com.example.a390project.R;
 
 import java.util.List;
 
-public class InventoryListViewAdapter extends BaseAdapter {
+public class InventoryPaintListViewAdapter extends BaseAdapter {
 
     private Context context;
     private List<PaintBucket> paintBuckets;
@@ -22,7 +22,7 @@ public class InventoryListViewAdapter extends BaseAdapter {
 
     //variables
 
-    public InventoryListViewAdapter(Context context, List<PaintBucket> paintBuckets){
+    public InventoryPaintListViewAdapter(Context context, List<PaintBucket> paintBuckets){
         this.context = context;
         this.paintBuckets = paintBuckets;
     }

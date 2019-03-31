@@ -38,7 +38,7 @@ import com.example.a390project.ListViewAdapters.EmployeeTasksListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeWorkBlocksListViewAdapter;
 import com.example.a390project.ListViewAdapters.GraphableProjectsListViewAdapter;
 import com.example.a390project.ListViewAdapters.GraphsListViewAdapter;
-import com.example.a390project.ListViewAdapters.InventoryListViewAdapter;
+import com.example.a390project.ListViewAdapters.InventoryPaintListViewAdapter;
 import com.example.a390project.ListViewAdapters.MachineListViewAdapter;
 import com.example.a390project.ListViewAdapters.PrepaintTaskListViewAdapter;
 import com.example.a390project.ListViewAdapters.ProjectListViewAdapter;
@@ -403,6 +403,7 @@ public class FirebaseHelper {
                         }
                     });
 
+
                 }
             }
 
@@ -417,8 +418,10 @@ public class FirebaseHelper {
         if (!completedTasks.isEmpty()) {
             EmployeeTasksListViewAdapter adapter = new EmployeeTasksListViewAdapter(activity, completedTasks);
             ListView completedTasksListView = activity.findViewById(R.id.completedTasksListView);
-            completedTasksListView.setAdapter(adapter);
-            setEmployeeTasksListViewHeightBasedOnChildren(completedTasksListView);
+            if (completedTasksListView != null) {
+                completedTasksListView.setAdapter(adapter);
+                setEmployeeTasksListViewHeightBasedOnChildren(completedTasksListView);
+            }
         }
     }
 
@@ -1121,26 +1124,44 @@ public class FirebaseHelper {
       ------------------------------------------------ Firebase Inventory Fragment Methods ------------------------------------------------
      */
 
-    public void populateInventory(final View view, final Activity activity) {
-        rootRef.child("inventory").addValueEventListener(new ValueEventListener() {
+    public ValueEventListener populatePaintInventory(final Activity activity, final Boolean isLiquid) {
+
+        ValueEventListener paintValueEventListener;
+        rootRef.child("inventory").addValueEventListener(paintValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<PaintBucket> paintBuckets = new ArrayList<>();
 
-                for(DataSnapshot ds:dataSnapshot.getChildren()) {
-                    String paintType = ds.getKey();
+                DataSnapshot paintDataSnapshot;
 
-                    for(DataSnapshot ds2:ds.getChildren()) {
-                        String paintCode = ds2.getKey();
-                        String paintDescription = ds2.child("paintDescription").getValue(String.class);
-                        int bakeTemperature = ds2.child("bakeTemperature").getValue(int.class);
-                        int bakeTime = ds2.child("bakeTime").getValue(int.class);
-                        float paintWeight = ds2.child("paintWeight").getValue(float.class);
+                if (isLiquid)
+                    paintDataSnapshot = dataSnapshot.child("liquid");
+                else
+                    paintDataSnapshot = dataSnapshot.child("powder");
 
-                        paintBuckets.add(new PaintBucket(paintType, paintCode, paintDescription, bakeTemperature, bakeTime, paintWeight));
-                    }
+                for(DataSnapshot currentSnapshot : paintDataSnapshot.getChildren()){
+                    String paintCode = currentSnapshot.getKey();
+                    String paintDescription = currentSnapshot.child("paintDescription").getValue(String.class);
+                    int bakeTemperature = currentSnapshot.child("bakeTemperature").getValue(int.class);
+                    int bakeTime = currentSnapshot.child("bakeTime").getValue(int.class);
+                    float paintWeight = currentSnapshot.child("paintWeight").getValue(float.class);
+
+                    paintBuckets.add(new PaintBucket("powder", paintCode, paintDescription, bakeTemperature, bakeTime, paintWeight));
                 }
-                callInventoryListViewAdapter(view,activity,sortPaintBucketsByFirstLetter(paintBuckets));
+                // sort the paintBuckets
+                paintBuckets = sortPaintBucketsByFirstLetter(paintBuckets);
+
+                // set the adapter
+                InventoryPaintListViewAdapter adapter = new InventoryPaintListViewAdapter(activity, paintBuckets);
+                if (isLiquid) {
+                    ListView liquidPaintListView = activity.findViewById(R.id.liquidPaintListView);
+                    liquidPaintListView.setAdapter(adapter);
+                }
+
+                else{
+                    ListView powderPaintListView = activity.findViewById(R.id.powderPaintListView);
+                    powderPaintListView.setAdapter(adapter);
+                }
             }
 
             @Override
@@ -1148,6 +1169,8 @@ public class FirebaseHelper {
 
             }
         });
+
+        return paintValueEventListener;
     }
 
     private List<PaintBucket> sortPaintBucketsByFirstLetter(List<PaintBucket> paintBuckets) {
@@ -1171,18 +1194,11 @@ public class FirebaseHelper {
         return paintBuckets;
     }
 
-    private void callInventoryListViewAdapter(View view, Activity activity, List<PaintBucket> paintBuckets) {
-        // instantiate the custom list adapter
-        InventoryListViewAdapter adapter = new InventoryListViewAdapter(activity, paintBuckets);
-
-        // get the ListView and attach the adapter
-        ListView itemsListView  = (ListView) view.findViewById(R.id.inventory_list_view);
-        itemsListView.setAdapter(adapter);
-    }
-
     public void createInventoryItem(String paintType, String paintCode, String paintDescription, int paintBakeTemperature, int paintBakeTime, float paintWeight) {
         rootRef.child("inventory").child(paintType).child(paintCode).setValue(new PaintBucket(paintType,paintCode,paintDescription,paintBakeTemperature,paintBakeTime,paintWeight));
     }
+
+
 
     // ------------------------------------------------ Firebase Employee Comments ------------------------------------------------
 
