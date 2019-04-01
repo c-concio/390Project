@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,6 +15,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.a390project.ForegroundServices.NotificationForegroundService;
+import com.example.a390project.InventoryActivities.LiquidPaintActivity;
 import com.example.a390project.ListViewAdapters.ControlDeviceListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeCommentListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeListViewAdapter;
@@ -41,6 +45,7 @@ import com.example.a390project.ListViewAdapters.GraphsListViewAdapter;
 import com.example.a390project.ListViewAdapters.InventoryMaterialListViewAdapter;
 import com.example.a390project.ListViewAdapters.InventoryPaintListViewAdapter;
 import com.example.a390project.ListViewAdapters.MachineListViewAdapter;
+import com.example.a390project.ListViewAdapters.PaintRecyclerAdapter;
 import com.example.a390project.ListViewAdapters.PrepaintTaskListViewAdapter;
 import com.example.a390project.ListViewAdapters.ProjectListViewAdapter;
 import com.example.a390project.ListViewAdapters.TaskListViewAdapter;
@@ -66,6 +71,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.jjoe64.graphview.DefaultLabelFormatter;
@@ -1154,9 +1160,14 @@ public class FirebaseHelper {
 
                 // set the adapter
                 InventoryPaintListViewAdapter adapter = new InventoryPaintListViewAdapter(activity, paintBuckets);
+                PaintRecyclerAdapter testAdapter = new PaintRecyclerAdapter(activity, paintBuckets);
                 if (isLiquid) {
-                    ListView liquidPaintListView = activity.findViewById(R.id.liquidPaintListView);
-                    liquidPaintListView.setAdapter(adapter);
+                    //ListView liquidPaintListView = activity.findViewById(R.id.liquidPaintListView);
+                    //liquidPaintListView.setAdapter(adapter);
+                    RecyclerView liquidRecyclerView = activity.findViewById(R.id.liquidRecyclerView);
+                    liquidRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
+                    liquidRecyclerView.setAdapter(testAdapter);
+
                 }
 
                 else{
@@ -1250,6 +1261,34 @@ public class FirebaseHelper {
 
         return materials;
     }
+
+    public void firebaseSearch(final Activity activity, String searchText){
+        rootRef.child("inventory").child("liquid").orderByChild("paintDescription").startAt(searchText).endAt(searchText + "\uf0ff").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<PaintBucket> paintBuckets = new ArrayList<>();
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+
+                    PaintBucket paintBucket = ds.getValue(PaintBucket.class);
+                    paintBuckets.add(paintBucket);
+
+                    PaintRecyclerAdapter testAdapter = new PaintRecyclerAdapter(activity, paintBuckets);
+                    RecyclerView liquidRecyclerView = activity.findViewById(R.id.liquidRecyclerView);
+                    liquidRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
+                    liquidRecyclerView.setAdapter(testAdapter);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+        });
+
+
+    }
+
 
     // ------------------------------------------------ Firebase Employee Comments ------------------------------------------------
 
