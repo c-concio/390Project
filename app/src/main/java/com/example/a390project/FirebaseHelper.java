@@ -120,20 +120,11 @@ public class FirebaseHelper {
     // childEventListener to get Employees
     private ChildEventListener childEventListener;
 
-    // ------------------------------------------- Project variables -------------------------------------------
-
-    private List<Project> projects;
-
     // ------------------------------------------- Task variables -------------------------------------------
     private List<String> taskIDs;
     private List<Task> tasks;
     private ValueEventListener packagingValueEventListener;
     private ValueEventListener inspectionValueEventListener;
-
-
-    // ------------------------------------------- Control Device variables -------------------------------------------
-
-    private List<ControlDevice> cDevices;
 
 
     // ------------------------------------------- Employee Comments Variables -------------------------------------------
@@ -440,11 +431,11 @@ public class FirebaseHelper {
         rootRef.child("projects").child(po).setValue(new Project(po, title, client, startDate, dueDate));
     }
 
-    public void populateProjects(final View view, final Activity activity, final ProgressBar mProgressbar) {
+    public void populateProjects(final View view, final Activity activity, final ProgressBar mProgressbar, final boolean isDueDateSort, final boolean isStartDateSort) {
         rootRef.child("projects").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                projects = new ArrayList<>();
+                List<Project> projects = new ArrayList<>();
                 for (DataSnapshot ds:dataSnapshot.getChildren()) {
                     String po = ds.getKey();
                     String title = ds.child("title").getValue(String.class);
@@ -453,7 +444,17 @@ public class FirebaseHelper {
                     long dueDate = ds.child("dueDate").getValue(long.class);
                     projects.add(new Project(po, title, client, startDate, dueDate));
                 }
-                callProjectListViewAdapter(view, activity);
+                if (!isDueDateSort && !isStartDateSort) {
+                    callProjectListViewAdapter(view, activity, projects);
+                }
+                else if(isDueDateSort && !isStartDateSort) {
+                    sortProjectsByDueDate(projects);
+                    callProjectListViewAdapter(view, activity, projects);
+                }
+                else if(!isDueDateSort && isStartDateSort) {
+                    sortProjectsByStartDate(projects);
+                    callProjectListViewAdapter(view, activity, projects);
+                }
                 mProgressbar.setVisibility(View.GONE);
             }
 
@@ -464,7 +465,43 @@ public class FirebaseHelper {
         });
     }
 
-    private void callProjectListViewAdapter(View view, Activity activity){
+    private List<Project> sortProjectsByStartDate(List<Project> projects) {
+        Collections.sort(projects,new Comparator<Project>(){
+            @Override
+            public int compare(final Project lhs, Project rhs) {
+                if (lhs.getStartDate()<rhs.getStartDate()) {
+                    return 1;
+                }
+                else if (lhs.getStartDate()>rhs.getStartDate()) {
+                    return -1;
+                }
+                else {
+                    return 0;
+                }
+            }
+        });
+        return projects;
+    }
+
+    private List<Project> sortProjectsByDueDate(List<Project> projects) {
+        Collections.sort(projects,new Comparator<Project>(){
+            @Override
+            public int compare(final Project lhs, Project rhs) {
+                if (lhs.getDueDate()<rhs.getDueDate()) {
+                    return -1;
+                }
+                else if (lhs.getDueDate()>rhs.getDueDate()) {
+                    return 1;
+                }
+                else {
+                    return 0;
+                }
+            }
+        });
+        return projects;
+    }
+
+    private void callProjectListViewAdapter(View view, Activity activity, List<Project> projects){
         ProjectListViewAdapter adapter = new ProjectListViewAdapter(activity, projects);
         ListView itemsListView  = view.findViewById(R.id.project_list_view);
         itemsListView.setAdapter(adapter);
@@ -711,16 +748,14 @@ public class FirebaseHelper {
         rootRef.child("cDevices").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!check) {
-                    cDevices = new ArrayList<ControlDevice>();
-                    for(DataSnapshot ds:dataSnapshot.getChildren()){
-                        String cDeviceTitle = ds.child("cDeviceTitle").getValue(String.class);
-                        boolean cDeviceStatus = ds.child("cDeviceStatus").getValue(boolean.class);
-                        cDevices.add(new ControlDevice(cDeviceTitle, cDeviceStatus));
-                    }
-                    callControlDeviceListViewAdapter(view, activity);
-                    check = true;
+                rootRef.child("cDevices").removeEventListener(this);
+                List<ControlDevice> cDevices = new ArrayList<>();
+                for(DataSnapshot ds:dataSnapshot.getChildren()){
+                    String cDeviceTitle = ds.child("cDeviceTitle").getValue(String.class);
+                    boolean cDeviceStatus = ds.child("cDeviceStatus").getValue(boolean.class);
+                    cDevices.add(new ControlDevice(cDeviceTitle, cDeviceStatus));
                 }
+                callControlDeviceListViewAdapter(view, activity, cDevices);
             }
 
             @Override
@@ -731,17 +766,19 @@ public class FirebaseHelper {
 
     }
 
-    private void callControlDeviceListViewAdapter(View view, Activity activity){
+    private void callControlDeviceListViewAdapter(View view, Activity activity, List<ControlDevice> cDevices){
         ControlDeviceListViewAdapter adapter = new ControlDeviceListViewAdapter(activity, cDevices);
-        ListView itemsListView = (ListView) view.findViewById(R.id.control_device_list_view);
+        ListView itemsListView = view.findViewById(R.id.control_device_list_view);
         itemsListView.setAdapter(adapter);
     }
 
-    public void setStatusOfSwitch(final String cDeviceTitle, final Switch switchControlDevice) {
+    public void setStatusOfSwitch(final String cDeviceTitle, final View convertView) {
         rootRef.child("cDevices").child(cDeviceTitle).child("cDeviceStatus").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 rootRef.child("cDevices").child(cDeviceTitle).child("cDeviceStatus").removeEventListener(this);
+
+                Switch switchControlDevice = convertView.findViewById(R.id.control_device_switch);
                 boolean checked = dataSnapshot.getValue(boolean.class);
                 switchControlDevice.setChecked(checked);
                 Log.d(TAG, cDeviceTitle + " CHECKED " + checked);
@@ -816,7 +853,7 @@ public class FirebaseHelper {
             return;
 
         int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-        int totalHeight = 0;
+        int totalHeight = 45;
         View view = null;
         for (int i = 0; i < listAdapter.getCount(); i++) {
             view = listAdapter.getView(i, view, listView);
@@ -1396,9 +1433,9 @@ public class FirebaseHelper {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 uIdRef.removeEventListener(this);
-                if (dataSnapshot.child("workingTasks").hasChild(taskID)) {
+                if (dataSnapshot.child("workingTasks").child(taskID).child("canStart").exists()) {
                     boolean canStart = dataSnapshot.child("workingTasks").child(taskID).child("canStart").getValue(boolean.class);
-                    if(canStart) {
+                    if (canStart) {
                         createWorkBlock(taskID, taskTitle, context, activity, mStartTime, mEndTime, mTimeElapsed, backPressed, convertView);
                     }
                     else {
@@ -1464,7 +1501,15 @@ public class FirebaseHelper {
                                         //createNotification(timeNow,context,taskTitle,projectPO,taskID);
 
                                         startService(timeNow, context, activity, taskTitle, projectPO, taskID);
-                                        createUpdateTimeElapsedThread(mTimeElapsed, activity, timeNow, backPressed, convertView);
+
+                                        //this checks to see if the call was made from the pre-paint listview item
+                                        if (convertView != null) {
+                                            TextView mTimeElapsed1 = convertView.findViewById(R.id.elapsed_time_since_pressed_start_time_prepaint);
+                                            createUpdateTimeElapsedThread(mTimeElapsed1, activity, timeNow, backPressed);
+                                        }
+                                        else {
+                                            createUpdateTimeElapsedThread(mTimeElapsed, activity, timeNow, backPressed);
+                                        }
 
                                         //manage workBlockLimitCount
                                         rootRef.child("users").child(uId).child("workBlockLimitCount").addValueEventListener(new ValueEventListener() {
@@ -1522,7 +1567,7 @@ public class FirebaseHelper {
 
     }
 
-    public void checkIfCanEnd(final String taskID, final Context context, final TextView mTimeElapsed) {
+    public void checkIfCanEnd(final String taskID, final Context context, final TextView mTimeElapsed, final View finalConvertView) {
         final DatabaseReference uIdRef = rootRef.child("users").child(uId);
         uIdRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -1532,7 +1577,7 @@ public class FirebaseHelper {
                     if (dataSnapshot.child("workingTasks").child(taskID).hasChild("canEnd")) {
                         boolean canEnd = dataSnapshot.child("workingTasks").child(taskID).child("canEnd").getValue(boolean.class);
                         if (canEnd) {
-                            endWorkBlock(taskID, context, mTimeElapsed);
+                            endWorkBlock(taskID, context, mTimeElapsed, finalConvertView);
                             Toast.makeText(context, "Time Ended.", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(context, "Cannot End.", Toast.LENGTH_SHORT).show();
@@ -1554,7 +1599,7 @@ public class FirebaseHelper {
         });
     }
 
-    public void endWorkBlock(final String taskID, final Context context, final TextView mTimeElapsed) {
+    public void endWorkBlock(final String taskID, final Context context, final TextView mTimeElapsed, final View finalConvertView) {
         final DatabaseReference currentWorkBlockRef = rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("currentWorkBlock");
         currentWorkBlockRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -1580,8 +1625,13 @@ public class FirebaseHelper {
                         //removeNotification(startTime, context);
 
                         stopService(context);
-                        mTimeElapsed.setVisibility(View.GONE);
-
+                        if (finalConvertView != null) {
+                            TextView mTimeElapsed1 = finalConvertView.findViewById(R.id.elapsed_time_since_pressed_start_time_prepaint);
+                            mTimeElapsed1.setVisibility(View.GONE);
+                        }
+                        else {
+                            mTimeElapsed.setVisibility(View.GONE);
+                        }
                         //manage workBlockLimitCount
                         rootRef.child("users").child(uId).addValueEventListener(new ValueEventListener() {
                             @Override
@@ -1619,6 +1669,7 @@ public class FirebaseHelper {
     }
 
     public void populateWorkBlocksForEmployee(final String employeeID, final View view, final Activity activity) {
+        final int[] i = {0};
         final List<WorkBlock> employeeWorkBlocks = new ArrayList<>();
         rootRef.child("users").child(employeeID).addValueEventListener(new ValueEventListener() {
             @Override
@@ -1631,7 +1682,13 @@ public class FirebaseHelper {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     String workBlockID = dataSnapshot.child("workBlockID").getValue(String.class);
-                                    long startTime = dataSnapshot.child("startTime").getValue(long.class);
+                                    long startTime = 0;
+                                    if (dataSnapshot.child("startTime").getValue(long.class) == null) {
+                                        Log.d(TAG, "NUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUL: ");
+                                    }
+                                    else {
+                                        startTime = dataSnapshot.child("startTime").getValue(long.class);
+                                    }
                                     long endTime = dataSnapshot.child("endTime").getValue(long.class);
                                     long workingTime = dataSnapshot.child("workingTime").getValue(long.class);
                                     String taskID = dataSnapshot.child("taskID").getValue(String.class);
@@ -1639,8 +1696,9 @@ public class FirebaseHelper {
                                     String projectPO = dataSnapshot.child("projectPO").getValue(String.class);
                                     //public WorkBlock(String workBlockID, long startTime, long endTime, long workingTime, String taskID, String employeeID)
                                     employeeWorkBlocks.add(new WorkBlock(workBlockID, startTime, endTime, workingTime, taskID, employeeID, title, projectPO));
-                                    Log.d(TAG, "WORKBLOCK: " + workBlockID + " " + startTime + " " + endTime + " " + workingTime
+                                    Log.d(TAG, "WORKBLOCK: " + i[0] + " " + workBlockID + " " + startTime + " " + endTime + " " + workingTime
                                             + " " + taskID + " " + workBlockID + " " + employeeID + " " + title + " " + projectPO);
+                                    i[0] += 1;
                                     callEmployeeWorkBlocksListViewAdapter(view, activity, sortWorkBlocksByLatestCreatedFirst(employeeWorkBlocks));
                                 }
 
@@ -2285,7 +2343,7 @@ public class FirebaseHelper {
         });
     }
 
-    public void checkIfTaskStartedAlready(final String taskID, final TextView mTimeElapsed, final Activity activity, final boolean backPressed, final View convertView) {
+    public void checkIfTaskStartedAlready(final String taskID, final TextView mTimeElapsed, final Activity activity, final boolean backPressed, final View convertView, final String taskTitle) {
         rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("currentWorkBlock").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -2293,12 +2351,21 @@ public class FirebaseHelper {
                 if(dataSnapshot.exists()) {
                     final String currentWorkBlock = dataSnapshot.getValue(String.class);
                     if (!currentWorkBlock.equals("none")) {
-                        rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").child(currentWorkBlock).child("startTime").addValueEventListener(new ValueEventListener() {
+                        rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").child(currentWorkBlock).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").child(currentWorkBlock).child("startTime").removeEventListener(this);
-                                final long startTime = dataSnapshot.getValue(long.class);
-                                createUpdateTimeElapsedThread(mTimeElapsed, activity, startTime, backPressed, convertView);
+                                rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").child(currentWorkBlock).removeEventListener(this);
+                                final String title = dataSnapshot.child("title").getValue(String.class);
+                                final long startTime = dataSnapshot.child("startTime").getValue(long.class);
+                                //this checks to see if the call was made from the pre-paint listview item
+                                if (taskTitle.equals(title)) {
+                                    if (convertView != null) {
+                                        TextView mTimeElapsed1 = convertView.findViewById(R.id.elapsed_time_since_pressed_start_time_prepaint);
+                                        createUpdateTimeElapsedThread(mTimeElapsed1, activity, startTime, backPressed);
+                                    } else {
+                                        createUpdateTimeElapsedThread(mTimeElapsed, activity, startTime, backPressed);
+                                    }
+                                }
                             }
 
                             @Override
@@ -2317,8 +2384,7 @@ public class FirebaseHelper {
         });
     }
 
-    private void createUpdateTimeElapsedThread(final TextView mTimeElapsed, final Activity activity, final long startTime, final boolean backPressed,
-                                               final View convertView) {
+    private void createUpdateTimeElapsedThread(final TextView mTimeElapsed, final Activity activity, final long startTime, final boolean backPressed) {
         mTimeElapsed.setVisibility(View.VISIBLE);
         final Thread updateTimeElapsed = new Thread() {
             @Override
@@ -2328,7 +2394,6 @@ public class FirebaseHelper {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-
                                 long entryTime = startTime;
                                 long currentTime = System.currentTimeMillis();
 
@@ -2352,15 +2417,7 @@ public class FirebaseHelper {
                                     h = Long.toString(hour);
 
                                 String elapsedTime = h + ":" + m + ":" + s;
-                                if (convertView != null)
-                                    mTimeElapsed.setText(elapsedTime);
-                                else {
-                                    TextView mTimeElapsed;
-                                    mTimeElapsed = convertView.findViewById(R.id.elapsed_time_since_pressed_start_time_prepaint);
-                                    mTimeElapsed.setVisibility(View.VISIBLE);
-                                    mTimeElapsed.setText(elapsedTime);
-
-                                }
+                                mTimeElapsed.setText(elapsedTime);
 
                                 Log.d(TAG, "run: UPDATING ELAPSED TIME: " + elapsedTime);
                             }
@@ -2372,10 +2429,15 @@ public class FirebaseHelper {
 
                 }
                 if (mTimeElapsed.getVisibility() == View.GONE || backPressed) {
-                    Thread.currentThread().interrupt();
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mTimeElapsed.setVisibility(View.GONE);
+                        }
+                    });
                 }
+                Thread.currentThread().interrupt();
             }
-
         };
         updateTimeElapsed.start();
     }

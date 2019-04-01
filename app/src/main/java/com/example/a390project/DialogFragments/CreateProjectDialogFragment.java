@@ -103,7 +103,7 @@ public class CreateProjectDialogFragment extends DialogFragment implements DateP
         // Do something with the date chosen by the user
         //Toast.makeText(getActivity(), "Start Date: " + day + "-" + month + "-" + year, Toast.LENGTH_SHORT).show();
         String str_date = day + "-" + (month+1) + "-" + year;
-        String str_date_format = day + "-" + month + "-" + year;
+        String str_date_format = day + "-" + (month+1) + "-" + year;
         DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         try {
             if (when == 's') {

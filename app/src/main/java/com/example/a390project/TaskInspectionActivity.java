@@ -119,7 +119,7 @@ public class TaskInspectionActivity extends AppCompatActivity {
             -------------------------- Start and End time buttons creating workblocks, updating persistent notification and updating mTimeElapsed textview-------------------------
          */
 
-        firebaseHelper.checkIfTaskStartedAlready(inspectionTaskID, mTimeElapsed, TaskInspectionActivity.this, backPressed, null);
+        firebaseHelper.checkIfTaskStartedAlready(inspectionTaskID, mTimeElapsed, TaskInspectionActivity.this, backPressed, null, inspectionType);
 
         mStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,7 +134,7 @@ public class TaskInspectionActivity extends AppCompatActivity {
         mEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firebaseHelper.checkIfCanEnd(inspectionTaskID, getApplicationContext(), mTimeElapsed);
+                firebaseHelper.checkIfCanEnd(inspectionTaskID, getApplicationContext(), mTimeElapsed, null);
             }
         });
 

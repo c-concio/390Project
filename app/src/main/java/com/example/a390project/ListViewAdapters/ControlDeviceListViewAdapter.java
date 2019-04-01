@@ -51,23 +51,21 @@ public class ControlDeviceListViewAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 
-        Log.d(TAG, "getView: gotView");
-
         if(convertView ==null){
             convertView = LayoutInflater.from(context).inflate(R.layout.row_item_control_device, parent, false);
         }
 
         textControlDevice = convertView.findViewById(R.id.control_device_title_text_view_row);
-        switchControlDevice = convertView.findViewById(R.id.control_device_switch);
 
         final FirebaseHelper firebaseHelper = new FirebaseHelper();
         final ControlDevice currentItem = (ControlDevice) getItem(position);
         textControlDevice.setText(currentItem.getcDeviceTitle());
 
         //sets the switch based on status stored on firebase for all the control devices
-        firebaseHelper.setStatusOfSwitch(currentItem.getcDeviceTitle(), switchControlDevice);
+        firebaseHelper.setStatusOfSwitch(currentItem.getcDeviceTitle(), convertView);
 
         //Upon clicking the switch, change the status on firebase
+        switchControlDevice = convertView.findViewById(R.id.control_device_switch);
         switchControlDevice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
