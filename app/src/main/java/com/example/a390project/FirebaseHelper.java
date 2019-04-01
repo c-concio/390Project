@@ -125,11 +125,6 @@ public class FirebaseHelper {
     private ValueEventListener inspectionValueEventListener;
 
 
-    // ------------------------------------------- Control Device variables -------------------------------------------
-
-    private List<ControlDevice> cDevices;
-
-
     // ------------------------------------------- Employee Comments Variables -------------------------------------------
     private ValueEventListener employeeCommentsValueEventListener;
 
@@ -705,16 +700,14 @@ public class FirebaseHelper {
         rootRef.child("cDevices").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!check) {
-                    cDevices = new ArrayList<ControlDevice>();
-                    for(DataSnapshot ds:dataSnapshot.getChildren()){
-                        String cDeviceTitle = ds.child("cDeviceTitle").getValue(String.class);
-                        boolean cDeviceStatus = ds.child("cDeviceStatus").getValue(boolean.class);
-                        cDevices.add(new ControlDevice(cDeviceTitle, cDeviceStatus));
-                    }
-                    callControlDeviceListViewAdapter(view, activity);
-                    check = true;
+                rootRef.child("cDevices").removeEventListener(this);
+                List<ControlDevice> cDevices = new ArrayList<>();
+                for(DataSnapshot ds:dataSnapshot.getChildren()){
+                    String cDeviceTitle = ds.child("cDeviceTitle").getValue(String.class);
+                    boolean cDeviceStatus = ds.child("cDeviceStatus").getValue(boolean.class);
+                    cDevices.add(new ControlDevice(cDeviceTitle, cDeviceStatus));
                 }
+                callControlDeviceListViewAdapter(view, activity, cDevices);
             }
 
             @Override
@@ -725,17 +718,19 @@ public class FirebaseHelper {
 
     }
 
-    private void callControlDeviceListViewAdapter(View view, Activity activity){
+    private void callControlDeviceListViewAdapter(View view, Activity activity, List<ControlDevice> cDevices){
         ControlDeviceListViewAdapter adapter = new ControlDeviceListViewAdapter(activity, cDevices);
-        ListView itemsListView = (ListView) view.findViewById(R.id.control_device_list_view);
+        ListView itemsListView = view.findViewById(R.id.control_device_list_view);
         itemsListView.setAdapter(adapter);
     }
 
-    public void setStatusOfSwitch(final String cDeviceTitle, final Switch switchControlDevice) {
+    public void setStatusOfSwitch(final String cDeviceTitle, final View convertView) {
         rootRef.child("cDevices").child(cDeviceTitle).child("cDeviceStatus").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 rootRef.child("cDevices").child(cDeviceTitle).child("cDeviceStatus").removeEventListener(this);
+
+                Switch switchControlDevice = convertView.findViewById(R.id.control_device_switch);
                 boolean checked = dataSnapshot.getValue(boolean.class);
                 switchControlDevice.setChecked(checked);
                 Log.d(TAG, cDeviceTitle + " CHECKED " + checked);
@@ -1605,7 +1600,13 @@ public class FirebaseHelper {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     String workBlockID = dataSnapshot.child("workBlockID").getValue(String.class);
-                                    long startTime = dataSnapshot.child("startTime").getValue(long.class);
+                                    long startTime = 0;
+                                    if (dataSnapshot.child("startTime").getValue(long.class) == null) {
+                                        Log.d(TAG, "NUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUL: ");
+                                    }
+                                    else {
+                                        startTime = dataSnapshot.child("startTime").getValue(long.class);
+                                    }
                                     long endTime = dataSnapshot.child("endTime").getValue(long.class);
                                     long workingTime = dataSnapshot.child("workingTime").getValue(long.class);
                                     String taskID = dataSnapshot.child("taskID").getValue(String.class);
