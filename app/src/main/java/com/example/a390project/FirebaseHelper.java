@@ -114,10 +114,6 @@ public class FirebaseHelper {
     // childEventListener to get Employees
     private ChildEventListener childEventListener;
 
-    // ------------------------------------------- Project variables -------------------------------------------
-
-    private List<Project> projects;
-
     // ------------------------------------------- Task variables -------------------------------------------
     private List<String> taskIDs;
     private List<Task> tasks;
@@ -429,11 +425,11 @@ public class FirebaseHelper {
         rootRef.child("projects").child(po).setValue(new Project(po, title, client, startDate, dueDate));
     }
 
-    public void populateProjects(final View view, final Activity activity, final ProgressBar mProgressbar) {
+    public void populateProjects(final View view, final Activity activity, final ProgressBar mProgressbar, final boolean isDueDateSort, final boolean isStartDateSort) {
         rootRef.child("projects").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                projects = new ArrayList<>();
+                List<Project> projects = new ArrayList<>();
                 for (DataSnapshot ds:dataSnapshot.getChildren()) {
                     String po = ds.getKey();
                     String title = ds.child("title").getValue(String.class);
@@ -442,7 +438,17 @@ public class FirebaseHelper {
                     long dueDate = ds.child("dueDate").getValue(long.class);
                     projects.add(new Project(po, title, client, startDate, dueDate));
                 }
-                callProjectListViewAdapter(view, activity);
+                if (!isDueDateSort && !isStartDateSort) {
+                    callProjectListViewAdapter(view, activity, projects);
+                }
+                else if(isDueDateSort && !isStartDateSort) {
+                    sortProjectsByDueDate(projects);
+                    callProjectListViewAdapter(view, activity, projects);
+                }
+                else if(!isDueDateSort && isStartDateSort) {
+                    sortProjectsByStartDate(projects);
+                    callProjectListViewAdapter(view, activity, projects);
+                }
                 mProgressbar.setVisibility(View.GONE);
             }
 
@@ -453,7 +459,43 @@ public class FirebaseHelper {
         });
     }
 
-    private void callProjectListViewAdapter(View view, Activity activity){
+    private List<Project> sortProjectsByStartDate(List<Project> projects) {
+        Collections.sort(projects,new Comparator<Project>(){
+            @Override
+            public int compare(final Project lhs, Project rhs) {
+                if (lhs.getStartDate()<rhs.getStartDate()) {
+                    return 1;
+                }
+                else if (lhs.getStartDate()>rhs.getStartDate()) {
+                    return -1;
+                }
+                else {
+                    return 0;
+                }
+            }
+        });
+        return projects;
+    }
+
+    private List<Project> sortProjectsByDueDate(List<Project> projects) {
+        Collections.sort(projects,new Comparator<Project>(){
+            @Override
+            public int compare(final Project lhs, Project rhs) {
+                if (lhs.getDueDate()<rhs.getDueDate()) {
+                    return -1;
+                }
+                else if (lhs.getDueDate()>rhs.getDueDate()) {
+                    return 1;
+                }
+                else {
+                    return 0;
+                }
+            }
+        });
+        return projects;
+    }
+
+    private void callProjectListViewAdapter(View view, Activity activity, List<Project> projects){
         ProjectListViewAdapter adapter = new ProjectListViewAdapter(activity, projects);
         ListView itemsListView  = view.findViewById(R.id.project_list_view);
         itemsListView.setAdapter(adapter);
@@ -1588,6 +1630,7 @@ public class FirebaseHelper {
     }
 
     public void populateWorkBlocksForEmployee(final String employeeID, final View view, final Activity activity) {
+        final int[] i = {0};
         final List<WorkBlock> employeeWorkBlocks = new ArrayList<>();
         rootRef.child("users").child(employeeID).addValueEventListener(new ValueEventListener() {
             @Override
@@ -1614,8 +1657,9 @@ public class FirebaseHelper {
                                     String projectPO = dataSnapshot.child("projectPO").getValue(String.class);
                                     //public WorkBlock(String workBlockID, long startTime, long endTime, long workingTime, String taskID, String employeeID)
                                     employeeWorkBlocks.add(new WorkBlock(workBlockID, startTime, endTime, workingTime, taskID, employeeID, title, projectPO));
-                                    Log.d(TAG, "WORKBLOCK: " + workBlockID + " " + startTime + " " + endTime + " " + workingTime
+                                    Log.d(TAG, "WORKBLOCK: " + i[0] + " " + workBlockID + " " + startTime + " " + endTime + " " + workingTime
                                             + " " + taskID + " " + workBlockID + " " + employeeID + " " + title + " " + projectPO);
+                                    i[0] += 1;
                                     callEmployeeWorkBlocksListViewAdapter(view, activity, sortWorkBlocksByLatestCreatedFirst(employeeWorkBlocks));
                                 }
 

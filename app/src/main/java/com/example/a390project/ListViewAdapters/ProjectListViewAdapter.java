@@ -1,7 +1,9 @@
 package com.example.a390project.ListViewAdapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -96,6 +98,20 @@ public class ProjectListViewAdapter extends BaseAdapter {
 
             }
         });
+        long timeNow = System.currentTimeMillis();
+        long dueDate = currentItem.getDueDate();
+        long sevenDaysFromDueDate = dueDate - 604800000;
+        long oneDayFromDueDate = dueDate - 86400000;
+
+        if (timeNow > dueDate)
+            convertView.setBackgroundResource(R.color.lightDarkerRed);
+        else if (timeNow > oneDayFromDueDate && timeNow < dueDate)
+            convertView.setBackgroundResource(R.color.lightRed);
+        else if (timeNow > sevenDaysFromDueDate && timeNow < dueDate)
+            convertView.setBackgroundResource(R.color.lightYellow);
+        else
+            convertView.setBackgroundResource(R.color.lightGreen);
+
 
         return convertView;
     }
@@ -108,7 +124,7 @@ public class ProjectListViewAdapter extends BaseAdapter {
     }
 
     private String getDate(long time) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("MMM d, yyyy");
         return formatter.format(time);
     }
 }

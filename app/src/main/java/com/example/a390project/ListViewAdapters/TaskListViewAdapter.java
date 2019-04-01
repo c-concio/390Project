@@ -142,10 +142,4 @@ public class TaskListViewAdapter extends BaseAdapter {
 
         return convertView;
     }
-
-
-    private String getDate(long time) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        return formatter.format(time);
-    }
 }
