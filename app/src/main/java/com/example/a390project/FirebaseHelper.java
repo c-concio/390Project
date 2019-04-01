@@ -810,7 +810,7 @@ public class FirebaseHelper {
             return;
 
         int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-        int totalHeight = 0;
+        int totalHeight = 45;
         View view = null;
         for (int i = 0; i < listAdapter.getCount(); i++) {
             view = listAdapter.getView(i, view, listView);
@@ -1357,9 +1357,9 @@ public class FirebaseHelper {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 uIdRef.removeEventListener(this);
-                if (dataSnapshot.child("workingTasks").hasChild(taskID)) {
+                if (dataSnapshot.child("workingTasks").child(taskID).child("canStart").exists()) {
                     boolean canStart = dataSnapshot.child("workingTasks").child(taskID).child("canStart").getValue(boolean.class);
-                    if(canStart) {
+                    if (canStart) {
                         createWorkBlock(taskID, taskTitle, context, activity, mStartTime, mEndTime, mTimeElapsed, backPressed, convertView);
                     }
                     else {
@@ -1425,7 +1425,15 @@ public class FirebaseHelper {
                                         //createNotification(timeNow,context,taskTitle,projectPO,taskID);
 
                                         startService(timeNow, context, activity, taskTitle, projectPO, taskID);
-                                        createUpdateTimeElapsedThread(mTimeElapsed, activity, timeNow, backPressed, convertView);
+
+                                        //this checks to see if the call was made from the pre-paint listview item
+                                        if (convertView != null) {
+                                            TextView mTimeElapsed1 = convertView.findViewById(R.id.elapsed_time_since_pressed_start_time_prepaint);
+                                            createUpdateTimeElapsedThread(mTimeElapsed1, activity, timeNow, backPressed);
+                                        }
+                                        else {
+                                            createUpdateTimeElapsedThread(mTimeElapsed, activity, timeNow, backPressed);
+                                        }
 
                                         //manage workBlockLimitCount
                                         rootRef.child("users").child(uId).child("workBlockLimitCount").addValueEventListener(new ValueEventListener() {
@@ -1483,7 +1491,7 @@ public class FirebaseHelper {
 
     }
 
-    public void checkIfCanEnd(final String taskID, final Context context, final TextView mTimeElapsed) {
+    public void checkIfCanEnd(final String taskID, final Context context, final TextView mTimeElapsed, final View finalConvertView) {
         final DatabaseReference uIdRef = rootRef.child("users").child(uId);
         uIdRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -1493,7 +1501,7 @@ public class FirebaseHelper {
                     if (dataSnapshot.child("workingTasks").child(taskID).hasChild("canEnd")) {
                         boolean canEnd = dataSnapshot.child("workingTasks").child(taskID).child("canEnd").getValue(boolean.class);
                         if (canEnd) {
-                            endWorkBlock(taskID, context, mTimeElapsed);
+                            endWorkBlock(taskID, context, mTimeElapsed, finalConvertView);
                             Toast.makeText(context, "Time Ended.", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(context, "Cannot End.", Toast.LENGTH_SHORT).show();
@@ -1515,7 +1523,7 @@ public class FirebaseHelper {
         });
     }
 
-    public void endWorkBlock(final String taskID, final Context context, final TextView mTimeElapsed) {
+    public void endWorkBlock(final String taskID, final Context context, final TextView mTimeElapsed, final View finalConvertView) {
         final DatabaseReference currentWorkBlockRef = rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("currentWorkBlock");
         currentWorkBlockRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -1541,8 +1549,13 @@ public class FirebaseHelper {
                         //removeNotification(startTime, context);
 
                         stopService(context);
-                        mTimeElapsed.setVisibility(View.GONE);
-
+                        if (finalConvertView != null) {
+                            TextView mTimeElapsed1 = finalConvertView.findViewById(R.id.elapsed_time_since_pressed_start_time_prepaint);
+                            mTimeElapsed1.setVisibility(View.GONE);
+                        }
+                        else {
+                            mTimeElapsed.setVisibility(View.GONE);
+                        }
                         //manage workBlockLimitCount
                         rootRef.child("users").child(uId).addValueEventListener(new ValueEventListener() {
                             @Override
@@ -2246,7 +2259,7 @@ public class FirebaseHelper {
         });
     }
 
-    public void checkIfTaskStartedAlready(final String taskID, final TextView mTimeElapsed, final Activity activity, final boolean backPressed, final View convertView) {
+    public void checkIfTaskStartedAlready(final String taskID, final TextView mTimeElapsed, final Activity activity, final boolean backPressed, final View convertView, final String taskTitle) {
         rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("currentWorkBlock").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -2254,12 +2267,21 @@ public class FirebaseHelper {
                 if(dataSnapshot.exists()) {
                     final String currentWorkBlock = dataSnapshot.getValue(String.class);
                     if (!currentWorkBlock.equals("none")) {
-                        rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").child(currentWorkBlock).child("startTime").addValueEventListener(new ValueEventListener() {
+                        rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").child(currentWorkBlock).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").child(currentWorkBlock).child("startTime").removeEventListener(this);
-                                final long startTime = dataSnapshot.getValue(long.class);
-                                createUpdateTimeElapsedThread(mTimeElapsed, activity, startTime, backPressed, convertView);
+                                rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").child(currentWorkBlock).removeEventListener(this);
+                                final String title = dataSnapshot.child("title").getValue(String.class);
+                                final long startTime = dataSnapshot.child("startTime").getValue(long.class);
+                                //this checks to see if the call was made from the pre-paint listview item
+                                if (taskTitle.equals(title)) {
+                                    if (convertView != null) {
+                                        TextView mTimeElapsed1 = convertView.findViewById(R.id.elapsed_time_since_pressed_start_time_prepaint);
+                                        createUpdateTimeElapsedThread(mTimeElapsed1, activity, startTime, backPressed);
+                                    } else {
+                                        createUpdateTimeElapsedThread(mTimeElapsed, activity, startTime, backPressed);
+                                    }
+                                }
                             }
 
                             @Override
@@ -2278,8 +2300,7 @@ public class FirebaseHelper {
         });
     }
 
-    private void createUpdateTimeElapsedThread(final TextView mTimeElapsed, final Activity activity, final long startTime, final boolean backPressed,
-                                               final View convertView) {
+    private void createUpdateTimeElapsedThread(final TextView mTimeElapsed, final Activity activity, final long startTime, final boolean backPressed) {
         mTimeElapsed.setVisibility(View.VISIBLE);
         final Thread updateTimeElapsed = new Thread() {
             @Override
@@ -2289,7 +2310,6 @@ public class FirebaseHelper {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-
                                 long entryTime = startTime;
                                 long currentTime = System.currentTimeMillis();
 
@@ -2313,15 +2333,7 @@ public class FirebaseHelper {
                                     h = Long.toString(hour);
 
                                 String elapsedTime = h + ":" + m + ":" + s;
-                                if (convertView != null)
-                                    mTimeElapsed.setText(elapsedTime);
-                                else {
-                                    TextView mTimeElapsed;
-                                    mTimeElapsed = convertView.findViewById(R.id.elapsed_time_since_pressed_start_time_prepaint);
-                                    mTimeElapsed.setVisibility(View.VISIBLE);
-                                    mTimeElapsed.setText(elapsedTime);
-
-                                }
+                                mTimeElapsed.setText(elapsedTime);
 
                                 Log.d(TAG, "run: UPDATING ELAPSED TIME: " + elapsedTime);
                             }
@@ -2333,10 +2345,15 @@ public class FirebaseHelper {
 
                 }
                 if (mTimeElapsed.getVisibility() == View.GONE || backPressed) {
-                    Thread.currentThread().interrupt();
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mTimeElapsed.setVisibility(View.GONE);
+                        }
+                    });
                 }
+                Thread.currentThread().interrupt();
             }
-
         };
         updateTimeElapsed.start();
     }

@@ -89,7 +89,7 @@ public class TaskPaintingActivity extends AppCompatActivity {
             -------------------------- Start and End time buttons creating workblocks, updating persistent notification and updating mTimeElapsed textview-------------------------
          */
 
-        firebaseHelper.checkIfTaskStartedAlready(paintingTaskID, mTimeElapsed, TaskPaintingActivity.this, backPressed, null);
+        firebaseHelper.checkIfTaskStartedAlready(paintingTaskID, mTimeElapsed, TaskPaintingActivity.this, backPressed, null, "Painting");
 
         mStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,7 +102,7 @@ public class TaskPaintingActivity extends AppCompatActivity {
         mEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firebaseHelper.checkIfCanEnd(paintingTaskID, getApplicationContext(), mTimeElapsed);
+                firebaseHelper.checkIfCanEnd(paintingTaskID, getApplicationContext(), mTimeElapsed, null);
                 Toast.makeText(TaskPaintingActivity.this, "Task Ended!" , Toast.LENGTH_SHORT).show();
             }
         });

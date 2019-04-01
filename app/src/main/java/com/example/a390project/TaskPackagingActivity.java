@@ -112,7 +112,7 @@ public class TaskPackagingActivity extends AppCompatActivity {
         packagingTaskID = intent.getStringExtra("packagingTaskID");
 
         //check if workblock already running for this task and display the timer
-        firebaseHelper.checkIfTaskStartedAlready(packagingTaskID, mTimeElapsed, TaskPackagingActivity.this, backPressed, null);
+        firebaseHelper.checkIfTaskStartedAlready(packagingTaskID, mTimeElapsed, TaskPackagingActivity.this, backPressed, null, "Packaging");
     }
 
 
@@ -128,7 +128,7 @@ public class TaskPackagingActivity extends AppCompatActivity {
     View.OnClickListener endTimeOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            firebaseHelper.checkIfCanEnd(packagingTaskID, getApplicationContext(), mTimeElapsed);
+            firebaseHelper.checkIfCanEnd(packagingTaskID, getApplicationContext(), mTimeElapsed, null);
         }
     };
 

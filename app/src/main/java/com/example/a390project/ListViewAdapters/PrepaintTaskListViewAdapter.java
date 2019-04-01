@@ -79,7 +79,7 @@ public class PrepaintTaskListViewAdapter extends BaseAdapter {
 
         firebaseHelper.setStartTimeEndTimeButtons(startTimeButton,endTimeButton,currentItem.getTaskID());
 
-        firebaseHelper.checkIfTaskStartedAlready(currentItem.getTaskID(), mTimeElapsed, activity, backPressed, convertView);
+        firebaseHelper.checkIfTaskStartedAlready(currentItem.getTaskID(), mTimeElapsed, activity, backPressed, convertView, currentItem.getSubTaskType());
 
         final View finalConvertView = convertView;
         startTimeButton.setOnClickListener(new View.OnClickListener() {
@@ -92,7 +92,7 @@ public class PrepaintTaskListViewAdapter extends BaseAdapter {
         endTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                firebaseHelper.checkIfCanEnd(currentItem.getTaskID(), context, mTimeElapsed);
+                firebaseHelper.checkIfCanEnd(currentItem.getTaskID(), context, mTimeElapsed, finalConvertView);
             }
         });
 
