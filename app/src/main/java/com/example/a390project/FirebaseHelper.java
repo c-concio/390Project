@@ -1303,7 +1303,7 @@ public class FirebaseHelper {
     }
 
     public void liquidPaintSearch(final Activity activity, String searchText){
-        rootRef.child("inventory").child("liquid").orderByChild("paintDescription").startAt(searchText).endAt(searchText + "\uf0ff").addValueEventListener(new ValueEventListener() {
+        rootRef.child("inventory").child("liquid").orderByChild("paintDescription").startAt(searchText.toUpperCase()).endAt(searchText.toUpperCase() + "\uf0ff").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<PaintBucket> paintBuckets = new ArrayList<>();
@@ -1330,7 +1330,7 @@ public class FirebaseHelper {
     }
 
     public void powderPaintSearch(final Activity activity, String searchText){
-        rootRef.child("inventory").child("powder").orderByChild("paintDescription").startAt(searchText).endAt(searchText + "\uf0ff").addValueEventListener(new ValueEventListener() {
+        rootRef.child("inventory").child("powder").orderByChild("paintDescription").startAt(searchText.toUpperCase()).endAt(searchText.toUpperCase() + "\uf0ff").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<PaintBucket> paintBuckets = new ArrayList<>();
