@@ -1,8 +1,11 @@
 package com.example.a390project.InventoryActivities;
 
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.a390project.FirebaseHelper;
@@ -18,7 +21,7 @@ public class PowderPaintActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_inventory_powder_paint);
+        setContentView(R.layout.activity_inventory_powder_paint2);
         setActionBar("Powder Paint Inventory");
     }
 
@@ -52,5 +55,28 @@ public class PowderPaintActivity extends AppCompatActivity {
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        firebaseHelper = new FirebaseHelper();
+        getMenuInflater().inflate(R.menu.inventory, menu);
+        MenuItem item = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                firebaseHelper.powderPaintSearch(PowderPaintActivity.this, s);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                firebaseHelper.powderPaintSearch(PowderPaintActivity.this, s);
+                return false;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
     }
 }

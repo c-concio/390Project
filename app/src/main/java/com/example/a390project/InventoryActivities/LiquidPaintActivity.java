@@ -76,6 +76,7 @@ public class LiquidPaintActivity extends AppCompatActivity {
         actionBar.setTitle(heading);
         actionBar.show();
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -97,13 +98,13 @@ public class LiquidPaintActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextSubmit(String s) {
-                firebaseHelper.firebaseSearch(LiquidPaintActivity.this, s);
+                firebaseHelper.liquidPaintSearch(LiquidPaintActivity.this, s);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                firebaseHelper.firebaseSearch(LiquidPaintActivity.this, s);
+                firebaseHelper.liquidPaintSearch(LiquidPaintActivity.this, s);
                 return false;
             }
         });

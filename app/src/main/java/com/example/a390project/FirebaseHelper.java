@@ -1196,20 +1196,23 @@ public class FirebaseHelper {
                 paintBuckets = sortPaintBucketsByFirstLetter(paintBuckets);
 
                 // set the adapter
-                InventoryPaintListViewAdapter adapter = new InventoryPaintListViewAdapter(activity, paintBuckets);
-                PaintRecyclerAdapter testAdapter = new PaintRecyclerAdapter(activity, paintBuckets);
+                //InventoryPaintListViewAdapter adapter = new InventoryPaintListViewAdapter(activity, paintBuckets);
+                PaintRecyclerAdapter adapter = new PaintRecyclerAdapter(activity, paintBuckets);
                 if (isLiquid) {
                     //ListView liquidPaintListView = activity.findViewById(R.id.liquidPaintListView);
                     //liquidPaintListView.setAdapter(adapter);
                     RecyclerView liquidRecyclerView = activity.findViewById(R.id.liquidRecyclerView);
                     liquidRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
-                    liquidRecyclerView.setAdapter(testAdapter);
+                    liquidRecyclerView.setAdapter(adapter);
 
                 }
 
                 else{
-                    ListView powderPaintListView = activity.findViewById(R.id.powderPaintListView);
-                    powderPaintListView.setAdapter(adapter);
+                    //ListView powderPaintListView = activity.findViewById(R.id.powderPaintListView);
+                    //powderPaintListView.setAdapter(adapter);
+                    RecyclerView powderRecyclerView = activity.findViewById(R.id.powderRecyclerView);
+                    powderRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
+                    powderRecyclerView.setAdapter(adapter);
                 }
             }
 
@@ -1299,7 +1302,7 @@ public class FirebaseHelper {
         return materials;
     }
 
-    public void firebaseSearch(final Activity activity, String searchText){
+    public void liquidPaintSearch(final Activity activity, String searchText){
         rootRef.child("inventory").child("liquid").orderByChild("paintDescription").startAt(searchText).endAt(searchText + "\uf0ff").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -1309,10 +1312,42 @@ public class FirebaseHelper {
                     PaintBucket paintBucket = ds.getValue(PaintBucket.class);
                     paintBuckets.add(paintBucket);
 
-                    PaintRecyclerAdapter testAdapter = new PaintRecyclerAdapter(activity, paintBuckets);
+                    PaintRecyclerAdapter adapter = new PaintRecyclerAdapter(activity, paintBuckets);
                     RecyclerView liquidRecyclerView = activity.findViewById(R.id.liquidRecyclerView);
                     liquidRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
-                    liquidRecyclerView.setAdapter(testAdapter);
+                    liquidRecyclerView.setAdapter(adapter);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+        });
+
+
+    }
+
+    public void powderPaintSearch(final Activity activity, String searchText){
+        rootRef.child("inventory").child("powder").orderByChild("paintDescription").startAt(searchText).endAt(searchText + "\uf0ff").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<PaintBucket> paintBuckets = new ArrayList<>();
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    String paintCode = ds.getKey();
+                    String paintDescription = ds.child("paintDescription").getValue(String.class);
+                    int bakeTemperature = ds.child("bakeTemperature").getValue(int.class);
+                    int bakeTime = ds.child("bakeTime").getValue(int.class);
+                    float paintWeight = ds.child("paintWeight").getValue(float.class);
+
+                    paintBuckets.add(new PaintBucket("powder", paintCode, paintDescription, bakeTemperature, bakeTime, paintWeight));
+
+
+                    PaintRecyclerAdapter adapter = new PaintRecyclerAdapter(activity, paintBuckets);
+                    RecyclerView powderRecyclerView = activity.findViewById(R.id.powderRecyclerView);
+                    powderRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
+                    powderRecyclerView.setAdapter(adapter);
                 }
             }
 
