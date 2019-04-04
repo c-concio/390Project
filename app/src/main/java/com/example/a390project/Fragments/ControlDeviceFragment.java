@@ -88,6 +88,7 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
     public void onViewCreated(View view, Bundle savedInstanceState) {
         firebaseHelper = new FirebaseHelper();
         firebaseHelper.populateControlDevices(view, getActivity());
+        mMapView = view.findViewById(R.id.mapView);
 
         mView = view;
         mSavedInstanceState = savedInstanceState;
@@ -125,7 +126,7 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
         if (savedInstanceState != null) {
             mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
         }
-        mMapView = view.findViewById(R.id.mapView);
+
         mMapView.onCreate(mapViewBundle);
         Log.d(TAG, "onViewCreated: ");
 
