@@ -13,38 +13,33 @@ import com.example.a390project.FirebaseHelper;
 import com.example.a390project.R;
 
 @SuppressLint("ValidFragment")
-public class DeleteTaskDialogFragment extends DialogFragment {
+public class DeleteProjectDialogFragment extends DialogFragment {
 
-    private TextView mDeleteTaskTitle;
+    private TextView mDeleteProjectTitle;
     private Button Yesbutton;
     private Button Nobutton;
 
     private String projectPO;
-    private String taskID;
-    private String taskTitle;
+    private String title;
 
-
-
-    public DeleteTaskDialogFragment(String taskID, String projectPO, String taskTitle) {
-        this.taskID = taskID;
+    public DeleteProjectDialogFragment(String projectPO, String title) {
         this.projectPO = projectPO;
-        this.taskTitle = taskTitle;
+        this.title = title;
     }
 
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.delete_task_dialog_fragment, container, false);
-        mDeleteTaskTitle = view.findViewById(R.id.delete_task_title);
-        Yesbutton = view.findViewById(R.id.Yes_button);
-        Nobutton = view.findViewById(R.id.No_button);
+        View view = inflater.inflate(R.layout.delete_project_dialog_fragment, container, false);
+        mDeleteProjectTitle = view.findViewById(R.id.delete_project_title);
+        Yesbutton = view.findViewById(R.id.Yes_button_project);
+        Nobutton = view.findViewById(R.id.No_button_project);
 
-        mDeleteTaskTitle.setText("Delete " + taskTitle);
+        mDeleteProjectTitle.setText("Delete " + title);
 
         Yesbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FirebaseHelper FBHelper = new FirebaseHelper();
-                FBHelper.deleteTask(taskID, projectPO);
+                FBHelper.deleteProject(projectPO);
                 getDialog().dismiss();
             }
         });
@@ -56,6 +51,8 @@ public class DeleteTaskDialogFragment extends DialogFragment {
         });
 
         return view;
-
     }
+
 }
+
+

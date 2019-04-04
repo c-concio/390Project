@@ -12,7 +12,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.a390project.DialogFragments.DeleteProjectDialogFragment;
 import com.example.a390project.FirebaseHelper;
+import com.example.a390project.MainActivity;
 import com.example.a390project.Model.Project;
 import com.example.a390project.ProjectActivity;
 import com.example.a390project.R;
@@ -28,10 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectListViewAdapter extends BaseAdapter {
-
-    //firebase variables
-    private DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-    private String uId = FirebaseAuth.getInstance().getUid();
 
     private Context context;
     private List<Project> projects;
@@ -111,6 +109,15 @@ public class ProjectListViewAdapter extends BaseAdapter {
             convertView.setBackgroundResource(R.color.lightYellow);
         else
             convertView.setBackgroundResource(R.color.lightGreen);
+
+        convertView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                DeleteProjectDialogFragment dialog = new DeleteProjectDialogFragment(currentItem.getPo(), currentItem.getTitle());
+                dialog.show(((MainActivity) context).getSupportFragmentManager(),"delete_project");
+                return true;
+            }
+        });
 
 
         return convertView;

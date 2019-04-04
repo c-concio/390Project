@@ -11,9 +11,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.a390project.DialogFragments.DeleteTaskDialogFragment;
 import com.example.a390project.FirebaseHelper;
 import com.example.a390project.Model.Task;
-import com.example.a390project.Model.fragmentInListView;
+import com.example.a390project.ProjectActivity;
 import com.example.a390project.R;
 import com.example.a390project.TaskBakingActivity;
 import com.example.a390project.TaskInspectionActivity;
@@ -132,9 +133,10 @@ public class TaskListViewAdapter extends BaseAdapter {
         convertView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                String Taskid = currentItem.getTaskID();
-                fragmentInListView filv = new fragmentInListView(Taskid,projectPO);
-                filv.deletetaskfragment(context);
+                String taskID = currentItem.getTaskID();
+                String taskTitle = currentItem.getTaskType();
+                DeleteTaskDialogFragment dialog = new DeleteTaskDialogFragment(taskID, projectPO, taskTitle);
+                dialog.show(((ProjectActivity) context).getSupportFragmentManager(),"delete_task");
                 return true;
             }
         });

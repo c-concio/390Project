@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -702,7 +703,9 @@ public class FirebaseHelper {
     public void changeInspectionRejected(String taskID, int partCounted){
         rootRef.child("tasks").child(taskID).child("partRejected").setValue(partCounted);
     }
-    //delete task method
+    /*
+    --------------------------------------------------------- DELETE TASKS-PROJECTS METHODS ---------------------------------------------------------------------------
+     */
 
     public void deleteTask(String TaskID, String projectPO){
         //remove task from projects
@@ -732,6 +735,82 @@ public class FirebaseHelper {
 
 
     }
+
+    public void deleteProject(final String projectPO) {
+        rootRef.child("projects").child(projectPO).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                rootRef.child("projects").child(projectPO).removeEventListener(this);
+                if (dataSnapshot.exists()) {
+                    List<String> taskIDs = new ArrayList<>();
+                    List<String> subTaskIDs = new ArrayList<>();
+                    List<String> graphIDs = new ArrayList<>();
+                    if (dataSnapshot.hasChild("tasks")) {
+                        for (DataSnapshot ds : dataSnapshot.child("tasks").getChildren()) {
+                            taskIDs.add(ds.getKey());
+                            if (ds.hasChild("subTasks")) {
+                                for (DataSnapshot dsSub : ds.child("subTasks").getChildren()) {
+                                    subTaskIDs.add(dsSub.getKey());
+                                }
+                            }
+                        }
+                    }
+                    if (dataSnapshot.hasChild("graphs")) {
+                        for (DataSnapshot ds : dataSnapshot.child("graphs").getChildren()) {
+                            graphIDs.add(ds.getKey());
+                        }
+                    }
+                    if (!taskIDs.isEmpty()) {
+                        for (String taskID : taskIDs) {
+                            rootRef.child("tasks").child(taskID).removeValue();
+                        }
+                    }
+                    if (!subTaskIDs.isEmpty()) {
+                        for (String subTaskID : subTaskIDs) {
+                            rootRef.child("subTasks").child(subTaskID).removeValue();
+                        }
+                    }
+                    if (!graphIDs.isEmpty()) {
+                        for (final String graphID : graphIDs) {
+                            rootRef.child("projects").addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    rootRef.child("projects").removeEventListener(this);
+                                    boolean deleteGraph = true;
+                                    for (DataSnapshot ds:dataSnapshot.getChildren()) {
+                                        if (!ds.getKey().equals(projectPO)) {
+                                            if (ds.child("graphs").hasChild(graphID)) {
+                                                deleteGraph = false;
+                                            }
+                                        }
+                                    }
+                                    if (deleteGraph) {
+                                        rootRef.child("graphs").child(graphID).removeValue();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                    }
+                    rootRef.child("projects").child(projectPO).removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+    /*
+    --------------------------------------------------------- END OF DELETE METHODS ---------------------------------------------------------------------------
+     */
+
+
     //end of Inspection Controllers
 
     //------------------------------ Firebase Control Device Methods --------------------------------------------------------
@@ -768,16 +847,21 @@ public class FirebaseHelper {
         itemsListView.setAdapter(adapter);
     }
 
-    public void setStatusOfSwitch(final String cDeviceTitle, final View convertView) {
+    public void setStatusOfSwitch(final String cDeviceTitle, final Switch switchControlDevice, final boolean [] switches) {
         rootRef.child("cDevices").child(cDeviceTitle).child("cDeviceStatus").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 rootRef.child("cDevices").child(cDeviceTitle).child("cDeviceStatus").removeEventListener(this);
-
-                Switch switchControlDevice = convertView.findViewById(R.id.control_device_switch);
                 boolean checked = dataSnapshot.getValue(boolean.class);
                 switchControlDevice.setChecked(checked);
+                if (cDeviceTitle.equals("Switch 1")) {
+                    switches[0] = true;
+                }
+                else {
+                    switches[1] = true;
+                }
                 Log.d(TAG, cDeviceTitle + " CHECKED " + checked);
+
             }
 
             @Override
@@ -2509,6 +2593,4 @@ public class FirebaseHelper {
         };
         updateTimeElapsed.start();
     }
-
-
 }

@@ -22,7 +22,8 @@ public class ControlDeviceListViewAdapter extends BaseAdapter {
     private static final String TAG = "CDeviceListViewAdapter";
     private Context context;
     private List<ControlDevice> cDevice;
-    private int i = 0;
+
+    private boolean [] switches = new boolean[2];
 
     //views
     private TextView textControlDevice;
@@ -31,6 +32,8 @@ public class ControlDeviceListViewAdapter extends BaseAdapter {
     public ControlDeviceListViewAdapter(Context context, List<ControlDevice> cDevice){
         this.context = context;
         this.cDevice = cDevice;
+        switches[0] = false;
+        switches[1] = false;
     }
 
     @Override
@@ -51,38 +54,43 @@ public class ControlDeviceListViewAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 
-        if(convertView ==null){
+        if(convertView == null){
             convertView = LayoutInflater.from(context).inflate(R.layout.row_item_control_device, parent, false);
         }
-
         textControlDevice = convertView.findViewById(R.id.control_device_title_text_view_row);
-
-        final FirebaseHelper firebaseHelper = new FirebaseHelper();
         final ControlDevice currentItem = (ControlDevice) getItem(position);
         textControlDevice.setText(currentItem.getcDeviceTitle());
 
         //sets the switch based on status stored on firebase for all the control devices
-        firebaseHelper.setStatusOfSwitch(currentItem.getcDeviceTitle(), convertView);
+        final FirebaseHelper firebaseHelper = new FirebaseHelper();
+        switchControlDevice = convertView.findViewById(R.id.control_device_switch);
+
+        firebaseHelper.setStatusOfSwitch(currentItem.getcDeviceTitle(), switchControlDevice, switches);
+
+        firebaseHelper.canToggleSwitch(switchControlDevice, context);
 
         //Upon clicking the switch, change the status on firebase
-        switchControlDevice = convertView.findViewById(R.id.control_device_switch);
-        firebaseHelper.canToggleSwitch(switchControlDevice, context);
-        switchControlDevice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        Thread t1 = new Thread(new Runnable() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (i > 2) {
-                    if (isChecked) {
-                        firebaseHelper.changeDeviceStatus(currentItem.getcDeviceTitle(), true, context);
-                    } else {
-                        firebaseHelper.changeDeviceStatus(currentItem.getcDeviceTitle(), false, context);
+            public void run() {
+                while (true) {
+                    if (switches[0] && switches[1]) {
+                        switchControlDevice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                FirebaseHelper firebaseHelper = new FirebaseHelper();
+                                if (isChecked) {
+                                    firebaseHelper.changeDeviceStatus(currentItem.getcDeviceTitle(), true, context);
+                                } else {
+                                    firebaseHelper.changeDeviceStatus(currentItem.getcDeviceTitle(), false, context);
+                                }
+                            }
+                        });
                     }
                 }
-                else {
-                    i++;
-                }
-                Log.d(TAG, "onCheckedChanged: " + i);
             }
         });
+        t1.start();
 
         return convertView;
 
