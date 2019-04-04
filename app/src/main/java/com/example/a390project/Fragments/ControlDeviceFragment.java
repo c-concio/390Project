@@ -88,6 +88,7 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
     public void onViewCreated(View view, Bundle savedInstanceState) {
         firebaseHelper = new FirebaseHelper();
         firebaseHelper.populateControlDevices(view, getActivity());
+        mMapView = view.findViewById(R.id.mapView);
 
         mView = view;
         mSavedInstanceState = savedInstanceState;
@@ -125,7 +126,6 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
         if (savedInstanceState != null) {
             mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
         }
-        mMapView = view.findViewById(R.id.mapView);
         mMapView.onCreate(mapViewBundle);
         Log.d(TAG, "onViewCreated: ");
 
@@ -181,7 +181,7 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
                                 public void onLocationChanged(Location currentLocation) {
 
                                     LatLng currentUserLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-
+                                    Log.d(TAG, "onLocationChanged: " + currentLocation.getLatitude() + " " + currentLocation.getLongitude());
                                     CameraUpdate zoom=CameraUpdateFactory.zoomTo(DEFAULT_ZOOM);
                                     CameraUpdate center= CameraUpdateFactory.newLatLng(currentUserLatLng);
 
@@ -230,7 +230,7 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
                                 }
                             };
                             LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
-                            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 1, locationListener);
+                            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 5, locationListener);
 
                         }else{
                             Log.d(TAG, "onComplete: current location is null");

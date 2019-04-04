@@ -33,15 +33,15 @@ public class NotificationForegroundService extends Service {
     public static final String NOTIFICATION_CHANNEL_ID = "NotificationChannel";
     private static final String TAG = "WorkBlockFS";
 
+    //notification variables
+    private NotificationCompat.Builder builder = null;
+
     //variables from Intent
     private int NOTIFICATION_ID = 0;
     private String taskTitle;
     private String taskID;
     private String projectPO;
     private long timeNow;
-
-
-    private NotificationCompat.Builder builder = null;
 
     @Override
     public void onCreate() {
