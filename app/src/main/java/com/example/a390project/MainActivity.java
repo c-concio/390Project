@@ -241,7 +241,6 @@ public class MainActivity extends AppCompatActivity {
         InventoryFragment inventoryFragment = new InventoryFragment();
         adapter.addFragment(inventoryFragment, "INVENTORY");
 
-
         viewPager.setAdapter(adapter);
     }
 

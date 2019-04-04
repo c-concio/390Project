@@ -5,32 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import com.example.a390project.Fragments.ControlDeviceFragment;
-import com.example.a390project.Fragments.EmployeeFragment;
 import com.example.a390project.Fragments.EmployeeTasksFragment;
 import com.example.a390project.Fragments.EmployeeWorkBlocksFragment;
-import com.example.a390project.Fragments.InventoryFragment;
-import com.example.a390project.Fragments.MachineFragment;
-import com.example.a390project.Fragments.ProjectFragment;
-import com.example.a390project.ListViewAdapters.EmployeeTasksListViewAdapter;
-import com.example.a390project.Model.EmployeeTasks;
-import com.example.a390project.Model.Task;
 
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class EmployeeActivity extends AppCompatActivity{

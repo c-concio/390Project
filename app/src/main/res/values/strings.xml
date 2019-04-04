@@ -22,5 +22,6 @@
         <item>Powder</item>
         <item>Material</item>
     </string-array>
+    <string name="title_activity_maps">Map</string>
 
 </resources>

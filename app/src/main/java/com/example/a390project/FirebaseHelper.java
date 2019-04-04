@@ -7,7 +7,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -34,7 +33,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.a390project.ForegroundServices.NotificationForegroundService;
-import com.example.a390project.InventoryActivities.LiquidPaintActivity;
 import com.example.a390project.ListViewAdapters.ControlDeviceListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeCommentListViewAdapter;
 import com.example.a390project.ListViewAdapters.EmployeeListViewAdapter;
@@ -43,7 +41,6 @@ import com.example.a390project.ListViewAdapters.EmployeeWorkBlocksListViewAdapte
 import com.example.a390project.ListViewAdapters.GraphableProjectsListViewAdapter;
 import com.example.a390project.ListViewAdapters.GraphsListViewAdapter;
 import com.example.a390project.ListViewAdapters.InventoryMaterialListViewAdapter;
-import com.example.a390project.ListViewAdapters.InventoryPaintListViewAdapter;
 import com.example.a390project.ListViewAdapters.MachineListViewAdapter;
 import com.example.a390project.ListViewAdapters.PaintRecyclerAdapter;
 import com.example.a390project.ListViewAdapters.PrepaintTaskListViewAdapter;
@@ -71,7 +68,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.jjoe64.graphview.DefaultLabelFormatter;
@@ -791,9 +787,46 @@ public class FirebaseHelper {
         });
     }
 
-    public void changeDeviceStatus(String cDeviceTitle, boolean state) {
-        rootRef.child("cDevices").child(cDeviceTitle).child("cDeviceStatus").setValue(state);
-        Log.d(TAG, cDeviceTitle + " IS NOW " + state);
+    public void changeDeviceStatus(final String cDeviceTitle, final boolean state, final Context context) {
+        rootRef.child("users").child(uId).child("canToggleCDevices").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue(boolean.class)) {
+                    rootRef.child("cDevices").child(cDeviceTitle).child("cDeviceStatus").setValue(state);
+                    Log.d(TAG, cDeviceTitle + " IS NOW " + state);
+                }
+                else {
+                    Toast.makeText(context, "Not inside shop radius", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public void canToggleSwitch(final Switch switchControlDevice, final Context context) {
+        rootRef.child("users").child(uId).child("canToggleCDevices").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    if (dataSnapshot.getValue(boolean.class)) {
+                        switchControlDevice.setClickable(true);
+                    } else {
+                        switchControlDevice.setClickable(false);
+                        Toast.makeText(context, "Not inside shop radius", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 
@@ -2476,4 +2509,6 @@ public class FirebaseHelper {
         };
         updateTimeElapsed.start();
     }
+
+
 }

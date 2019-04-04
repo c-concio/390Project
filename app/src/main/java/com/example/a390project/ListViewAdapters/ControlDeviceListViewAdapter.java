@@ -66,14 +66,15 @@ public class ControlDeviceListViewAdapter extends BaseAdapter {
 
         //Upon clicking the switch, change the status on firebase
         switchControlDevice = convertView.findViewById(R.id.control_device_switch);
+        firebaseHelper.canToggleSwitch(switchControlDevice, context);
         switchControlDevice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (i > 2) {
                     if (isChecked) {
-                        firebaseHelper.changeDeviceStatus(currentItem.getcDeviceTitle(), true);
+                        firebaseHelper.changeDeviceStatus(currentItem.getcDeviceTitle(), true, context);
                     } else {
-                        firebaseHelper.changeDeviceStatus(currentItem.getcDeviceTitle(), false);
+                        firebaseHelper.changeDeviceStatus(currentItem.getcDeviceTitle(), false, context);
                     }
                 }
                 else {
