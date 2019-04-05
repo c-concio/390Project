@@ -74,6 +74,9 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Marker marker = null;
 
+    private LocationListener locationListener;
+    private LocationManager locationManager;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -151,7 +154,7 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
                 public void onComplete(@NonNull com.google.android.gms.tasks.Task task) {
                     if(task.isSuccessful()){
                         Log.d(TAG, "onComplete: found location!");
-                        LocationListener locationListener = new LocationListener() {
+                        locationListener = new LocationListener() {
                             @Override
                             public void onLocationChanged(Location currentLocation) {
                                 Log.d(TAG, "onLocationChanged: inside location changed");
@@ -173,7 +176,7 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
 
                             }
                         };
-                        LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+                        locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
                         Criteria locationCritera = new Criteria();
                         locationCritera.setAccuracy(Criteria.ACCURACY_FINE);
                         locationCritera.setAltitudeRequired(false);
@@ -232,6 +235,9 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
     public void onPause() {
         mMapView.onPause();
         super.onPause();
+
+        // detatch the listener
+        locationManager.removeUpdates(locationListener);
     }
 
     @Override
