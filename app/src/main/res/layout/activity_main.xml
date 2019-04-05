@@ -17,9 +17,10 @@
             android:background="@color/colorPrimary"
             app:tabGravity="fill"
             app:tabIndicatorColor="@android:color/white"
-            app:tabMode="fixed"
             app:tabSelectedTextColor="@android:color/white"
-            app:tabTextColor="#BADEFF" />
+            app:tabTextColor="#BADEFF"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:tabMode="scrollable" />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewpager"
