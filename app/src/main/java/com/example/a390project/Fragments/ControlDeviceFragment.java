@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -144,7 +145,7 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
                     .fillColor(0x550000FF);
             mMap.addCircle(circle);
 
-            com.google.android.gms.tasks.Task location = mFusedLocationProviderClient.getLastLocation();
+            final com.google.android.gms.tasks.Task location = mFusedLocationProviderClient.getLastLocation();
             location.addOnCompleteListener(new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull com.google.android.gms.tasks.Task task) {
@@ -153,41 +154,8 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
                         LocationListener locationListener = new LocationListener() {
                             @Override
                             public void onLocationChanged(Location currentLocation) {
-
-                                LatLng currentUserLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-
-                                CameraUpdate zoom= CameraUpdateFactory.zoomTo(DEFAULT_ZOOM);
-                                CameraUpdate center= CameraUpdateFactory.newLatLng(currentUserLatLng);
-
-                                if (marker != null) {
-                                    marker.remove();
-                                }
-                                marker = mMap.addMarker(new MarkerOptions().position(currentUserLatLng).title("You are Here"));
-                                mMap.moveCamera(center);
-                                mMap.animateCamera(zoom);
-
-
-                                float[] distance = new float[2];
-
-                                Location.distanceBetween( marker.getPosition().latitude, marker.getPosition().longitude,
-                                        circle.getCenter().latitude, circle.getCenter().longitude, distance);
-
-                                DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-                                String uId = FirebaseAuth.getInstance().getUid();
-
-                                if(distance[0] > circle.getRadius()){
-                                    Toast.makeText(getContext(), "Outside " + distance[0], Toast.LENGTH_LONG).show();
-                                    Log.d(TAG, "onLocationChanged: " + "Outside " + distance[0]);
-                                    rootRef.child("users").child(uId).child("canToggleCDevices").setValue(false);
-                                } else {
-                                    Toast.makeText(getContext(), "Inside " + distance[0], Toast.LENGTH_LONG).show();
-                                    Log.d(TAG, "onLocationChanged: " + "Inside " + distance[0]);
-                                    rootRef.child("users").child(uId).child("canToggleCDevices").setValue(true);
-                                    //Allow control of switch
-                                    //...
-                                }
-
-
+                                Log.d(TAG, "onLocationChanged: inside location changed");
+                                insertMarker(currentLocation, circle);
                             }
 
                             @Override
@@ -206,7 +174,16 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
                             }
                         };
                         LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
-                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 1, locationListener);
+                        Criteria locationCritera = new Criteria();
+                        locationCritera.setAccuracy(Criteria.ACCURACY_FINE);
+                        locationCritera.setAltitudeRequired(false);
+                        locationCritera.setBearingRequired(false);
+                        locationCritera.setCostAllowed(true);
+                        locationCritera.setPowerRequirement(Criteria.NO_REQUIREMENT);
+                        String providerName = locationManager.getBestProvider(locationCritera, true);
+                        Location location = locationManager.getLastKnownLocation(providerName);
+                        insertMarker(location, circle);
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 5, locationListener); //<- minDistance change of 5 meters
 
                     }else{
                         Log.d(TAG, "onComplete: current location is null");
@@ -267,6 +244,41 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
     public void onLowMemory() {
         super.onLowMemory();
         mMapView.onLowMemory();
+    }
+
+    private void insertMarker(Location currentLocation, CircleOptions circle) {
+        LatLng currentUserLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+
+        CameraUpdate zoom= CameraUpdateFactory.zoomTo(DEFAULT_ZOOM);
+        CameraUpdate center= CameraUpdateFactory.newLatLng(currentUserLatLng);
+
+        if (marker != null) {
+            marker.remove();
+        }
+        marker = mMap.addMarker(new MarkerOptions().position(currentUserLatLng).title("You are Here"));
+        mMap.moveCamera(center);
+        mMap.animateCamera(zoom);
+
+
+        float[] distance = new float[2];
+
+        Location.distanceBetween( marker.getPosition().latitude, marker.getPosition().longitude,
+                circle.getCenter().latitude, circle.getCenter().longitude, distance);
+
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        String uId = FirebaseAuth.getInstance().getUid();
+
+        if(distance[0] > circle.getRadius()){
+            Toast.makeText(getContext(), "Outside " + distance[0], Toast.LENGTH_LONG).show();
+            Log.d(TAG, "onLocationChanged: " + "Outside " + distance[0]);
+            rootRef.child("users").child(uId).child("canToggleCDevices").setValue(false);
+        } else {
+            Toast.makeText(getContext(), "Inside " + distance[0], Toast.LENGTH_LONG).show();
+            Log.d(TAG, "onLocationChanged: " + "Inside " + distance[0]);
+            rootRef.child("users").child(uId).child("canToggleCDevices").setValue(true);
+            //Allow control of switch
+            //...
+        }
     }
 }
 

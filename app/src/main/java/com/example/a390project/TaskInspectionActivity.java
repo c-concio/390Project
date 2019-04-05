@@ -49,6 +49,9 @@ public class TaskInspectionActivity extends AppCompatActivity {
         firebaseHelper.setStartTimeEndTimeButtons(mStartTime,mEndTime,inspectionTaskID);
         final Thread classThread = Thread.currentThread();
 
+        Intent intent = getIntent();
+        inspectionType = intent.getStringExtra("taskType");
+
         checkIfManager();
 
         //Text changed listener
@@ -124,8 +127,6 @@ public class TaskInspectionActivity extends AppCompatActivity {
         mStartTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = getIntent();
-                inspectionType = intent.getStringExtra("taskType");
                 Log.d(TAG, "onClick: " + inspectionType);
                 firebaseHelper.checkIfCanStart(inspectionTaskID, getApplicationContext(), inspectionType, TaskInspectionActivity.this,mStartTime,mEndTime, mTimeElapsed,backPressed, null);
             }
