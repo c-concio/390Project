@@ -847,21 +847,14 @@ public class FirebaseHelper {
         itemsListView.setAdapter(adapter);
     }
 
-    public void setStatusOfSwitch(final String cDeviceTitle, final Switch switchControlDevice, final boolean [] switches) {
+    public void setStatusOfSwitch(final String cDeviceTitle, final Switch switchControlDevice) {
         rootRef.child("cDevices").child(cDeviceTitle).child("cDeviceStatus").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 rootRef.child("cDevices").child(cDeviceTitle).child("cDeviceStatus").removeEventListener(this);
                 boolean checked = dataSnapshot.getValue(boolean.class);
                 switchControlDevice.setChecked(checked);
-                if (cDeviceTitle.equals("Switch 1")) {
-                    switches[0] = true;
-                }
-                else {
-                    switches[1] = true;
-                }
-                Log.d(TAG, cDeviceTitle + " CHECKED " + checked);
-
+                Log.d(TAG, cDeviceTitle + " IS SET TO " + checked);
             }
 
             @Override
@@ -875,6 +868,7 @@ public class FirebaseHelper {
         rootRef.child("users").child(uId).child("canToggleCDevices").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                rootRef.child("users").child(uId).child("canToggleCDevices").removeEventListener(this);
                 if (dataSnapshot.getValue(boolean.class)) {
                     rootRef.child("cDevices").child(cDeviceTitle).child("cDeviceStatus").setValue(state);
                     Log.d(TAG, cDeviceTitle + " IS NOW " + state);
