@@ -73,6 +73,9 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Marker marker = null;
+    private Location markerLocation = null;
+    private boolean runThreadListener = true;
+    private Thread t = null;
 
     @Nullable
     @Override
@@ -132,6 +135,14 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
         Log.d(TAG, "getDeviceLocation: getting the devices current location");
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
+        final LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        Criteria locationCritera = new Criteria();
+        locationCritera.setAccuracy(Criteria.ACCURACY_FINE);
+        locationCritera.setAltitudeRequired(false);
+        locationCritera.setBearingRequired(false);
+        locationCritera.setCostAllowed(true);
+        locationCritera.setPowerRequirement(Criteria.NO_REQUIREMENT);
+        final String providerName = locationManager.getBestProvider(locationCritera, true);
 
         try{
             //shop marker and radius
@@ -151,39 +162,46 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
                 public void onComplete(@NonNull com.google.android.gms.tasks.Task task) {
                     if(task.isSuccessful()){
                         Log.d(TAG, "onComplete: found location!");
-                        LocationListener locationListener = new LocationListener() {
+                        t = new Thread() {
                             @Override
-                            public void onLocationChanged(Location currentLocation) {
-                                Log.d(TAG, "onLocationChanged: inside location changed");
-                                insertMarker(currentLocation, circle);
-                            }
-
-                            @Override
-                            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                            }
-
-                            @Override
-                            public void onProviderEnabled(String provider) {
-
-                            }
-
-                            @Override
-                            public void onProviderDisabled(String provider) {
+                            public void run() {
+                                Log.d(TAG, "run: THREAD LISTENER RUNNING");
+                                while (runThreadListener) {
+                                    try {
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Location location = locationManager.getLastKnownLocation(providerName);
+                                                if (markerLocation == null) {
+                                                    markerLocation = location;
+                                                    insertMarker(markerLocation, circle);
+                                                    Log.d(TAG, "run: FIRST MARKER");
+                                                }
+                                                float[] distance = new float[2];
+                                                Location.distanceBetween(location.getLatitude(), location.getLongitude(),
+                                                        markerLocation.getLatitude(), markerLocation.getLongitude(), distance);
+                                                if (distance[0] > 5.0) { //<- 5 meters between old and new location
+                                                    markerLocation = location;
+                                                    insertMarker(markerLocation, circle);
+                                                    Log.d(TAG, "run: DISTANCE BETWEEN OLD POSITION AND CURRENT POSISTION: " + distance[0]);
+                                                }
+                                            }
+                                        });
+                                        Thread.sleep(1000);
+                                    }
+                                    catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                if (!runThreadListener) {
+                                    Log.d(TAG, "run: THREAD LISTENER STOPPED");
+                                    Thread.currentThread().interrupt();
+                                }
 
                             }
                         };
-                        LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
-                        Criteria locationCritera = new Criteria();
-                        locationCritera.setAccuracy(Criteria.ACCURACY_FINE);
-                        locationCritera.setAltitudeRequired(false);
-                        locationCritera.setBearingRequired(false);
-                        locationCritera.setCostAllowed(true);
-                        locationCritera.setPowerRequirement(Criteria.NO_REQUIREMENT);
-                        String providerName = locationManager.getBestProvider(locationCritera, true);
-                        Location location = locationManager.getLastKnownLocation(providerName);
-                        insertMarker(location, circle);
-                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 5, locationListener); //<- minDistance change of 5 meters
+                        t.start();
+
 
                     }else{
                         Log.d(TAG, "onComplete: current location is null");
@@ -213,12 +231,18 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
     public void onResume() {
         super.onResume();
         mMapView.onResume();
+        if (t != null) {
+            t.start();
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
         mMapView.onStart();
+        if (t != null) {
+            t.start();
+        }
     }
 
     @Override
@@ -238,6 +262,7 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
     public void onDestroy() {
         mMapView.onDestroy();
         super.onDestroy();
+        runThreadListener = false;
     }
 
     @Override
