@@ -895,7 +895,7 @@ public class FirebaseHelper {
                         switchControlDevice.setClickable(true);
                     } else {
                         switchControlDevice.setClickable(false);
-                        Toast.makeText(context, "Not inside shop radius t", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "Not inside shop radius t", Toast.LENGTH_SHORT).show();
                     }
                 }
             }

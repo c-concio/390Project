@@ -60,8 +60,8 @@ public class ControlDeviceListViewAdapter extends BaseAdapter {
         textControlDevice.setText(currentItem.getcDeviceTitle());
         switchControlDevice = convertView.findViewById(R.id.control_device_switch);
 
-        firebaseHelper.canToggleSwitch(switchControlDevice, context);
         firebaseHelper.setStatusOfSwitch(currentItem.getcDeviceTitle(), switchControlDevice);
+        firebaseHelper.canToggleSwitch(switchControlDevice, context);
 
         final View finalConvertView = convertView;
         switchControlDevice.setOnClickListener(new View.OnClickListener() {

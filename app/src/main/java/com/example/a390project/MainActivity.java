@@ -24,7 +24,6 @@ import com.example.a390project.DialogFragments.CreateEmployeeDialogFragment;
 import com.example.a390project.DialogFragments.CreateInventoryDialogFragment;
 import com.example.a390project.DialogFragments.CreateMachineDialogFragment;
 import com.example.a390project.DialogFragments.CreateProjectDialogFragment;
-import com.example.a390project.DialogFragments.MapDialogFragment;
 import com.example.a390project.Fragments.ControlDeviceFragment;
 import com.example.a390project.Fragments.EmployeeFragment;
 import com.example.a390project.Fragments.InventoryFragment;

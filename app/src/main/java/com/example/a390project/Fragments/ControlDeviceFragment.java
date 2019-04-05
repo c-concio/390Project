@@ -139,7 +139,7 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
             final CircleOptions circle = new CircleOptions()
                     .center(shopLatLng)
-                    .radius(200)
+                    .radius(7000) //<- radius from shop in meters
                     .strokeWidth(0f)
                     .fillColor(0x550000FF);
             mMap.addCircle(circle);

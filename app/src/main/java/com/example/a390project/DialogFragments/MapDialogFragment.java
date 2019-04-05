@@ -154,11 +154,11 @@ public class MapDialogFragment extends DialogFragment implements OnMapReadyCallb
                                 String uId = FirebaseAuth.getInstance().getUid();
 
                                 if(distance[0] > circle.getRadius()){
-                                    Toast.makeText(getContext(), "Outside " + distance[0], Toast.LENGTH_LONG).show();
+                                    //Toast.makeText(getContext(), "Outside " + distance[0], Toast.LENGTH_LONG).show();
                                     Log.d(TAG, "onLocationChanged: " + "Outside " + distance[0]);
                                     rootRef.child("users").child(uId).child("canToggleCDevices").setValue(false);
                                 } else {
-                                    Toast.makeText(getContext(), "Inside " + distance[0], Toast.LENGTH_LONG).show();
+                                    //Toast.makeText(getContext(), "Inside " + distance[0], Toast.LENGTH_LONG).show();
                                     Log.d(TAG, "onLocationChanged: " + "Inside " + distance[0]);
                                     rootRef.child("users").child(uId).child("canToggleCDevices").setValue(true);
                                     //Allow control of switch
