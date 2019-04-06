@@ -729,33 +729,45 @@ public class FirebaseHelper {
 
     }
 
-    public void setTaskPackagingActivityListener(final String taskID, final Activity activity){
-        rootRef.child("tasks").child(taskID).addValueEventListener(packagingValueEventListener = new ValueEventListener() {
+    public ValueEventListener setTaskPackagingActivityListener(final String taskID, final Activity activity){
+        ValueEventListener packagingValueEventListener;
+        rootRef.addValueEventListener(packagingValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                rootRef.child("tasks").child(taskID).removeEventListener(packagingValueEventListener);
-                //Task currentTask = dataSnapshot.getValue(Task.class);
-                Task currentTask = new Task();
-                currentTask.setDescription(dataSnapshot.child("description").getValue(String.class));
+                DataSnapshot taskDataSnapshot = dataSnapshot.child("tasks").child(taskID);
+                Task packagingTask = new Task();
 
+                // description
+                packagingTask.setDescription(taskDataSnapshot.child("description").getValue(String.class));
                 TextView packagingDescriptionTextView = activity.findViewById(R.id.descriptionTextView);
+                packagingDescriptionTextView.setText(packagingTask.getDescription());
 
-                packagingDescriptionTextView.setText(currentTask.getDescription());
+                // inventory
+                if (taskDataSnapshot.child("materials").exists()){
+                    List<String> materialIDs = new ArrayList<>();
 
-                // get the material used
-                LinearLayout materialUsedLinearLayout = activity.findViewById(R.id.materialUsedLinearLayout);
-                materialUsedLinearLayout.removeAllViews();
-                if (!dataSnapshot.child("materialUsed").hasChildren()) {
-                    TextView text = new TextView(activity);
-                    text.setText("No material chosen yet");
-                    materialUsedLinearLayout.addView(text);
-                }
-                else {
-                    for (DataSnapshot postSnapshot : dataSnapshot.child("materialUsed").getChildren()) {
-                        TextView text = new TextView(activity);
-                        text.setText(postSnapshot.getKey());
-                        materialUsedLinearLayout.addView(text);
+                    // fill materialIDs array with all the material IDs
+                    for(DataSnapshot materialSnapshot : taskDataSnapshot.child("materials").getChildren()){
+                        materialIDs.add(materialSnapshot.getKey());
                     }
+
+                    // go to the inventory section and get all the materials
+                    List<Material> materials = new ArrayList<>();
+                    DataSnapshot materialDataSnapshot = dataSnapshot.child("inventory").child("material");
+
+                    for (String materialID : materialIDs){
+                        if (materialDataSnapshot.child(materialID).exists()) {
+                            Material newMaterial = materialDataSnapshot.child(materialID).getValue(Material.class);
+                            newMaterial.setMaterialName(materialID);
+                            materials.add(newMaterial);
+                        }
+                    }
+
+                    // output materials into listView
+                    ListView materialListView = activity.findViewById(R.id.materialListView);
+                    InventoryMaterialListViewAdapter adapter = new InventoryMaterialListViewAdapter(activity, materials);
+                    materialListView.setAdapter(adapter);
+                    setPackagingMaterialListViewHeightBasedOnChildren(materialListView);
                 }
             }
 
@@ -764,11 +776,60 @@ public class FirebaseHelper {
 
             }
         });
+        return packagingValueEventListener;
     }
 
-    public void detachTaskPackagingActivityListener(String taskID){
-        rootRef.child("tasks").child(taskID).removeEventListener(packagingValueEventListener);
+    private static void setPackagingMaterialListViewHeightBasedOnChildren(ListView listView) {
+        InventoryMaterialListViewAdapter listAdapter = (InventoryMaterialListViewAdapter) listView.getAdapter();
+        if (listAdapter == null)
+            return;
+
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 45;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, listView);
+            if (i == 0)
+                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() + 1));
+        listView.setLayoutParams(params);
     }
+
+    public ValueEventListener populateMaterialSpinner(final Activity activity){
+        ValueEventListener machineValueEventListener;
+        rootRef.child("inventory").child("material").addValueEventListener(machineValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<String> materials = new ArrayList<>();
+
+                for (DataSnapshot currentSnapshot : dataSnapshot.getChildren()){
+                    materials.add(currentSnapshot.getKey());
+                    Log.d(TAG, "onDataChange: materials " + currentSnapshot.getKey());
+                }
+
+                Spinner materialSpinner = activity.findViewById(R.id.materialSpinner);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, materials);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                materialSpinner.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return machineValueEventListener;
+    }
+
+    public void addMaterialUsed(String taskID, String materialId){
+        rootRef.child("tasks").child(taskID).child("materials").child(materialId).setValue(true);
+    }
+
 
     //------------------------------ Inspection Task Methods --------------------------------------------------------
 
