@@ -61,6 +61,8 @@ class PdfHelper {
 
     private static final String TAG = "PdfHelper";
 
+    // TODO: total time from project should be taken from either the workBlocks or total time value if completed
+
 
     // value event listeners
     private ValueEventListener projectValueEventListener;
@@ -527,6 +529,7 @@ class PdfHelper {
 
                 // --------------------------------------------- 4. Graphs Task ---------------------------------------------
                 // check if the project has graphs
+                //TODO: fix up outputting graphs
                 DataSnapshot projectSnapshot = dataSnapshot.child("projects");
                 DataSnapshot graphSnapshot = dataSnapshot.child("graphs");
                 List<String> graphIDs = new ArrayList<>();
@@ -553,7 +556,7 @@ class PdfHelper {
 
 
                     //createGraphLayout(graphs, pageNumber);
-                    endPage();
+                    //endPage();
                     pageNumber++;
                 }
 

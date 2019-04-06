@@ -98,7 +98,7 @@ public class LiquidPaintActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextSubmit(String s) {
-                firebaseHelper.liquidPaintSearch(LiquidPaintActivity.this, s);
+                //firebaseHelper.liquidPaintSearch(LiquidPaintActivity.this, s);
                 return false;
             }
 

@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.a390project.DialogFragments.CompleteProjectDialogFragment;
 import com.example.a390project.DialogFragments.CreateMachineDialogFragment;
 import com.example.a390project.DialogFragments.CreateTaskDialogFragment;
 import com.example.a390project.Fragments.EmployeeTasksFragment;
@@ -25,6 +26,7 @@ import com.example.a390project.Model.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
@@ -43,12 +45,25 @@ public class ProjectActivity extends AppCompatActivity {
     //check if user is manager from sharedpreferences
     private boolean isManager;
 
+    private boolean tasksCompleted = false;
+
+    private ValueEventListener tasksCompletedValueEventListener;
+
+    FirebaseHelper firebaseHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project);
 
         checkIfManager();
+        firebaseHelper = new FirebaseHelper();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        tasksCompletedValueEventListener = firebaseHelper.isTasksCompleted(projectPO, this);
     }
 
     private void checkIfManager() {
@@ -77,6 +92,7 @@ public class ProjectActivity extends AppCompatActivity {
                     startCreateTaskDialogFragment();
                 }
             });
+
         }
         else {
             mFabOpenTaskDialogFragment.hide();
@@ -171,13 +187,26 @@ public class ProjectActivity extends AppCompatActivity {
                 this.finish();
                 return true;
             }
-            case R.id.generatePdfItem:{
+            case R.id.generatePdfItem:
                 // generate the pdf for the current project
                 PdfHelper pdfHelper = new PdfHelper(2200, 1700, this);
                 pdfHelper.generatePdf(projectPO);
+                return true;
+            case R.id.completeProjectItem:
+                // if tasks are completed then set onclick to complete the project, else invalidate
+                CompleteProjectDialogFragment completeProjectDialogFragment = new CompleteProjectDialogFragment();
+                if (tasksCompleted){
+                    // complete project
+                    completeProjectDialogFragment.setCompletedProject(true);
+                    completeProjectDialogFragment.setProjectPO(projectPO);
+                    completeProjectDialogFragment.show(getSupportFragmentManager(), "CompleteProjectDialogFragment");
+                }
+                else{
+                    completeProjectDialogFragment.setCompletedProject(false);
+                    completeProjectDialogFragment.show(getSupportFragmentManager(), "CompleteProjectDialogFragment");
+                }
 
-
-            }
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -188,6 +217,28 @@ public class ProjectActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_project, menu);
+
+        MenuItem completeProjectItem = menu.findItem(R.id.completeProjectItem);
+        // show completeProjectItem only if manager
+        if (isManager){
+            completeProjectItem.setVisible(true);
+
+        }
+        else{
+            completeProjectItem.setVisible(false);
+        }
+
+
         return true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        firebaseHelper.detatchTasksCompletedValueEventListener(tasksCompletedValueEventListener);
+    }
+
+    protected void setTasksCompleted(boolean tasksCompleted) {
+        this.tasksCompleted = tasksCompleted;
     }
 }

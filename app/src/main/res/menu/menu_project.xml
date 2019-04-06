@@ -4,4 +4,7 @@
     <item
         android:id="@+id/generatePdfItem"
         android:title="Generate Pdf" />
+    <item
+        android:id="@+id/completeProjectItem"
+        android:title="Complete Project" />
 </menu>

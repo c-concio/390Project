@@ -23,5 +23,7 @@
         <item>Material</item>
     </string-array>
     <string name="title_activity_maps">Map</string>
+    <string name="completeProjectHeader">Are you sure you want to complete the project?</string>
+    <string name="completeProjectReturnHeader">Some tasks have not been completed</string>
 
 </resources>

@@ -504,6 +504,111 @@ public class FirebaseHelper {
         itemsListView.setAdapter(adapter);
     }
 
+    // function that checks if all the tasks for a given project is complete or not
+    ValueEventListener isTasksCompleted(final String projectPO, final ProjectActivity projectActivity){
+        ValueEventListener valueEventListener;
+        rootRef.addValueEventListener(valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // get all the taskIDs of a project
+                List<String> taskIDs = new ArrayList<>();
+
+                DataSnapshot projectTasksDataSnapshot = dataSnapshot.child("projects").child(projectPO).child("tasks");
+                for (DataSnapshot currentSnapshot : projectTasksDataSnapshot.getChildren()){
+                    taskIDs.add(currentSnapshot.getKey());
+                }
+
+                // for all the taskIDs, find if it is completed
+
+                Boolean tasksCompleted = true;
+                DataSnapshot taskDataSnapshot = dataSnapshot.child("tasks");
+                for (String taskId : taskIDs){
+                    if (taskDataSnapshot.child(taskId).exists()){
+                        if (!taskDataSnapshot.child(taskId).child("completed").getValue(Boolean.class)) {
+                                tasksCompleted = false;
+                        }
+                    }
+                }
+
+                // if tasks are not completed, then set the activity's tasksCompleted status to false and call the OnCreateOptionsMenu function to handle the complete project option
+                if (!tasksCompleted){
+                    projectActivity.setTasksCompleted(false);
+                    projectActivity.invalidateOptionsMenu();
+                }
+                else{
+                    projectActivity.setTasksCompleted(true);
+                    projectActivity.invalidateOptionsMenu();
+                }
+
+
+                rootRef.removeEventListener(this);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return valueEventListener;
+    }
+
+    void detatchTasksCompletedValueEventListener (ValueEventListener valueEventListener){
+        rootRef.removeEventListener(valueEventListener);
+    }
+
+    // calculates the total time from the work blocks of each task and deletes them
+    public void calculateTotalTimes(final String projectPO){
+
+        rootRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                // get the taskIDs
+                DataSnapshot projectDS = dataSnapshot.child("projects").child(projectPO);
+                List<String> taskIDs = new ArrayList<>();
+                for (DataSnapshot currentDS : projectDS.child("tasks").getChildren()){
+                    taskIDs.add(currentDS.getKey());
+                }
+
+                // get the workBlocks from the tasks and calculate the total time
+                DataSnapshot taskDS = dataSnapshot.child("tasks");
+                for (String taskID : taskIDs){
+                    if (taskDS.child(taskID).exists()){
+                        //TODO: deletion
+                        // get the workBlock IDs
+                        /*taskDS.child(taskID).child("workBlocks");
+                        List<String> workBlocks = new ArrayList<>();
+                        for (DataSnapshot workBlockDS : taskDS.child(taskID).child("workBlocks").getChildren()){
+                            workBlocks.add(workBlockDS.getKey());
+                        }*/
+
+                        // delete the workBlocks
+                        //taskDS.child(taskID).child("workBlocks").getRef().removeValue();
+
+                        // go through all the workBlocks and calculate the totalTime and delete the block
+                        long totalTime = 0;
+                        if (dataSnapshot.child("workHistory").child("workingTasks").child(taskID).exists()){
+                            for (DataSnapshot currentDS : dataSnapshot.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").getChildren()){
+                                totalTime += currentDS.child("workingTime").getValue(long.class);
+                            }
+
+                            //set the totalTime fo the task
+                            taskDS.child(taskID).child("totalTime").getRef().setValue(totalTime);
+                    }
+
+                    }
+                }
+                rootRef.removeEventListener(this);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
     /*
     ------------------------------ Firebase Project Methods --------------------------------------------------------
      */
