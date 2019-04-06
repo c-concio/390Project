@@ -11,30 +11,50 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <RadioGroup
-            android:id="@+id/radio_group_projects"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="#EDF7FF"
-            android:gravity="center_horizontal">
-            <RadioButton
-                android:id="@+id/radio_button_start"
-                android:text="Start Date"
-                android:textColor="#616161"
-                android:textSize="14sp"
+            android:orientation="horizontal">
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="30dp" />
-            <RadioButton
-                android:id="@+id/radio_button_due"
-                android:text="Due Date"
+                android:text="Sort Projects By"
+                android:textSize="15sp"
                 android:textColor="#616161"
-                android:textSize="14sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_marginLeft="12dp"
+                android:layout_gravity="center_horizontal|center_vertical"/>
+            <RadioGroup
+                android:id="@+id/radio_group_projects"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@android:color/white"
+                >
+                <RadioButton
+                    android:id="@+id/radio_button_start"
+                    android:text="Start Date"
+                    android:textColor="#616161"
+                    android:textSize="18sp"
+                    android:scaleX="0.8"
+                    android:scaleY="0.8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp" />
+                <RadioButton
+                    android:id="@+id/radio_button_due"
+                    android:text="Due Date"
+                    android:textColor="#616161"
+                    android:textSize="18sp"
+                    android:scaleX="0.8"
+                    android:scaleY="0.8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RadioGroup>
 
-        </RadioGroup>
+        </LinearLayout>
+
+
 
         <ListView
             android:id="@+id/project_list_view"
@@ -42,13 +62,4 @@
             android:layout_height="match_parent"/>
 
     </LinearLayout>
-
-
-
-    <ProgressBar
-        android:id="@+id/progress_bar_projects"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"/>
 </RelativeLayout>

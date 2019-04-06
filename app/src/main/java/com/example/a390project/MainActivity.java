@@ -16,7 +16,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.a390project.DialogFragments.CreateControlDeviceDialogFragment;
@@ -45,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference  rootRef = FirebaseDatabase.getInstance().getReference();
     private String uId = FirebaseAuth.getInstance().getUid();
     private boolean isManager;
+    private ProgressBar mProgressbar;
 
     //This is our tab-layout
     private TabLayout tabLayout;
@@ -82,6 +87,24 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         updateUI(currentUser);
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_activity_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.LogOutbtnn:{
+                mAuth.signOut();
+                finish();
+                startActivity(new Intent(MainActivity.this, LogInActivity.class));
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void updateUI(FirebaseUser currentUser) {
@@ -139,6 +162,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void prepareActivity(final boolean isManager) {
         //instantiate fragment views
+        mProgressbar = findViewById(R.id.progress_bar_main_activity);
+        mProgressbar.setVisibility(View.VISIBLE);
+
         mFabOpenDialogFragmentProject = findViewById(R.id.fab_open_dialog_fragment_project);
         mFabOpenDialogFragmentProject.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -223,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
         //adapter.addFragment(fragment2,"FRAGMENT_2_TITLE");
 
         // ------------------ PROJECT FRAGMENT ------------------------
-        ProjectFragment projectFragment = new ProjectFragment();
+        ProjectFragment projectFragment = new ProjectFragment(mProgressbar);
         adapter.addFragment(projectFragment, "PROJECTS");
 
         if (isManager) {
