@@ -166,6 +166,8 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
                             @Override
                             public void run() {
                                 Log.d(TAG, "run: THREAD LISTENER RUNNING");
+                                runThreadListener = true;
+                                markerLocation = null;
                                 while (runThreadListener) {
                                     try {
                                         getActivity().runOnUiThread(new Runnable() {
@@ -231,24 +233,24 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
     public void onResume() {
         super.onResume();
         mMapView.onResume();
-        if (t != null) {
-            t.start();
-        }
+        Log.d(TAG, "onResume: starting thread");
+        runThreadListener = true;
     }
 
     @Override
     public void onStart() {
         super.onStart();
         mMapView.onStart();
-        if (t != null) {
-            t.start();
-        }
+        Log.d(TAG, "onStart: starting thread");
+        runThreadListener = true;
     }
 
     @Override
     public void onStop() {
         super.onStop();
         mMapView.onStop();
+        Log.d(TAG, "onStop: stopping thread");
+        runThreadListener = false;
     }
 
 
@@ -256,12 +258,15 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
     public void onPause() {
         mMapView.onPause();
         super.onPause();
+        Log.d(TAG, "onPause: stopping thread");
+        runThreadListener = false;
     }
 
     @Override
     public void onDestroy() {
         mMapView.onDestroy();
         super.onDestroy();
+        Log.d(TAG, "onDestroy: stopping thread");
         runThreadListener = false;
     }
 
