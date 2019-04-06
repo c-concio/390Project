@@ -9,13 +9,19 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 // Todo: input set firebase
 
@@ -42,7 +48,10 @@ public class TaskPackagingActivity extends AppCompatActivity {
 
     // ------------------------- temporary ----------------------------
     Button addMaterialButton;
-    EditText materialEditText;
+    Spinner materialSpinner;
+
+    ValueEventListener materialSpinnerValueEventListener;
+    ValueEventListener packagingValueEventListener;
     // ------------------------- temporary ----------------------------
 
     @Override
@@ -54,15 +63,16 @@ public class TaskPackagingActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         setActionBar("Packaging");
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         setupUI();
-        firebaseHelper.setTaskPackagingActivityListener(packagingTaskID, this);
+        packagingValueEventListener = firebaseHelper.setTaskPackagingActivityListener(packagingTaskID, this);
         firebaseHelper.setStartTimeEndTimeButtons(startTimeButton,endTimeButton,packagingTaskID);
         firebaseHelper.getEmployeeComments(this, packagingTaskID);
+        materialSpinnerValueEventListener = firebaseHelper.populateMaterialSpinner(this);
 
     }
 
@@ -85,25 +95,10 @@ public class TaskPackagingActivity extends AppCompatActivity {
             completeButton.setVisibility(View.GONE);
         postCommentButton.setOnClickListener(postCommentOnClickListener);
 
-        // ------------------------- temporary ----------------------------
-        materialEditText = findViewById(R.id.materialEditText);
+        materialSpinner = findViewById(R.id.materialSpinner);
         addMaterialButton = findViewById(R.id.addMaterialButton);
-        addMaterialButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (materialEditText.getText().toString().isEmpty()){
-                    materialEditText.setError("Please enter a material");
-                }
-                else{
-                    String material = materialEditText.getText().toString();
-                    DatabaseReference taskRef = FirebaseDatabase.getInstance().getReference().child("tasks").child(packagingTaskID);
-                    taskRef.child("materialUsed").child(material).setValue(true);
-                    materialEditText.getText().clear();
-                    Toast.makeText(TaskPackagingActivity.this, "Material added", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        // ------------------------- temporary ----------------------------
+        addMaterialButton.setOnClickListener(addMaterialOnClickListener);
+
 
 
         // setup the firebaseHelper
@@ -111,9 +106,18 @@ public class TaskPackagingActivity extends AppCompatActivity {
         Intent intent = getIntent();
         packagingTaskID = intent.getStringExtra("packagingTaskID");
 
+
         //check if workblock already running for this task and display the timer
         firebaseHelper.checkIfTaskStartedAlready(packagingTaskID, mTimeElapsed, TaskPackagingActivity.this, backPressed, null, "Packaging");
     }
+
+    View.OnClickListener addMaterialOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            String selectedMaterial = materialSpinner.getSelectedItem().toString();
+            firebaseHelper.addMaterialUsed(packagingTaskID, selectedMaterial);
+        }
+    };
 
 
     // onClickListener for the startTime button
@@ -162,7 +166,9 @@ public class TaskPackagingActivity extends AppCompatActivity {
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        firebaseHelper.detachTaskPackagingActivityListener(packagingTaskID);
+        FirebaseDatabase.getInstance().getReference().removeEventListener(packagingValueEventListener);
+        // detatch materialValueEventListener
+        FirebaseDatabase.getInstance().getReference().child("inventory").child("material").removeEventListener(materialSpinnerValueEventListener);
     }
 
     //custom heading and back button
