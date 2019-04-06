@@ -1,5 +1,6 @@
 package com.example.a390project.Fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import com.example.a390project.R;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressLint("ValidFragment")
 public class ProjectFragment extends Fragment {
 
     private String TAG = "ProjectFragment";
@@ -30,6 +32,10 @@ public class ProjectFragment extends Fragment {
     private RadioButton mRadioButtonStart;
     private View mView = null;
 
+    public ProjectFragment(ProgressBar mProgressbar) {
+        this.mProgressbar = mProgressbar;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState) {
         return inflater.inflate(R.layout.project_fragment, container, false);
@@ -38,14 +44,12 @@ public class ProjectFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         mView = view;
-        mProgressbar = view.findViewById(R.id.progress_bar_projects);
         mRadioGroup = view.findViewById(R.id.radio_group_projects);
         mRadioButtonDue = view.findViewById(R.id.radio_button_due);
         mRadioButtonStart = view.findViewById(R.id.radio_button_start);
 
         final FirebaseHelper firebaseHelper = new FirebaseHelper();
         //populate all projects from firebase to listview
-        mProgressbar.setVisibility(View.VISIBLE);
         firebaseHelper.populateProjects(view, getActivity(), mProgressbar,false, true);
         mRadioButtonStart.setChecked(true);
 

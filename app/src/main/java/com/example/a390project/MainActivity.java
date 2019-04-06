@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.a390project.DialogFragments.CreateControlDeviceDialogFragment;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference  rootRef = FirebaseDatabase.getInstance().getReference();
     private String uId = FirebaseAuth.getInstance().getUid();
     private boolean isManager;
+    private ProgressBar mProgressbar;
 
     //This is our tab-layout
     private TabLayout tabLayout;
@@ -139,6 +141,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void prepareActivity(final boolean isManager) {
         //instantiate fragment views
+        mProgressbar = findViewById(R.id.progress_bar_main_activity);
+        mProgressbar.setVisibility(View.VISIBLE);
+
         mFabOpenDialogFragmentProject = findViewById(R.id.fab_open_dialog_fragment_project);
         mFabOpenDialogFragmentProject.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -223,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
         //adapter.addFragment(fragment2,"FRAGMENT_2_TITLE");
 
         // ------------------ PROJECT FRAGMENT ------------------------
-        ProjectFragment projectFragment = new ProjectFragment();
+        ProjectFragment projectFragment = new ProjectFragment(mProgressbar);
         adapter.addFragment(projectFragment, "PROJECTS");
 
         if (isManager) {

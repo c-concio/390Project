@@ -82,6 +82,13 @@
                 app:maxImageSize="30dp" />
 
         </android.support.design.widget.CoordinatorLayout>
+
+        <ProgressBar
+            android:id="@+id/progress_bar_main_activity"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"/>
     </RelativeLayout>
 
 

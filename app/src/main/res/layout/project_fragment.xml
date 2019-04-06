@@ -42,13 +42,4 @@
             android:layout_height="match_parent"/>
 
     </LinearLayout>
-
-
-
-    <ProgressBar
-        android:id="@+id/progress_bar_projects"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"/>
 </RelativeLayout>
