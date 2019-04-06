@@ -103,6 +103,10 @@ public class MainActivity extends AppCompatActivity {
                 finish();
                 startActivity(new Intent(MainActivity.this, LogInActivity.class));
             }
+            case R.id.ProfileBtnn:{
+                Intent profactivity = new Intent(MainActivity.this, ProfileActivity.class);
+                startActivity(profactivity);
+            }
         }
         return super.onOptionsItemSelected(item);
     }
