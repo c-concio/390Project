@@ -16,8 +16,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.a390project.DialogFragments.CreateControlDeviceDialogFragment;
@@ -84,6 +87,24 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         updateUI(currentUser);
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_activity_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.LogOutbtnn:{
+                mAuth.signOut();
+                finish();
+                startActivity(new Intent(MainActivity.this, LogInActivity.class));
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void updateUI(FirebaseUser currentUser) {
