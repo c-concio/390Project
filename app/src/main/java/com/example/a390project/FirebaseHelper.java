@@ -542,6 +542,10 @@ public class FirebaseHelper {
                 projectActivity.setTasksCompleted(tasksCompleted);
                 projectActivity.invalidateOptionsMenu();
 
+                if (projectCompleted) {
+                    FloatingActionButton mFabOpenTaskDialogFragment = projectActivity.findViewById(R.id.fab_open_dialog_fragment_task);
+                    mFabOpenTaskDialogFragment.hide();
+                }
 
             }
 

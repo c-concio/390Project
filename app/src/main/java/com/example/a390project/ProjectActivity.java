@@ -66,6 +66,7 @@ public class ProjectActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         tasksCompletedValueEventListener = firebaseHelper.isTasksCompleted(projectPO, this);
+
     }
 
     private void checkIfManager() {
@@ -79,7 +80,6 @@ public class ProjectActivity extends AppCompatActivity {
             isManager = false;
             prepareActivity(isManager);
         }
-
     }
 
     private void prepareActivity(final boolean isManager) {
@@ -157,7 +157,10 @@ public class ProjectActivity extends AppCompatActivity {
     private void animateFab(int position) {
         switch (position) {
             case 0:
-                mFabOpenTaskDialogFragment.show();
+                if (projectCompleted)
+                    mFabOpenTaskDialogFragment.hide();
+                else
+                    mFabOpenTaskDialogFragment.show();
                 break;
             case 1:
                 mFabOpenTaskDialogFragment.hide();

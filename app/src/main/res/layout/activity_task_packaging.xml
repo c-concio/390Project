@@ -43,13 +43,14 @@
 
         <LinearLayout
             android:id="@+id/linearLayout5"
-            android:layout_width="0dp"
+            android:layout_width="362dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout8">
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout10">
 
             <LinearLayout
                 android:id="@+id/linear_layout"
@@ -101,13 +102,13 @@
             android:id="@+id/materialUsedTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:text="Materials Used: "
             android:textColor="@color/colorPrimaryDark"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout5" />
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout8" />
 
         <ListView
             android:id="@+id/materialListView"
@@ -156,22 +157,22 @@
             android:id="@+id/divider4"
             android:layout_width="0dp"
             android:layout_height="5dp"
-            android:layout_marginTop="8dp"
             android:background="@color/colorPrimaryDark"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout10" />
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout5" />
 
         <LinearLayout
             android:id="@+id/linearLayout11"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
+            android:layout_height="61dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/divider4">
+            app:layout_constraintTop_toBottomOf="@+id/divider4">
 
             <EditText
                 android:id="@+id/employeeCommentEditText"
