@@ -524,24 +524,25 @@ public class FirebaseHelper {
                 DataSnapshot taskDataSnapshot = dataSnapshot.child("tasks");
                 for (String taskId : taskIDs){
                     if (taskDataSnapshot.child(taskId).exists()){
-                        if (!taskDataSnapshot.child(taskId).child("completed").getValue(Boolean.class)) {
-                                tasksCompleted = false;
-                        }
+                        if (!taskDataSnapshot.child(taskId).child("completed").getValue(Boolean.class))
+                            tasksCompleted = false;
                     }
                 }
 
+                // check if project is already completed
+                Boolean projectCompleted = false;
+                if (dataSnapshot.child("projects").child(projectPO).child("completed").exists()){
+                    projectCompleted = dataSnapshot.child("projects").child(projectPO).child("completed").getValue(Boolean.class);
+                }
+
+                Log.d(TAG, "onDataChange: projectCompleted " + projectCompleted);
                 // if tasks are not completed, then set the activity's tasksCompleted status to false and call the OnCreateOptionsMenu function to handle the complete project option
-                if (!tasksCompleted){
-                    projectActivity.setTasksCompleted(false);
-                    projectActivity.invalidateOptionsMenu();
-                }
-                else{
-                    projectActivity.setTasksCompleted(true);
-                    projectActivity.invalidateOptionsMenu();
-                }
+
+                projectActivity.setProjectCompleted(projectCompleted);
+                projectActivity.setTasksCompleted(tasksCompleted);
+                projectActivity.invalidateOptionsMenu();
 
 
-                rootRef.removeEventListener(this);
             }
 
             @Override
@@ -575,29 +576,36 @@ public class FirebaseHelper {
                 for (String taskID : taskIDs){
                     if (taskDS.child(taskID).exists()){
                         //TODO: deletion
-                        // get the workBlock IDs
-                        /*taskDS.child(taskID).child("workBlocks");
-                        List<String> workBlocks = new ArrayList<>();
-                        for (DataSnapshot workBlockDS : taskDS.child(taskID).child("workBlocks").getChildren()){
-                            workBlocks.add(workBlockDS.getKey());
-                        }*/
-
-                        // delete the workBlocks
-                        //taskDS.child(taskID).child("workBlocks").getRef().removeValue();
+                        //delete the workBlocks
+                        taskDS.child(taskID).child("workBlocks").getRef().removeValue();
 
                         // go through all the workBlocks and calculate the totalTime and delete the block
                         long totalTime = 0;
                         if (dataSnapshot.child("workHistory").child("workingTasks").child(taskID).exists()){
+
                             for (DataSnapshot currentDS : dataSnapshot.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").getChildren()){
                                 totalTime += currentDS.child("workingTime").getValue(long.class);
+                                // get the employeeIDs and delete the workblock in the employee
+                                String employeeID = currentDS.child("employeeID").getValue(String.class);
+                                String workBlockID = currentDS.getKey();
+                                // go to employee and delete workblock
+                                if (dataSnapshot.child("users").child(employeeID).child("workingTasks").child(taskID).child("workBlocks").child(workBlockID).exists())
+                                    dataSnapshot.child("users").child(employeeID).child("workingTasks").child(taskID).child("workBlocks").child(workBlockID).getRef().setValue(null);
                             }
 
                             //set the totalTime fo the task
                             taskDS.child(taskID).child("totalTime").getRef().setValue(totalTime);
-                    }
+
+                            // delete the workblock
+                            dataSnapshot.child("workHistory").child("workingTasks").child(taskID).getRef().setValue(null);
+                        }
 
                     }
                 }
+
+                // create a variable in project to indicate that the project has been completed
+                dataSnapshot.child("projects").child(projectPO).child("completed").getRef().setValue(true);
+
                 rootRef.removeEventListener(this);
             }
 

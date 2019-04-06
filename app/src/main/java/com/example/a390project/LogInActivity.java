@@ -43,6 +43,7 @@ public class LogInActivity extends AppCompatActivity {
         //firebase
         mAuth = FirebaseAuth.getInstance();
 
+        Log.d(TAG, "onCreate: opened logInActivity");
         prepareActivity();
     }
 

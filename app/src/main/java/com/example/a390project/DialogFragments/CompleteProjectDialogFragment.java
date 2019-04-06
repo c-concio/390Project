@@ -22,6 +22,7 @@ public class CompleteProjectDialogFragment extends DialogFragment {
     private Button noButton;
     private Button returnButton;
     Boolean completedProject;
+    Boolean completedTasks;
     private FirebaseHelper firebaseHelper;
     private String projectPO;
 
@@ -53,7 +54,10 @@ public class CompleteProjectDialogFragment extends DialogFragment {
         Button noButton = view.findViewById(R.id.noButton);
         Button returnButton = view.findViewById(R.id.returnButton);
 
-        if (completedProject){
+        Log.d(TAG, "setupUI: completedTasks is " + completedTasks);
+        Log.d(TAG, "setupUI: completedProject is " + completedProject);
+
+        if (completedTasks && !completedProject){
             outputTextView.setText(getString(R.string.completeProjectHeader));
             yesButton.setVisibility(View.VISIBLE);
             noButton.setVisibility(View.VISIBLE);
@@ -61,8 +65,16 @@ public class CompleteProjectDialogFragment extends DialogFragment {
 
             yesButton.setOnClickListener(yesOnClickListener);
             noButton.setOnClickListener(noOnClickListener);
-
         }
+        else if (completedTasks && completedProject){
+            outputTextView.setText(getString(R.string.alreadyCompletedHeader));
+            yesButton.setVisibility(View.GONE);
+            noButton.setVisibility(View.GONE);
+            returnButton.setVisibility(View.VISIBLE);
+
+            returnButton.setOnClickListener(returnOnClickListener);
+        }
+
         else{
             outputTextView.setText(getString(R.string.completeProjectReturnHeader));
             yesButton.setVisibility(View.GONE);
@@ -105,5 +117,10 @@ public class CompleteProjectDialogFragment extends DialogFragment {
 
     public void setProjectPO(String projectPO) {
         this.projectPO = projectPO;
+    }
+
+
+    public void setCompletedTasks(Boolean completedTasks) {
+        this.completedTasks = completedTasks;
     }
 }

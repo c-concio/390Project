@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -46,6 +47,7 @@ public class ProjectActivity extends AppCompatActivity {
     private boolean isManager;
 
     private boolean tasksCompleted = false;
+    private boolean projectCompleted = false;
 
     private ValueEventListener tasksCompletedValueEventListener;
 
@@ -195,17 +197,13 @@ public class ProjectActivity extends AppCompatActivity {
             case R.id.completeProjectItem:
                 // if tasks are completed then set onclick to complete the project, else invalidate
                 CompleteProjectDialogFragment completeProjectDialogFragment = new CompleteProjectDialogFragment();
-                if (tasksCompleted){
-                    // complete project
-                    completeProjectDialogFragment.setCompletedProject(true);
-                    completeProjectDialogFragment.setProjectPO(projectPO);
-                    completeProjectDialogFragment.show(getSupportFragmentManager(), "CompleteProjectDialogFragment");
-                }
-                else{
-                    completeProjectDialogFragment.setCompletedProject(false);
-                    completeProjectDialogFragment.show(getSupportFragmentManager(), "CompleteProjectDialogFragment");
-                }
+                completeProjectDialogFragment.setCompletedTasks(tasksCompleted);
+                completeProjectDialogFragment.setCompletedProject(projectCompleted);
+                completeProjectDialogFragment.setProjectPO(projectPO);
+                completeProjectDialogFragment.show(getSupportFragmentManager(), "CompleteProjectDialogFragment");
 
+                Log.d(TAG, "onOptionsItemSelected: tsksCompleted " + tasksCompleted);
+                Log.d(TAG, "onOptionsItemSelected: projectCompleted " + projectCompleted);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -222,7 +220,6 @@ public class ProjectActivity extends AppCompatActivity {
         // show completeProjectItem only if manager
         if (isManager){
             completeProjectItem.setVisible(true);
-
         }
         else{
             completeProjectItem.setVisible(false);
@@ -240,5 +237,9 @@ public class ProjectActivity extends AppCompatActivity {
 
     protected void setTasksCompleted(boolean tasksCompleted) {
         this.tasksCompleted = tasksCompleted;
+    }
+
+    public void setProjectCompleted(boolean projectCompleted) {
+        this.projectCompleted = projectCompleted;
     }
 }
