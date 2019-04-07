@@ -1,6 +1,9 @@
 package com.example.a390project.Model;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 public class Employee {
 
@@ -11,7 +14,12 @@ public class Employee {
     private String email;
     private String timeCreated;
 
-    Employee(){}
+    Thread t = new Thread(new Runnable() {
+        @Override
+        public void run() {
+
+        }
+    })
 
     public String getAccountID() {
         return accountID;
