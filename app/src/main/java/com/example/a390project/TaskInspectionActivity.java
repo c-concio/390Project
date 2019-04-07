@@ -31,7 +31,7 @@ public class TaskInspectionActivity extends AppCompatActivity {
     Button mCompleteTime;
     Button mPostCommentButton;
     TextView mTimeElapsed;
-    boolean backPressed = false;
+    private boolean backPressed[] = new boolean[1];
 
     FirebaseHelper firebaseHelper;
     String inspectionTaskID;
@@ -46,13 +46,14 @@ public class TaskInspectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_inspection);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        Intent intent = getIntent();
+        inspectionType = intent.getStringExtra("taskType");
+        inspectionTaskID = intent.getStringExtra("inspectionTaskID");
         setupUI();
         firebaseHelper.setTaskInspectionActivityListener(inspectionTaskID, TaskInspectionActivity.this);
         firebaseHelper.setStartTimeEndTimeButtons(mStartTime,mEndTime,inspectionTaskID);
-        final Thread classThread = Thread.currentThread();
 
-        Intent intent = getIntent();
-        inspectionType = intent.getStringExtra("taskType");
+
 
         checkIfManager();
 
@@ -123,7 +124,7 @@ public class TaskInspectionActivity extends AppCompatActivity {
         /*
             -------------------------- Start and End time buttons creating workblocks, updating persistent notification and updating mTimeElapsed textview-------------------------
          */
-
+        backPressed[0] = false;
         firebaseHelper.checkIfTaskStartedAlready(inspectionTaskID, mTimeElapsed, TaskInspectionActivity.this, backPressed, null, inspectionType);
 
         mStartTime.setOnClickListener(new View.OnClickListener() {
@@ -200,8 +201,7 @@ public class TaskInspectionActivity extends AppCompatActivity {
         mTimeElapsed.setVisibility(View.GONE);
 
         firebaseHelper = new FirebaseHelper();
-        Intent intent = getIntent();
-        inspectionTaskID = intent.getStringExtra("inspectionTaskID");
+
 
     }
 
@@ -224,7 +224,7 @@ public class TaskInspectionActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home: {
                 mTimeElapsed.setVisibility(View.GONE);
-                backPressed = true;
+                backPressed[0] = true;
                 this.finish();
                 return true;
             }
@@ -248,6 +248,6 @@ public class TaskInspectionActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         mTimeElapsed.setVisibility(View.GONE);
-        backPressed = true;
+        backPressed[0] = true;
     }
 }

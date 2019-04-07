@@ -14,13 +14,6 @@ public class Employee {
     private String email;
     private String timeCreated;
 
-    Thread t = new Thread(new Runnable() {
-        @Override
-        public void run() {
-
-        }
-    })
-
     public String getAccountID() {
         return accountID;
     }

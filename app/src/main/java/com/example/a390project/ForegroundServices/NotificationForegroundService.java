@@ -77,6 +77,7 @@ public class NotificationForegroundService extends Service {
             intent2 = new Intent(getApplicationContext(), TaskInspectionActivity.class);
             // send the TaskInspectionActivity the projectPO
             intent2.putExtra("inspectionTaskID", taskID);
+            intent2.putExtra("taskType", taskTitle);
         }
         else if(taskTitle.equals("Sanding") || taskTitle.equals("SandBlasting") || taskTitle.equals("ManualSolventCleaning") || taskTitle.equals("Iridite") || taskTitle.equals("Masking")) {
             intent2 = new Intent(getApplicationContext(), TaskPrePaintingActivity.class);

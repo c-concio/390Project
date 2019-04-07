@@ -36,7 +36,7 @@ public class TaskPackagingActivity extends AppCompatActivity {
     Button postCommentButton;
     FirebaseHelper firebaseHelper;
     TextView mTimeElapsed;
-    private boolean backPressed = false;
+    private boolean backPressed[] = new boolean[1];
 
     String packagingTaskID;
 
@@ -108,6 +108,7 @@ public class TaskPackagingActivity extends AppCompatActivity {
 
 
         //check if workblock already running for this task and display the timer
+        backPressed[0] = false;
         firebaseHelper.checkIfTaskStartedAlready(packagingTaskID, mTimeElapsed, TaskPackagingActivity.this, backPressed, null, "Packaging");
     }
 
@@ -184,7 +185,7 @@ public class TaskPackagingActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home: {
                 mTimeElapsed.setVisibility(View.GONE);
-                backPressed = true;
+                backPressed[0] = true;
                 this.finish();
                 return true;
             }
@@ -208,6 +209,6 @@ public class TaskPackagingActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         mTimeElapsed.setVisibility(View.GONE);
-        backPressed = true;
+        backPressed[0] = true;
     }
 }

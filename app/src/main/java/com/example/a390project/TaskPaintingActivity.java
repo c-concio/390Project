@@ -36,7 +36,7 @@ public class TaskPaintingActivity extends AppCompatActivity {
     private ListView employeeCommentsListView;
     private Button saveButton;
     private TextView mTimeElapsed;
-    private boolean backPressed = false;
+    private boolean backPressed[] = new boolean[1];
 
     // views for liquid paint
     LinearLayout liquidLinearLayout;
@@ -90,7 +90,7 @@ public class TaskPaintingActivity extends AppCompatActivity {
         /*
             -------------------------- Start and End time buttons creating workblocks, updating persistent notification and updating mTimeElapsed textview-------------------------
          */
-
+        backPressed[0] = false;
         firebaseHelper.checkIfTaskStartedAlready(paintingTaskID, mTimeElapsed, TaskPaintingActivity.this, backPressed, null, "Painting");
 
         mStartTime.setOnClickListener(new View.OnClickListener() {
@@ -168,7 +168,7 @@ public class TaskPaintingActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home: {
                 mTimeElapsed.setVisibility(View.GONE);
-                backPressed = true;
+                backPressed[0] = true;
                 this.finish();
                 return true;
             }
@@ -246,6 +246,6 @@ public class TaskPaintingActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         mTimeElapsed.setVisibility(View.GONE);
-        backPressed = true;
+        backPressed[0] = true;
     }
 }

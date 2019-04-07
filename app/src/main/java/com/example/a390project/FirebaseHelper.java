@@ -22,7 +22,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -62,6 +61,14 @@ import com.example.a390project.Model.SubTask;
 import com.example.a390project.Model.Task;
 import com.example.a390project.Model.User;
 import com.example.a390project.Model.WorkBlock;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -73,6 +80,7 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -89,6 +97,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import static java.lang.Integer.parseInt;
 
@@ -98,7 +107,6 @@ public class FirebaseHelper {
     private static final String TAG = "FirebaseHelper";
     private DatabaseReference rootRef;
     private String uId;
-    private boolean check;
     public static final String CHANNEL_ID = "NotificationChannel";
 
     public FirebaseHelper() {
@@ -561,7 +569,7 @@ public class FirebaseHelper {
         rootRef.removeEventListener(valueEventListener);
     }
 
-    // calculates the total time from the work blocks of each task and deletes them
+    // for the selected project to complete: calculates the total time from the work blocks of each task and deletes them
     public void calculateTotalTimes(final String projectPO){
 
         rootRef.addValueEventListener(new ValueEventListener() {
@@ -1087,7 +1095,7 @@ public class FirebaseHelper {
 
 
     // -------------------------------------------- Firebase Prepaint Task Methods --------------------------------------------
-    public void populateSubTasks(String taskId, final Activity activity, final boolean backPressed){
+    public void populateSubTasks(String taskId, final Activity activity, final boolean[] backPressed){
         final List<String> subTasksID = new ArrayList<>();
         final List<SubTask> subTasks = new ArrayList<>();
         rootRef.child("tasks").child(taskId).child("subTasks").addValueEventListener(new ValueEventListener() {
@@ -1129,7 +1137,7 @@ public class FirebaseHelper {
 
     }
 
-    private void callPrepaintTaskListViewAdapter(Activity activity, List<SubTask> subTasks, boolean backPressed){
+    private void callPrepaintTaskListViewAdapter(Activity activity, List<SubTask> subTasks, boolean[] backPressed){
         PrepaintTaskListViewAdapter adapter = new PrepaintTaskListViewAdapter(activity, subTasks, activity, backPressed);
         ListView prepaintTasksListView = activity.findViewById(R.id.prepaintTaskListView);
         prepaintTasksListView.setAdapter(adapter);
@@ -1751,7 +1759,7 @@ public class FirebaseHelper {
      */
 
     public void checkIfCanStart(final String taskID, final Context context, final String taskTitle, final Activity activity, final Button mStartTime, final Button mEndTime,
-                                final TextView mTimeElapsed, final boolean backPressed, final View convertView) {
+                                final TextView mTimeElapsed, final boolean backPressed[], final View convertView) {
         final DatabaseReference uIdRef = rootRef.child("users").child(uId);
         uIdRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -1779,7 +1787,7 @@ public class FirebaseHelper {
     }
 
     public void createWorkBlock(final String taskID, final String taskTitle, final Context context, final Activity activity, final Button mStartTime, final Button mEndTime,
-                                final TextView mTimeElapsed, final boolean backPressed, final View convertView) {
+                                final TextView mTimeElapsed, final boolean backPressed[], final View convertView) {
         rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("completed").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -1832,6 +1840,7 @@ public class FirebaseHelper {
                                             createUpdateTimeElapsedThread(mTimeElapsed1, activity, timeNow, backPressed);
                                         }
                                         else {
+                                            Log.d(TAG, "CONVERT VIEW IS NULLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
                                             createUpdateTimeElapsedThread(mTimeElapsed, activity, timeNow, backPressed);
                                         }
 
@@ -1954,6 +1963,7 @@ public class FirebaseHelper {
                             mTimeElapsed1.setVisibility(View.GONE);
                         }
                         else {
+                            Log.d(TAG, "CONVERT VIEW IS NULLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
                             mTimeElapsed.setVisibility(View.GONE);
                         }
                         //manage workBlockLimitCount
@@ -2289,10 +2299,11 @@ public class FirebaseHelper {
         rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("completed").setValue(true);
     }
 
-    public void setStartTimeEndTimeButtons(final Button mStartTime, final Button mEndTime, String taskID) {
+    public void setStartTimeEndTimeButtons(final Button mStartTime, final Button mEndTime, final String taskID) {
         rootRef.child("tasks").child(taskID).child("completed").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                rootRef.child("tasks").child(taskID).child("completed").removeEventListener(this);
                 if(dataSnapshot.getValue(boolean.class)) {
                     mStartTime.setVisibility(View.GONE);
                     mEndTime.setVisibility(View.GONE);
@@ -2667,7 +2678,7 @@ public class FirebaseHelper {
         });
     }
 
-    public void checkIfTaskStartedAlready(final String taskID, final TextView mTimeElapsed, final Activity activity, final boolean backPressed, final View convertView, final String taskTitle) {
+    public void checkIfTaskStartedAlready(final String taskID, final TextView mTimeElapsed, final Activity activity, final boolean backPressed[], final View convertView, final String taskTitle) {
         rootRef.child("users").child(uId).child("workingTasks").child(taskID).child("currentWorkBlock").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -2708,12 +2719,12 @@ public class FirebaseHelper {
         });
     }
 
-    private void createUpdateTimeElapsedThread(final TextView mTimeElapsed, final Activity activity, final long startTime, final boolean backPressed) {
+    private void createUpdateTimeElapsedThread(final TextView mTimeElapsed, final Activity activity, final long startTime, final boolean[] backPressed) {
         mTimeElapsed.setVisibility(View.VISIBLE);
         final Thread updateTimeElapsed = new Thread() {
             @Override
             public void run() {
-                while (mTimeElapsed.getVisibility() == View.VISIBLE && !backPressed) {
+                while (mTimeElapsed.getVisibility() == View.VISIBLE && !backPressed[0] && !Thread.currentThread().isInterrupted()) {
                     try {
                         activity.runOnUiThread(new Runnable() {
                             @Override
@@ -2743,7 +2754,7 @@ public class FirebaseHelper {
                                 String elapsedTime = h + ":" + m + ":" + s;
                                 mTimeElapsed.setText(elapsedTime);
 
-                                Log.d(TAG, "run: UPDATING ELAPSED TIME: " + elapsedTime);
+                                Log.d(TAG, "run: UPDATING ELAPSED TIME: " + elapsedTime + " " + mTimeElapsed.getVisibility() + " " + backPressed[0]);
                             }
                         });
                         Thread.sleep(1000);
@@ -2752,17 +2763,87 @@ public class FirebaseHelper {
                     }
 
                 }
-                if (mTimeElapsed.getVisibility() == View.GONE || backPressed) {
+                if (mTimeElapsed.getVisibility() == View.GONE || backPressed[0]) {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             mTimeElapsed.setVisibility(View.GONE);
+                            Thread.currentThread().interrupt();
                         }
                     });
                 }
-                Thread.currentThread().interrupt();
+
             }
         };
         updateTimeElapsed.start();
     }
+
+    /*
+    -------------------------------------------------------------------STATISTICS GRAPH--------------------------------------------------------------------------
+     */
+
+    public void populateStatisticsGraph(final String projectPO, final BarChart statisticsGraph) {
+        rootRef.child("projects").child(projectPO).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                rootRef.child("projects").child(projectPO).removeEventListener(this);
+                if (dataSnapshot.hasChild("completed")) {
+                    boolean completed = dataSnapshot.child("completed").getValue(boolean.class);
+                    if (completed) {
+                        final List<String> taskIDs = new ArrayList<>();
+                        for(DataSnapshot ds:dataSnapshot.child("tasks").getChildren()) {
+                            taskIDs.add(ds.getKey());
+                        }
+                        rootRef.child("tasks").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                rootRef.child("tasks").removeEventListener(this);
+                                String graphTitle = projectPO;
+                                final ArrayList<BarEntry> entries = new ArrayList<>();
+                                final ArrayList<String> xLabels = new ArrayList<>();
+                                int i = 0;
+                                for (String taskID:taskIDs) {
+                                    float taskTime = (float) TimeUnit.MILLISECONDS.toHours(dataSnapshot.child(taskID).child("totalTime").getValue(long.class));
+                                    String taskType = dataSnapshot.child(taskID).child("taskType").getValue(String.class);
+                                    Log.d(TAG, "fetching: " + taskID + " " + taskType + " " + taskTime);
+                                    entries.add(new BarEntry(i, taskTime));
+                                    xLabels.add(taskType);
+                                    i++;
+                                }
+
+                                BarDataSet dataSet = new BarDataSet(entries,"Task Time in hours");
+
+                                BarData data = new BarData(dataSet);
+                                statisticsGraph.setData(data);
+                                statisticsGraph.getLegend().setEnabled(true);
+                                statisticsGraph.getDescription().setEnabled(false);
+                                statisticsGraph.animateXY(2000, 2000);
+
+                                XAxis xAxis = statisticsGraph.getXAxis();
+                                xAxis.setGranularity(1f);
+                                xAxis.setValueFormatter(new IndexAxisValueFormatter(xLabels));
+                                xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+
+                                statisticsGraph.invalidate();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+
+
 }

@@ -32,10 +32,10 @@ public class PrepaintTaskListViewAdapter extends BaseAdapter {
     private Button endTimeButton;
     private EditText employeeCommentEditText;
     private TextView mTimeElapsed;
-    private boolean backPressed;
+    private boolean backPressed[];
     private PrepaintTaskListViewAdapter adapter;
 
-    public PrepaintTaskListViewAdapter(Context context, List<SubTask> subTasks, Activity activity, boolean backPressed){
+    public PrepaintTaskListViewAdapter(Context context, List<SubTask> subTasks, Activity activity, boolean[] backPressed){
         this.context = context;
         this.subTasks = subTasks;
         this.activity = activity;

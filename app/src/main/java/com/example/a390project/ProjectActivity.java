@@ -22,6 +22,7 @@ import com.example.a390project.DialogFragments.CreateTaskDialogFragment;
 import com.example.a390project.Fragments.EmployeeTasksFragment;
 import com.example.a390project.Fragments.EmployeeWorkBlocksFragment;
 import com.example.a390project.Fragments.ProjectGraphFragment;
+import com.example.a390project.Fragments.ProjectStatisticsFragment;
 import com.example.a390project.Fragments.ProjectTasksFragment;
 import com.example.a390project.Model.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -146,10 +147,15 @@ public class ProjectActivity extends AppCompatActivity {
         // ------------------ PROJECT FRAGMENT ------------------------
 
         ProjectTasksFragment projectTasksFragment = new ProjectTasksFragment(projectPO);
-        adapter.addFragment(projectTasksFragment, "PROJECT TASKS");
+        adapter.addFragment(projectTasksFragment, "TASKS");
 
         ProjectGraphFragment projectGraphFragment = new ProjectGraphFragment(projectPO);
-        adapter.addFragment(projectGraphFragment, "PROJECT GRAPHS");
+        adapter.addFragment(projectGraphFragment, "GRAPHS");
+
+        if (isManager) {
+            ProjectStatisticsFragment projectStatisticsFragment = new ProjectStatisticsFragment(projectPO);
+            adapter.addFragment(projectStatisticsFragment, "STATISTICS");
+        }
 
         viewPager.setAdapter(adapter);
     }
