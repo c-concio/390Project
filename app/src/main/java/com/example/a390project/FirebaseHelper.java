@@ -1644,6 +1644,36 @@ public class FirebaseHelper {
 
     }
 
+    public void powderPaintSearch2(final Activity activity, final String searchText) {
+        rootRef.child("inventory").child("powder").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<PaintBucket> paintBuckets = new ArrayList<>();
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    String paintCode = ds.getKey();
+                    String paintDescription = ds.child("paintDescription").getValue(String.class);
+                    int bakeTemperature = ds.child("bakeTemperature").getValue(int.class);
+                    int bakeTime = ds.child("bakeTime").getValue(int.class);
+                    float paintWeight = ds.child("paintWeight").getValue(float.class);
+
+                    if (paintDescription.toLowerCase().contains(searchText)) {
+                        paintBuckets.add(new PaintBucket("powder", paintCode, paintDescription, bakeTemperature, bakeTime, paintWeight));
+                    }
+                }
+                PaintRecyclerAdapter adapter = new PaintRecyclerAdapter(activity, paintBuckets);
+                RecyclerView powderRecyclerView = activity.findViewById(R.id.powderRecyclerView);
+                powderRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
+                powderRecyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+        });
+    }
+
     public void powderPaintSearch(final Activity activity, String searchText){
         rootRef.child("inventory").child("powder").orderByChild("paintDescription").startAt(searchText).endAt(searchText + "\uf0ff").addValueEventListener(new ValueEventListener() {
             @Override
