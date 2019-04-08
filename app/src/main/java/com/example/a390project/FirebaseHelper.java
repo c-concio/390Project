@@ -457,24 +457,34 @@ public class FirebaseHelper {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Project> projects = new ArrayList<>();
+                List<Boolean> projectsCompleted = new ArrayList<>();
                 for (DataSnapshot ds:dataSnapshot.getChildren()) {
                     String po = ds.getKey();
                     String title = ds.child("title").getValue(String.class);
                     String client = ds.child("client").getValue(String.class);
                     long startDate = ds.child("startDate").getValue(long.class);
                     long dueDate = ds.child("dueDate").getValue(long.class);
-                    projects.add(new Project(po, title, client, startDate, dueDate));
+                    Boolean hasCompleted;
+                    if (ds.child("completed").exists()) {
+                        hasCompleted = (ds.child("completed").getValue(Boolean.class));
+                    }
+                    else {
+                        hasCompleted = false;
+                    }
+                    projects.add(new Project(po, title, client, startDate, dueDate, hasCompleted));
+
                 }
+
                 if (!isDueDateSort && !isStartDateSort) {
-                    callProjectListViewAdapter(view, activity, projects);
+                    callProjectListViewAdapter(view, activity, projects, projectsCompleted);
                 }
                 else if(isDueDateSort && !isStartDateSort) {
                     sortProjectsByDueDate(projects);
-                    callProjectListViewAdapter(view, activity, projects);
+                    callProjectListViewAdapter(view, activity, projects, projectsCompleted);
                 }
                 else if(!isDueDateSort && isStartDateSort) {
                     sortProjectsByStartDate(projects);
-                    callProjectListViewAdapter(view, activity, projects);
+                    callProjectListViewAdapter(view, activity, projects, projectsCompleted);
                 }
                 mProgressbar.setVisibility(View.GONE);
             }
@@ -522,8 +532,8 @@ public class FirebaseHelper {
         return projects;
     }
 
-    private void callProjectListViewAdapter(View view, Activity activity, List<Project> projects){
-        ProjectListViewAdapter adapter = new ProjectListViewAdapter(activity, projects);
+    private void callProjectListViewAdapter(View view, Activity activity, List<Project> projects, List<Boolean> projectsCompleted){
+        ProjectListViewAdapter adapter = new ProjectListViewAdapter(activity, projects, projectsCompleted);
         ListView itemsListView  = view.findViewById(R.id.project_list_view);
         itemsListView.setAdapter(adapter);
     }
