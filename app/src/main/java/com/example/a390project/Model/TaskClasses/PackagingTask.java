@@ -1,12 +1,16 @@
 package com.example.a390project.Model.TaskClasses;
 
+import android.util.Log;
+
 import java.util.List;
 
 public class PackagingTask {
 
     private String description;
     private long hours;
-    private List<String> materials;
+    private List<String> materialIDs;
+
+    private static final String TAG = "PackagingTask";
 
     public String getDescription() {
         return description;
@@ -24,11 +28,14 @@ public class PackagingTask {
         this.hours = hours;
     }
 
-    public List<String> getMaterials() {
-        return materials;
+    public List<String> getMaterialIDs() {
+        return materialIDs;
     }
 
-    public void setMaterials(List<String> materials) {
-        this.materials = materials;
+    public void setMaterialIDs(List<String> materialIDs) {
+        Log.d(TAG, "setMaterialIDs: material");
+        for (String material : materialIDs)
+            Log.d(TAG, "setMaterialIDs: material: " + material);
+        this.materialIDs = materialIDs;
     }
 }

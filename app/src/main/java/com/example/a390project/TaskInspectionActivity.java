@@ -192,7 +192,7 @@ public class TaskInspectionActivity extends AppCompatActivity {
         mCounted = findViewById(R.id.partCountedEditText);
         mAccepted = findViewById(R.id.partAcceptedEditText);
         mRejected = findViewById(R.id.partRejectedEditText);
-        mEmployeeCommentEditText = findViewById(R.id.employeeCommentEditText);
+        mEmployeeCommentEditText = findViewById(R.id.newCommentsEditText);
         mCompleteTime = findViewById(R.id.completeButton);
         mStartTime = findViewById(R.id.startTimeButton_inspection);
         mEndTime = findViewById(R.id.endTimeButton_inspection);

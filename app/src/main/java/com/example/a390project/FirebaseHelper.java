@@ -587,7 +587,6 @@ public class FirebaseHelper {
                 DataSnapshot taskDS = dataSnapshot.child("tasks");
                 for (String taskID : taskIDs){
                     if (taskDS.child(taskID).exists()){
-                        //TODO: deletion
                         //delete the workBlocks
                         taskDS.child(taskID).child("workBlocks").getRef().removeValue();
 
@@ -849,6 +848,16 @@ public class FirebaseHelper {
         rootRef.child("tasks").child(taskID).addValueEventListener(inspectionValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.child("completed").getValue(Boolean.class)){
+                    EditText partCountedEditText = activity.findViewById(R.id.partCountedEditText);
+                    EditText partAcceptedEditText = activity.findViewById(R.id.partAcceptedEditText);
+                    EditText partRejectedEditText = activity.findViewById(R.id.partRejectedEditText);
+
+                    partCountedEditText.setEnabled(false);
+                    partAcceptedEditText.setEnabled(false);
+                    partRejectedEditText.setEnabled(false);
+                }
+
                 if (dataSnapshot.hasChild("partCounted")) {
                     int partCounted = dataSnapshot.child("partCounted").getValue(int.class);
                     EditText partCountedEditText = activity.findViewById(R.id.partCountedEditText);
@@ -1095,10 +1104,11 @@ public class FirebaseHelper {
 
 
     // -------------------------------------------- Firebase Prepaint Task Methods --------------------------------------------
-    public void populateSubTasks(String taskId, final Activity activity, final boolean[] backPressed){
+    public ValueEventListener populateSubTasks(String taskId, final Activity activity, final boolean[] backPressed){
         final List<String> subTasksID = new ArrayList<>();
         final List<SubTask> subTasks = new ArrayList<>();
-        rootRef.child("tasks").child(taskId).child("subTasks").addValueEventListener(new ValueEventListener() {
+        ValueEventListener prepaintValueEventListener;
+        rootRef.child("tasks").child(taskId).child("subTasks").addValueEventListener( prepaintValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot ds:dataSnapshot.getChildren()) {
@@ -1135,6 +1145,11 @@ public class FirebaseHelper {
             }
         });
 
+        return prepaintValueEventListener;
+    }
+
+    public void detatchPrepaintValueEventListener(String taskID, ValueEventListener valueEventListener){
+        rootRef.child("tasks").child(taskID).child("subTasks").removeEventListener(valueEventListener);
     }
 
     private void callPrepaintTaskListViewAdapter(Activity activity, List<SubTask> subTasks, boolean[] backPressed){
@@ -1663,9 +1678,11 @@ public class FirebaseHelper {
 
     // function that gets all the comments of the specified task
     void getEmployeeComments(final Activity activity, final String taskID){
-        rootRef.child("tasks").child(taskID).child("employeeComments").addValueEventListener(employeeCommentsValueEventListener = new ValueEventListener() {
+        rootRef.child("tasks").child(taskID).addValueEventListener(employeeCommentsValueEventListener = new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot employeeDataSnapshot) {
+                DataSnapshot dataSnapshot = employeeDataSnapshot.child("employeeComments");
+
                 List<EmployeeComment> comments = new ArrayList<>();
                 Log.d(TAG, "onDataChange: Called snapshot " + taskID);
                 for(DataSnapshot postSnapshot : dataSnapshot.getChildren()){
@@ -1678,6 +1695,15 @@ public class FirebaseHelper {
 
                 if (comments.size() > 0)
                     callEmployeeCommentListViewAdapter(activity, comments);
+
+                if (employeeDataSnapshot.child("completed").exists()) {
+                    if (employeeDataSnapshot.child("completed").getValue(Boolean.class)) {
+                        EditText commentEditText = activity.findViewById(R.id.newCommentsEditText);
+                        commentEditText.setEnabled(false);
+                    }
+                }
+
+
             }
 
             @Override

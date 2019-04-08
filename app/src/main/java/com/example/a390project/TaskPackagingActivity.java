@@ -23,7 +23,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-// Todo: input set firebase
 
 public class TaskPackagingActivity extends AppCompatActivity {
 
@@ -79,7 +78,7 @@ public class TaskPackagingActivity extends AppCompatActivity {
     private void setupUI(){
         // find the ids of the widgets
         descriptionTextView = findViewById(R.id.descriptionTextView);
-        employeeCommentEditText = findViewById(R.id.employeeCommentEditText);
+        employeeCommentEditText = findViewById(R.id.newCommentsEditText);
         startTimeButton = findViewById(R.id.startTimeButton);
         endTimeButton = findViewById(R.id.endTimeButton);
         completeButton = findViewById(R.id.completed_packaging_task);

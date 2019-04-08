@@ -14,6 +14,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.ValueEventListener;
+
 public class TaskPrePaintingActivity extends AppCompatActivity {
 
     private TextView mDescription;
@@ -24,6 +26,7 @@ public class TaskPrePaintingActivity extends AppCompatActivity {
     private EditText newEmployeeCommentEdtText;
     private Button mComplete;
     private boolean backPressed[] = new boolean[1];
+    private ValueEventListener valueEventListener;
 
     //check if user is manager from sharedpreferences
     private boolean isManager;
@@ -44,7 +47,7 @@ public class TaskPrePaintingActivity extends AppCompatActivity {
         setActionBar("Pre-Painting");
 
         setupUI();
-        firebaseHelper.populateSubTasks(taskId, this, backPressed);
+        valueEventListener = firebaseHelper.populateSubTasks(taskId, this, backPressed);
         firebaseHelper.getEmployeeComments(this, taskId);
     }
 
@@ -124,6 +127,12 @@ public class TaskPrePaintingActivity extends AppCompatActivity {
             isManager = false;
         }
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        firebaseHelper.detatchPrepaintValueEventListener(taskId, valueEventListener);
     }
 
     @Override
