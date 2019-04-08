@@ -42,6 +42,7 @@ import com.example.a390project.ListViewAdapters.GraphableProjectsListViewAdapter
 import com.example.a390project.ListViewAdapters.GraphsListViewAdapter;
 import com.example.a390project.ListViewAdapters.InventoryMaterialListViewAdapter;
 import com.example.a390project.ListViewAdapters.MachineListViewAdapter;
+import com.example.a390project.ListViewAdapters.MaterialRecyclerAdapter;
 import com.example.a390project.ListViewAdapters.PaintRecyclerAdapter;
 import com.example.a390project.ListViewAdapters.PrepaintTaskListViewAdapter;
 import com.example.a390project.ListViewAdapters.ProjectListViewAdapter;
@@ -432,8 +433,23 @@ public class FirebaseHelper {
     ------------------------------ Firebase Project Methods --------------------------------------------------------
      */
 
-    public void createProject(String po, String title, String client, long startDate, long dueDate) {
-        rootRef.child("projects").child(po).setValue(new Project(po, title, client, startDate, dueDate));
+    public void createProject(final String po, final String title, final String client, final long startDate, final long dueDate, final Context context) {
+        rootRef.child("projects").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                rootRef.child("projects").removeEventListener(this);
+                if (dataSnapshot.hasChild(po)) {
+                    Toast.makeText(context, "Enter a unique Project PO...", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    rootRef.child("projects").child(po).setValue(new Project(po, title, client, startDate, dueDate));
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void populateProjects(final View view, final Activity activity, final ProgressBar mProgressbar, final boolean isDueDateSort, final boolean isStartDateSort) {
@@ -1577,14 +1593,16 @@ public class FirebaseHelper {
                 for (DataSnapshot currentSnapshot : dataSnapshot.getChildren()){
                     Material newMaterial = currentSnapshot.getValue(Material.class);
                     newMaterial.setMaterialName(currentSnapshot.getKey());
+                    Log.d(TAG, "Material Key " + currentSnapshot.getKey());
                     materials.add(newMaterial);
                 }
 
                 // set adapter
                 materials = sortMaterialsByFirstLetter(materials);
-                InventoryMaterialListViewAdapter adapter = new InventoryMaterialListViewAdapter(activity, materials);
-                ListView materialListView = activity.findViewById(R.id.materialListView);
-                materialListView.setAdapter(adapter);
+                MaterialRecyclerAdapter adapter = new MaterialRecyclerAdapter(activity, materials);
+                RecyclerView materialRecyclerView = activity.findViewById(R.id.materialRecyclerView);
+                materialRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
+                materialRecyclerView.setAdapter(adapter);
             }
 
             @Override
@@ -1614,15 +1632,21 @@ public class FirebaseHelper {
         return materials;
     }
 
-    public void liquidPaintSearch(final Activity activity, String searchText){
-        rootRef.child("inventory").child("liquid").orderByChild("paintDescription").startAt(searchText.toUpperCase()).endAt(searchText.toUpperCase() + "\uf0ff").addValueEventListener(new ValueEventListener() {
+    public void liquidPaintSearch(final Activity activity, final String searchText){
+        rootRef.child("inventory").child("liquid").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<PaintBucket> paintBuckets = new ArrayList<>();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
 
-                    PaintBucket paintBucket = ds.getValue(PaintBucket.class);
-                    paintBuckets.add(paintBucket);
+                    String paintCode = ds.getKey();
+                    String paintDescription = ds.child("paintDescription").getValue(String.class);
+                    int bakeTemperature = ds.child("bakeTemperature").getValue(int.class);
+                    int bakeTime = ds.child("bakeTime").getValue(int.class);
+                    float paintWeight = ds.child("paintWeight").getValue(float.class);
+                    if (paintDescription.toLowerCase().contains(searchText)) {
+                        paintBuckets.add(new PaintBucket("liquid", paintCode, paintDescription, bakeTemperature, bakeTime, paintWeight));
+                    }
 
                     PaintRecyclerAdapter adapter = new PaintRecyclerAdapter(activity, paintBuckets);
                     RecyclerView liquidRecyclerView = activity.findViewById(R.id.liquidRecyclerView);
@@ -1641,8 +1665,8 @@ public class FirebaseHelper {
 
     }
 
-    public void powderPaintSearch(final Activity activity, String searchText){
-        rootRef.child("inventory").child("powder").orderByChild("paintDescription").startAt(searchText.toUpperCase()).endAt(searchText.toUpperCase() + "\uf0ff").addValueEventListener(new ValueEventListener() {
+    public void powderPaintSearch(final Activity activity, final String searchText) {
+        rootRef.child("inventory").child("powder").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<PaintBucket> paintBuckets = new ArrayList<>();
@@ -1653,13 +1677,45 @@ public class FirebaseHelper {
                     int bakeTime = ds.child("bakeTime").getValue(int.class);
                     float paintWeight = ds.child("paintWeight").getValue(float.class);
 
-                    paintBuckets.add(new PaintBucket("powder", paintCode, paintDescription, bakeTemperature, bakeTime, paintWeight));
+                    if (paintDescription.toLowerCase().contains(searchText)) {
+                        paintBuckets.add(new PaintBucket("powder", paintCode, paintDescription, bakeTemperature, bakeTime, paintWeight));
+                    }
+                }
+                PaintRecyclerAdapter adapter = new PaintRecyclerAdapter(activity, paintBuckets);
+                RecyclerView powderRecyclerView = activity.findViewById(R.id.powderRecyclerView);
+                powderRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
+                powderRecyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+        });
+    }
 
 
-                    PaintRecyclerAdapter adapter = new PaintRecyclerAdapter(activity, paintBuckets);
-                    RecyclerView powderRecyclerView = activity.findViewById(R.id.powderRecyclerView);
-                    powderRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
-                    powderRecyclerView.setAdapter(adapter);
+    public void materialSearch(final Activity activity, final String searchText){
+        rootRef.child("inventory").child("material").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Material> materials = new ArrayList<>();
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    String materialName = ds.getKey();
+                    String materialDescription = ds.child("materialDescription").getValue(String.class);
+                    Float materialQuantity = ds.child("materialQuantity").getValue(Float.class);
+                    Material newMaterial = new Material(materialDescription, materialQuantity);
+                    newMaterial.setMaterialName(ds.getKey());
+                    
+                    if(materialName.toLowerCase().contains(searchText)) {
+                        materials.add(newMaterial);
+                    }
+
+                    MaterialRecyclerAdapter adapter = new MaterialRecyclerAdapter(activity, materials);
+                    RecyclerView materialRecyclerView = activity.findViewById(R.id.materialRecyclerView);
+                    materialRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
+                    materialRecyclerView.setAdapter(adapter);
                 }
             }
 
@@ -1672,6 +1728,7 @@ public class FirebaseHelper {
 
 
     }
+
 
 
     // ------------------------------------------------ Firebase Employee Comments ------------------------------------------------

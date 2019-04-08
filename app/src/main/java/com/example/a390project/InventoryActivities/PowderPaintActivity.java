@@ -67,13 +67,13 @@ public class PowderPaintActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextSubmit(String s) {
-                firebaseHelper.powderPaintSearch(PowderPaintActivity.this, s);
+                firebaseHelper.powderPaintSearch(PowderPaintActivity.this, s.toLowerCase());
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                firebaseHelper.powderPaintSearch(PowderPaintActivity.this, s);
+                firebaseHelper.powderPaintSearch(PowderPaintActivity.this, s.toLowerCase());
                 return false;
             }
         });

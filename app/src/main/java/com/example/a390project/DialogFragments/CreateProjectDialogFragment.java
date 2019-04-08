@@ -81,7 +81,7 @@ public class CreateProjectDialogFragment extends DialogFragment implements DateP
                 if (!po.isEmpty() && !client.isEmpty() && !title.isEmpty() && !mStartText.equals("-") && !mDueText.equals("-")) {
                     if (startDate < dueDate) {
                         FirebaseHelper firebaseHelper = new FirebaseHelper();
-                        firebaseHelper.createProject(po, title, client, startDate, dueDate);
+                        firebaseHelper.createProject(po, title, client, startDate, dueDate, getContext());
                         getDialog().dismiss();
                     }
                     else {
