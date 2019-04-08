@@ -1760,7 +1760,7 @@ public class FirebaseHelper {
                     int bakeTime = ds.child("bakeTime").getValue(int.class);
                     float paintWeight = ds.child("paintWeight").getValue(float.class);
 
-                    if (paintDescription.toLowerCase().contains(searchText)) {
+                    if (paintDescription.toLowerCase().contains(searchText) || paintCode.toLowerCase().contains(searchText)) {
                         paintBuckets.add(new PaintBucket("powder", paintCode, paintDescription, bakeTemperature, bakeTime, paintWeight));
                     }
                 }
