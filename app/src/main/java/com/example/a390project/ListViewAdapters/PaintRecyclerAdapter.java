@@ -6,8 +6,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.a390project.FirebaseHelper;
 import com.example.a390project.Model.PaintBucket;
 import com.example.a390project.R;
 
@@ -26,7 +28,8 @@ public class PaintRecyclerAdapter extends RecyclerView.Adapter<PaintRecyclerAdap
 
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        public TextView mPaintDescription, mPaintCode, mPaintType, mPaintBakeTemperature, mPaintBakeTime, mPaintWeight;
+        public TextView mPaintDescription, mPaintCode, mPaintType, mPaintBakeTemperature, mPaintBakeTime;
+        public EditText mPaintWeight;
 
         public ViewHolder(View itemView){
             super(itemView);
@@ -67,10 +70,11 @@ public class PaintRecyclerAdapter extends RecyclerView.Adapter<PaintRecyclerAdap
         textView4.setText(Integer.toString(paintBucket.getBakeTemperature()));
         TextView textView5 = holder.mPaintBakeTime;
         textView5.setText(Integer.toString(paintBucket.getBakeTime()));
-        TextView textView6 = holder.mPaintWeight;
-        textView6.setText(Float.toString(paintBucket.getPaintWeight()));
+        EditText editView1 = holder.mPaintWeight;
+        editView1.setText(Float.toString(paintBucket.getPaintWeight()));
 
-
+        FirebaseHelper firebaseHelper = new FirebaseHelper();
+        firebaseHelper.editInventoryWeight(holder.mPaintWeight, paintBucket);
     }
 
     @Override

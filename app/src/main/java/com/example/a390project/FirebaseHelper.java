@@ -16,6 +16,8 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -89,6 +91,7 @@ import com.jjoe64.graphview.series.OnDataPointTapListener;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 import com.jjoe64.graphview.series.Series;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -1581,6 +1584,7 @@ public class FirebaseHelper {
         rootRef.child("inventory").addValueEventListener(paintValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                rootRef.child("inventory").removeEventListener(this);
                 List<PaintBucket> paintBuckets = new ArrayList<>();
 
                 DataSnapshot paintDataSnapshot;
@@ -1596,7 +1600,7 @@ public class FirebaseHelper {
                     int bakeTemperature = currentSnapshot.child("bakeTemperature").getValue(int.class);
                     int bakeTime = currentSnapshot.child("bakeTime").getValue(int.class);
                     float paintWeight = currentSnapshot.child("paintWeight").getValue(float.class);
-
+                    Log.d(TAG, "onDataChange: PAINT BUCKET " + paintCode + " "  + paintWeight);
                     paintBuckets.add(new PaintBucket("powder", paintCode, paintDescription, bakeTemperature, bakeTime, paintWeight));
                 }
                 // sort the paintBuckets
@@ -3061,5 +3065,28 @@ public class FirebaseHelper {
     }
 
 
+    public void editInventoryWeight(final TextView mPaintWeight, final PaintBucket paintBucket) {
+        mPaintWeight.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().isEmpty()) {
+                    float f = Float.parseFloat(s.toString());
+                    DecimalFormat decimalFormat = new DecimalFormat("#.##");
+                    float twoDigitsF = Float.valueOf(decimalFormat.format(f));
+                    rootRef.child("inventory").child(paintBucket.getPaintType().toLowerCase().trim()).child(paintBucket.getPaintCode())
+                            .child("paintWeight").setValue(twoDigitsF);
+                }
+            }
+        });
+    }
 }
