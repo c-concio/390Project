@@ -26,13 +26,17 @@ public class MachineActivity extends AppCompatActivity {
     private TextView mMachineTitle;
     private TextView mMachineStatus;
     private TextView mTemperature;
+    private TextView mHumidity;
+    private TextView mHumidityLabel;
     private Button mStartTemperatureGraph;
     private Button mEndTemperatureGraph;
+
 
     //variables
     private String machineTitle;
     private boolean machineStatus;
     private float temperature;
+    private float humidity;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,13 +85,24 @@ public class MachineActivity extends AppCompatActivity {
         mStartTemperatureGraph = findViewById(R.id.open_graphable_projects);
         mEndTemperatureGraph = findViewById(R.id.end_graph_graphable);
         mTemperature = findViewById(R.id.temperature_machine_activity);
+        mHumidity = findViewById(R.id.humidity_machine_text_view);
+        mHumidityLabel = findViewById(R.id.humidity_label);
 
         machineTitle = getIntent().getStringExtra("machine_title");
         machineStatus = getIntent().getBooleanExtra("machine_status", false);
         temperature =  getIntent().getFloatExtra("machine_temperature", 0);
+        humidity = getIntent().getFloatExtra("machine_humidity",0);
         Log.d(TAG, "Machine Fetched: " + machineTitle + " " + machineStatus);
 
         Machine machine = new Machine(machineTitle, machineStatus);
+
+        if(!machineTitle.equals("Big_Oven") && !machineTitle.equals("GFS_Oven")) {
+            mHumidity.setText(humidity + "%");
+        }
+        else {
+            mHumidity.setVisibility(View.GONE);
+            mHumidityLabel.setVisibility(View.GONE);
+        }
 
         mMachineTitle.setText(machine.getMachineTitle());
         mMachineStatus.setText(machine.isMachineStatus() ? "On" : "Off");

@@ -432,8 +432,23 @@ public class FirebaseHelper {
     ------------------------------ Firebase Project Methods --------------------------------------------------------
      */
 
-    public void createProject(String po, String title, String client, long startDate, long dueDate) {
-        rootRef.child("projects").child(po).setValue(new Project(po, title, client, startDate, dueDate));
+    public void createProject(final String po, final String title, final String client, final long startDate, final long dueDate, final Context context) {
+        rootRef.child("projects").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                rootRef.child("projects").removeEventListener(this);
+                if (dataSnapshot.hasChild(po)) {
+                    Toast.makeText(context, "Enter a unique Project PO...", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    rootRef.child("projects").child(po).setValue(new Project(po, title, client, startDate, dueDate));
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void populateProjects(final View view, final Activity activity, final ProgressBar mProgressbar, final boolean isDueDateSort, final boolean isStartDateSort) {

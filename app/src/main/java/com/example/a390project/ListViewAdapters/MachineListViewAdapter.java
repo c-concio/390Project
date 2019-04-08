@@ -15,6 +15,7 @@ import com.example.a390project.Model.Machine;
 
 import java.util.List;
 
+import com.example.a390project.Model.Paintbooth;
 import com.example.a390project.R;
 
 public class MachineListViewAdapter extends BaseAdapter {
@@ -27,6 +28,7 @@ public class MachineListViewAdapter extends BaseAdapter {
     TextView mMachineName;
     TextView mTemperature;
     TextView mStatus;
+    TextView mHumidity;
     ConstraintLayout mRowItem;
 
     //public constructor
@@ -66,11 +68,19 @@ public class MachineListViewAdapter extends BaseAdapter {
         mTemperature = convertView.findViewById(R.id.temperature_machine_text_view);
         mStatus = convertView.findViewById(R.id.status_text_view);
         mRowItem = convertView.findViewById(R.id.machine_row_item);
+        mHumidity = convertView.findViewById(R.id.humidity_machine_text_view);
 
         mMachineName.setText(currentItem.getMachineTitle());
         mTemperature.setText(Float.toString(currentItem.getTemperature()) + "°F");
         String status = currentItem.isMachineStatus() ? "On":"Off";
         mStatus.setText("Status: " + status);
+        if (!currentItem.getMachineTitle().equals("Big_Oven") && !currentItem.getMachineTitle().equals("GFS_Oven")) {
+            Paintbooth paintbooth = (Paintbooth) currentItem;
+            mHumidity.setText(paintbooth.getHumidity() + "%");
+        }
+        else {
+            mHumidity.setVisibility(View.GONE);
+        }
 
         //change background color if On/Off
         if (!currentItem.isMachineStatus())
@@ -85,7 +95,15 @@ public class MachineListViewAdapter extends BaseAdapter {
                 String machineTitle = currentItem.getMachineTitle();
                 Boolean machineStatus = currentItem.isMachineStatus();
                 float machineTemperature = currentItem.getTemperature();
-                startMachineActivity(machineTitle, machineStatus, machineTemperature);
+                if (!currentItem.getMachineTitle().equals("Big_Oven") && !currentItem.getMachineTitle().equals("GFS_Oven")) {
+                    Paintbooth paintbooth = (Paintbooth) currentItem;
+                    float humidity = paintbooth.getHumidity();
+                    startMachineActivity(machineTitle, machineStatus, machineTemperature, humidity);
+                }
+                else {
+                    startMachineActivity(machineTitle, machineStatus, machineTemperature);
+                }
+
             }
         });
 
@@ -98,6 +116,15 @@ public class MachineListViewAdapter extends BaseAdapter {
         intent.putExtra("machine_title", machineTitle);
         intent.putExtra("machine_status", machineStatus);
         intent.putExtra("machine_temperature", machineTemperature);
+        context.startActivity(intent);
+    }
+
+    private void startMachineActivity(String machineTitle, boolean machineStatus, float machineTemperature, float humidity) {
+        Intent intent = new Intent(context, MachineActivity.class);
+        intent.putExtra("machine_title", machineTitle);
+        intent.putExtra("machine_status", machineStatus);
+        intent.putExtra("machine_temperature", machineTemperature);
+        intent.putExtra("machine_humidity", humidity);
         context.startActivity(intent);
     }
 }
