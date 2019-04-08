@@ -1617,15 +1617,21 @@ public class FirebaseHelper {
         return materials;
     }
 
-    public void liquidPaintSearch(final Activity activity, String searchText){
-        rootRef.child("inventory").child("liquid").orderByChild("paintDescription").startAt(searchText).endAt(searchText + "\uf0ff").addValueEventListener(new ValueEventListener() {
+    public void liquidPaintSearch(final Activity activity, final String searchText){
+        rootRef.child("inventory").child("liquid").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<PaintBucket> paintBuckets = new ArrayList<>();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
 
-                    PaintBucket paintBucket = ds.getValue(PaintBucket.class);
-                    paintBuckets.add(paintBucket);
+                    String paintCode = ds.getKey();
+                    String paintDescription = ds.child("paintDescription").getValue(String.class);
+                    int bakeTemperature = ds.child("bakeTemperature").getValue(int.class);
+                    int bakeTime = ds.child("bakeTime").getValue(int.class);
+                    float paintWeight = ds.child("paintWeight").getValue(float.class);
+                    if (paintDescription.toLowerCase().contains(searchText)) {
+                        paintBuckets.add(new PaintBucket("liquid", paintCode, paintDescription, bakeTemperature, bakeTime, paintWeight));
+                    }
 
                     PaintRecyclerAdapter adapter = new PaintRecyclerAdapter(activity, paintBuckets);
                     RecyclerView liquidRecyclerView = activity.findViewById(R.id.liquidRecyclerView);
@@ -1644,7 +1650,7 @@ public class FirebaseHelper {
 
     }
 
-    public void powderPaintSearch2(final Activity activity, final String searchText) {
+    public void powderPaintSearch(final Activity activity, final String searchText) {
         rootRef.child("inventory").child("powder").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -1674,47 +1680,22 @@ public class FirebaseHelper {
         });
     }
 
-    public void powderPaintSearch(final Activity activity, String searchText){
-        rootRef.child("inventory").child("powder").orderByChild("paintDescription").startAt(searchText).endAt(searchText + "\uf0ff").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<PaintBucket> paintBuckets = new ArrayList<>();
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    String paintCode = ds.getKey();
-                    String paintDescription = ds.child("paintDescription").getValue(String.class);
-                    int bakeTemperature = ds.child("bakeTemperature").getValue(int.class);
-                    int bakeTime = ds.child("bakeTime").getValue(int.class);
-                    float paintWeight = ds.child("paintWeight").getValue(float.class);
 
-                    paintBuckets.add(new PaintBucket("powder", paintCode, paintDescription, bakeTemperature, bakeTime, paintWeight));
-
-
-                    PaintRecyclerAdapter adapter = new PaintRecyclerAdapter(activity, paintBuckets);
-                    RecyclerView powderRecyclerView = activity.findViewById(R.id.powderRecyclerView);
-                    powderRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
-                    powderRecyclerView.setAdapter(adapter);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-
-        });
-
-
-    }
-
-    public void materialSearch(final Activity activity, String searchText){
-        rootRef.child("inventory").child("material").orderByKey().startAt(searchText).endAt(searchText + "\uf0ff").addValueEventListener(new ValueEventListener() {
+    public void materialSearch(final Activity activity, final String searchText){
+        rootRef.child("inventory").child("material").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Material> materials = new ArrayList<>();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Material newMaterial = ds.getValue(Material.class);
+                    String materialName = ds.getKey();
+                    String materialDescription = ds.child("materialDescription").getValue(String.class);
+                    Float materialQuantity = ds.child("materialQuantity").getValue(Float.class);
+                    Material newMaterial = new Material(materialDescription, materialQuantity);
                     newMaterial.setMaterialName(ds.getKey());
-                    materials.add(newMaterial);
+                    
+                    if(materialName.toLowerCase().contains(searchText)) {
+                        materials.add(newMaterial);
+                    }
 
                     MaterialRecyclerAdapter adapter = new MaterialRecyclerAdapter(activity, materials);
                     RecyclerView materialRecyclerView = activity.findViewById(R.id.materialRecyclerView);
