@@ -145,7 +145,14 @@ public class RegisterActivity extends AppCompatActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(getApplicationContext(), "Email already in existance", Toast.LENGTH_SHORT).show();
+                            Exception error = task.getException();
+                            error.toString();
+
+                            if (error.toString().equals("com.google.firebase.auth.FirebaseAuthInvalidCredentialsException: The email address is badly formatted."))
+                                Toast.makeText(RegisterActivity.this, "Invalid email", Toast.LENGTH_SHORT).show();
+                            else
+                                Toast.makeText(RegisterActivity.this, "Email already in existance", Toast.LENGTH_SHORT).show();
+
                             FirebaseUser currentUser = mAuth.getCurrentUser();
                             updateUI(currentUser);
                         }
@@ -158,8 +165,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void updateUI(FirebaseUser currentUser) {
         mProgressBar.setVisibility(View.GONE);
         if (currentUser == null) {
-            Log.d(TAG,"User not registered");
-            Toast.makeText(this, "User not registered", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "User not registered", Toast.LENGTH_SHORT).show();
 
         }
         else {
