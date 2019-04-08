@@ -6,4 +6,80 @@
     android:layout_height="match_parent"
     tools:context=".ProfileActivity">
 
+    <TextView
+        android:id="@+id/TV"
+        android:layout_width="71dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="8dp"
+        android:text="Name:"
+        android:textSize="24sp"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <TextView
+        android:id="@+id/TV2"
+        android:layout_width="69dp"
+        android:layout_height="39dp"
+        android:layout_marginTop="8dp"
+        android:text="Email:"
+        android:textSize="24sp"
+        app:layout_constraintTop_toBottomOf="@+id/TV"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <TextView
+        android:id="@+id/TV3"
+        android:layout_width="112dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="20dp"
+        android:text="Password:"
+        android:textSize="24sp"
+        app:layout_constraintTop_toBottomOf="@+id/TV2"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <EditText
+        android:id="@+id/NameET"
+        android:layout_width="298dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:enabled="false"
+        android:inputType="textPersonName"
+        android:text="Name"
+        app:layout_constraintStart_toEndOf="@+id/TV"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/PasswordTV"
+        android:layout_width="254dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:enabled="false"
+        android:inputType="textPassword"
+        app:layout_constraintStart_toEndOf="@+id/TV3"
+        app:layout_constraintTop_toBottomOf="@+id/EmailTV" />
+
+    <EditText
+        android:id="@+id/EmailTV"
+        android:layout_width="299dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:enabled="false"
+        android:inputType="textEmailAddress"
+        app:layout_constraintStart_toEndOf="@+id/TV2"
+        app:layout_constraintTop_toBottomOf="@+id/NameET" />
+
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Edit mode"
+        app:layout_constraintTop_toBottomOf="@+id/TV3"
+        tools:layout_editor_absoluteX="16dp" />
+
 </android.support.constraint.ConstraintLayout>
