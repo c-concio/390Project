@@ -397,7 +397,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Painting Completed" />
+                android:text="Complete Painting" />
 
             <View
                 android:id="@+id/divider"
