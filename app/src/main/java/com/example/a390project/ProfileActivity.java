@@ -3,6 +3,7 @@ package com.example.a390project;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -11,6 +12,8 @@ import android.widget.Toast;
 import com.example.a390project.Model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -18,19 +21,20 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.core.Tag;
 
 public class ProfileActivity extends AppCompatActivity {
+
+    private final static String TAG = "ProfileActivity";
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseUser user;
 
     private String name;
     private String email;
     private String id;
-    private String password;
 
     private TextView NAME;
     private TextView EMAIL;
-    private TextView PASSWORD;
 
     private Switch switch1;
 
@@ -45,44 +49,36 @@ public class ProfileActivity extends AppCompatActivity {
         getname();
 
         NAME = findViewById(R.id.NameET);
-        PASSWORD = findViewById(R.id.PasswordTV);
         EMAIL = findViewById(R.id.EmailTV);
         switch1 = findViewById(R.id.switch1);
 
-        NAME.setText(name);
-        PASSWORD.setText("");
         EMAIL.setText(email);
-
+        switch1.setChecked(true);
         switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked == true){
+                if(isChecked){
                     NAME.setEnabled(true);
-                    PASSWORD.setEnabled(true);
                     EMAIL.setEnabled(true);
-                }else if(isChecked == false){
-
-                    update_user();
+                }
+                else if(!isChecked){
+                    update_user(NAME.getText().toString().trim(), EMAIL.getText().toString().trim());
                     NAME.setEnabled(false);
-                    PASSWORD.setEnabled(false);
                     EMAIL.setEnabled(false);
                 }
             }
         });
-
-
-    }
-    private void Getname(String n){
-        name = n;
     }
 
     private void getname(){
-        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        final DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
         rootRef.child("users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                rootRef.child("users").removeEventListener(this);
                 String n = dataSnapshot.child(id).child("name").getValue(String.class);
-                Getname(n);
+                name = n.trim();
+                NAME.setText(name);
             }
 
             @Override
@@ -99,34 +95,38 @@ public class ProfileActivity extends AppCompatActivity {
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
         rootRef.child("users").child(id).child("email").setValue(n);
     }
-    private void update_user(){
-
-        if(EMAIL.getText().toString() != null) {
-            setemail(EMAIL.getText().toString());
-            user.updateEmail(EMAIL.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(getApplicationContext(), "Email is changed", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Email is not changed", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
+    private void update_user(String NAME, final String email){
+        if(!email.isEmpty()) {
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            // Get auth credentials from the user for re-authentication
+            AuthCredential credential = EmailAuthProvider
+                    .getCredential("user@example.com", "password1234"); // Current Login Credentials \\
+            // Prompt the user to re-provide their sign-in credentials
+            user.reauthenticate(credential)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Log.d(TAG, "User re-authenticated.");
+                            //Now change your email address \\
+                            //----------------Code for Changing Email Address----------\\
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            user.updateEmail(email)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                setemail(email);
+                                                Log.d(TAG, "User email address updated.");
+                                            }
+                                        }
+                                    });
+                            //----------------------------------------------------------\\
+                        }
+                    });
         }
-        if(PASSWORD.getText().toString()!= null) {
-            user.updatePassword(PASSWORD.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(getApplicationContext(), "Password is changed", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Password is not changed", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
+        if (!NAME.isEmpty()) {
+            setname(NAME.trim());
         }
-        setname(NAME.getText().toString());
     }
 
 
