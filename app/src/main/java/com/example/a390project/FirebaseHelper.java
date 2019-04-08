@@ -2832,14 +2832,7 @@ public class FirebaseHelper {
                                 statisticsGraph.getDescription().setEnabled(false);
                                 statisticsGraph.animateXY(2000, 2000);
                                 statisticsGraph.setNoDataText("");
-//                                if (statisticsGraph) {
-//                                    mTotalTime.setVisibility(View.GONE);
-//                                    Log.d(TAG, "onDataChange: EMPTYYY GRAPH!");
-//                                }
-//                                else {
-//                                    mTotalTime.setVisibility(View.VISIBLE);
-//                                    mTotalTime.setText("Total Time: " + hour+"h"+min+"m"+sec+"s");
-//                                }
+
                                 XAxis xAxis = statisticsGraph.getXAxis();
                                 xAxis.setGranularity(1f);
                                 xAxis.setValueFormatter(new IndexAxisValueFormatter(xLabels));
@@ -2854,6 +2847,16 @@ public class FirebaseHelper {
                             }
                         });
                     }
+                    else {
+                        Log.d(TAG, "onDataChange: HEREEEEE ");
+                        mTotalTime.setVisibility(View.GONE);
+                        statisticsGraph.setVisibility(View.GONE);
+                    }
+                }
+                else {
+                    Log.d(TAG, "onDataChange: HEREEEEE ");
+                    mTotalTime.setVisibility(View.GONE);
+                    statisticsGraph.setVisibility(View.GONE);
                 }
             }
 
