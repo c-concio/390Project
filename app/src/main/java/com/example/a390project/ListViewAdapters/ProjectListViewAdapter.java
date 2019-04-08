@@ -33,6 +33,7 @@ public class ProjectListViewAdapter extends BaseAdapter {
 
     private Context context;
     private List<Project> projects;
+    private List<Boolean> projectCompleted;
 
     //views
     private TextView mClient;
@@ -42,9 +43,10 @@ public class ProjectListViewAdapter extends BaseAdapter {
     private TextView mDueDate;
     private ImageView mIcon;
 
-    public ProjectListViewAdapter(Context context, List<Project> projects){
+    public ProjectListViewAdapter(Context context, List<Project> projects, List<Boolean> projectCompleted){
         this.context = context;
         this.projects = projects;
+        this.projectCompleted = projectCompleted;
     }
 
     @Override
@@ -62,6 +64,7 @@ public class ProjectListViewAdapter extends BaseAdapter {
         return position;
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
@@ -119,6 +122,9 @@ public class ProjectListViewAdapter extends BaseAdapter {
             }
         });
 
+        // if the task is completed, then the background should be color white
+        if (projects.get(position).getHasCompleted())
+            convertView.setBackgroundResource(R.color.white);
 
         return convertView;
     }

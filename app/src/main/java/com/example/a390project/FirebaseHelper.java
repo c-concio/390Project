@@ -457,24 +457,34 @@ public class FirebaseHelper {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<Project> projects = new ArrayList<>();
+                List<Boolean> projectsCompleted = new ArrayList<>();
                 for (DataSnapshot ds:dataSnapshot.getChildren()) {
                     String po = ds.getKey();
                     String title = ds.child("title").getValue(String.class);
                     String client = ds.child("client").getValue(String.class);
                     long startDate = ds.child("startDate").getValue(long.class);
                     long dueDate = ds.child("dueDate").getValue(long.class);
-                    projects.add(new Project(po, title, client, startDate, dueDate));
+                    Boolean hasCompleted;
+                    if (ds.child("completed").exists()) {
+                        hasCompleted = (ds.child("completed").getValue(Boolean.class));
+                    }
+                    else {
+                        hasCompleted = false;
+                    }
+                    projects.add(new Project(po, title, client, startDate, dueDate, hasCompleted));
+
                 }
+
                 if (!isDueDateSort && !isStartDateSort) {
-                    callProjectListViewAdapter(view, activity, projects);
+                    callProjectListViewAdapter(view, activity, projects, projectsCompleted);
                 }
                 else if(isDueDateSort && !isStartDateSort) {
                     sortProjectsByDueDate(projects);
-                    callProjectListViewAdapter(view, activity, projects);
+                    callProjectListViewAdapter(view, activity, projects, projectsCompleted);
                 }
                 else if(!isDueDateSort && isStartDateSort) {
                     sortProjectsByStartDate(projects);
-                    callProjectListViewAdapter(view, activity, projects);
+                    callProjectListViewAdapter(view, activity, projects, projectsCompleted);
                 }
                 mProgressbar.setVisibility(View.GONE);
             }
@@ -522,8 +532,8 @@ public class FirebaseHelper {
         return projects;
     }
 
-    private void callProjectListViewAdapter(View view, Activity activity, List<Project> projects){
-        ProjectListViewAdapter adapter = new ProjectListViewAdapter(activity, projects);
+    private void callProjectListViewAdapter(View view, Activity activity, List<Project> projects, List<Boolean> projectsCompleted){
+        ProjectListViewAdapter adapter = new ProjectListViewAdapter(activity, projects, projectsCompleted);
         ListView itemsListView  = view.findViewById(R.id.project_list_view);
         itemsListView.setAdapter(adapter);
     }
@@ -769,6 +779,26 @@ public class FirebaseHelper {
                 TextView packagingDescriptionTextView = activity.findViewById(R.id.descriptionTextView);
                 packagingDescriptionTextView.setText(packagingTask.getDescription());
 
+                if (taskDataSnapshot.child("completed").exists()){
+                    if (taskDataSnapshot.child("completed").getValue(Boolean.class)){
+                        LinearLayout addMaterialLinearLayout = activity.findViewById(R.id.addMaterialLinearLayout);
+                        LinearLayout newCommentLinearLayout = activity.findViewById(R.id.newCommentLinearLayout);
+
+                        Button startButton = activity.findViewById(R.id.startTimeButton);
+                        Button endButton = activity.findViewById(R.id.endTimeButton);
+                        Button completedButton = activity.findViewById(R.id.completed_packaging_task);
+
+                        startButton.setVisibility(View.GONE);
+                        endButton.setVisibility(View.GONE);
+                        completedButton.setVisibility(View.GONE);
+
+                        addMaterialLinearLayout.setVisibility(View.GONE);
+                        newCommentLinearLayout.setVisibility(View.GONE);
+
+
+                    }
+                }
+
                 // inventory
                 if (taskDataSnapshot.child("materials").exists()){
                     List<String> materialIDs = new ArrayList<>();
@@ -868,10 +898,18 @@ public class FirebaseHelper {
                     EditText partCountedEditText = activity.findViewById(R.id.partCountedEditText);
                     EditText partAcceptedEditText = activity.findViewById(R.id.partAcceptedEditText);
                     EditText partRejectedEditText = activity.findViewById(R.id.partRejectedEditText);
+                    LinearLayout newCommentLinearLayout = activity.findViewById(R.id.newCommentLinearLayout);
+                    Button completeButton = activity.findViewById(R.id.completeButton);
+                    LinearLayout timeLinearLayout = activity.findViewById(R.id.timeLinearLayout);
 
                     partCountedEditText.setEnabled(false);
                     partAcceptedEditText.setEnabled(false);
                     partRejectedEditText.setEnabled(false);
+
+                    completeButton.setVisibility(View.GONE);
+                    timeLinearLayout.setVisibility(View.GONE);
+
+                    newCommentLinearLayout.setVisibility(View.GONE);
                 }
 
                 if (dataSnapshot.hasChild("partCounted")) {
@@ -1120,38 +1158,45 @@ public class FirebaseHelper {
 
 
     // -------------------------------------------- Firebase Prepaint Task Methods --------------------------------------------
-    public ValueEventListener populateSubTasks(String taskId, final Activity activity, final boolean[] backPressed){
-        final List<String> subTasksID = new ArrayList<>();
-        final List<SubTask> subTasks = new ArrayList<>();
+    public ValueEventListener populateSubTasks(final String taskId, final Activity activity, final boolean[] backPressed){
+
         ValueEventListener prepaintValueEventListener;
-        rootRef.child("tasks").child(taskId).child("subTasks").addValueEventListener( prepaintValueEventListener = new ValueEventListener() {
+
+        rootRef.addValueEventListener(prepaintValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot ds:dataSnapshot.getChildren()) {
+                List<String> subTasksID = new ArrayList<>();
+                List<SubTask> subTasks = new ArrayList<>();
+
+                if (dataSnapshot.child("tasks").child(taskId).child("completed").exists()){
+                    if (dataSnapshot.child("tasks").child(taskId).child("completed").getValue(Boolean.class)){
+                        Button completeButton = activity.findViewById(R.id.prepaintingCompletedButton);
+                        LinearLayout newCommentLinearLayout = activity.findViewById(R.id.newCommentLinearLayout);
+
+                        completeButton.setVisibility(View.GONE);
+                        newCommentLinearLayout.setVisibility(View.GONE);
+                    }
+                }
+
+                // subTasks
+                for(DataSnapshot ds : dataSnapshot.child("tasks").child(taskId).child("subTasks").getChildren()) {
                     subTasksID.add(ds.getKey());
                 }
-                rootRef.child("subTasks").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (String subTaskID:subTasksID) {
-                            boolean isCompleted = dataSnapshot.child(subTaskID).child("completed").getValue(boolean.class);
-                            if (!isCompleted) {
-                                String subTaskType = dataSnapshot.child(subTaskID).child("subTaskType").getValue(String.class);
-                                String ID = dataSnapshot.child(subTaskID).child("subTaskID").getValue(String.class);
-                                String projectID = dataSnapshot.child(subTaskID).child("projectID").getValue(String.class);
-                                String taskID = dataSnapshot.child(subTaskID).child("taskID").getValue(String.class);
-                                long createdTime = dataSnapshot.child(subTaskID).child("createdTime").getValue(long.class);
-                                subTasks.add(new SubTask(subTaskType,subTaskID,projectID,taskID,isCompleted,createdTime));
-                            }
-                        }
-                        callPrepaintTaskListViewAdapter(activity, subTasks, backPressed);
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                for (String subTaskID : subTasksID) {
+                    boolean isCompleted = dataSnapshot.child("subTasks").child(subTaskID).child("completed").getValue(boolean.class);
+                    if (!isCompleted) {
+                        String subTaskType = dataSnapshot.child("subTasks").child(subTaskID).child("subTaskType").getValue(String.class);
+                        String ID = dataSnapshot.child("subTasks").child(subTaskID).child("subTaskID").getValue(String.class);
+                        String projectID = dataSnapshot.child("subTasks").child(subTaskID).child("projectID").getValue(String.class);
+                        String taskID = dataSnapshot.child("subTasks").child(subTaskID).child("taskID").getValue(String.class);
+                        long createdTime = dataSnapshot.child("subTasks").child(subTaskID).child("createdTime").getValue(long.class);
+                        subTasks.add(new SubTask(subTaskType,subTaskID,projectID,taskID,isCompleted,createdTime));
                     }
-                });
+                }
+                callPrepaintTaskListViewAdapter(activity, subTasks, backPressed);
+
 
             }
 
@@ -1279,6 +1324,40 @@ public class FirebaseHelper {
                 final String paintType = dataSnapshot.child("paintType").getValue(String.class);
                 final String paintCode = dataSnapshot.child("paintCode").getValue(String.class);
                 final String description = dataSnapshot.child("description").getValue(String.class);
+
+                if (dataSnapshot.child("completed").exists()){
+                    if (dataSnapshot.child("completed").getValue(Boolean.class)){
+                        EditText viscosityEditText = activity.findViewById(R.id.viscosityEditText);
+                        EditText tipSizeEditText = activity.findViewById(R.id.tipSizeEditText);
+                        EditText pressureLiquidEditText = activity.findViewById(R.id.pressureLiquidEditText);
+                        EditText amountEditText = activity.findViewById(R.id.amountEditText);
+                        EditText spreadEditText = activity.findViewById(R.id.spreadEditText);
+                        EditText pressurePowderEditText = activity.findViewById(R.id.pressurePowderEditText);
+
+                        Button saveButton = activity.findViewById(R.id.saveButton);
+
+                        LinearLayout timeLinearLayout = activity.findViewById(R.id.timeLinearLayout);
+                        Button completeButton = activity.findViewById(R.id.completed_painting_task);
+                        LinearLayout newComments = activity.findViewById(R.id.newCommentLinearLayout);
+                        Switch reCoatSwitch = activity.findViewById(R.id.reCoatSwitch);
+
+                        viscosityEditText.setEnabled(false);
+                        tipSizeEditText.setEnabled(false);
+                        pressureLiquidEditText.setEnabled(false);
+                        amountEditText.setEnabled(false);
+                        spreadEditText.setEnabled(false);
+                        pressurePowderEditText.setEnabled(false);
+
+                        saveButton.setVisibility(View.GONE);
+
+                        timeLinearLayout.setVisibility(View.GONE);
+                        completeButton.setVisibility(View.GONE);
+                        newComments.setVisibility(View.GONE);
+                        reCoatSwitch.setClickable(false);
+
+
+                    }
+                }
 
                 rootRef.child("inventory").child(paintType).child(paintCode).addValueEventListener(new ValueEventListener() {
                     @Override
@@ -2153,6 +2232,36 @@ public class FirebaseHelper {
         return employeeWorkBlocks;
     }
 
+    //Denies a task to be complete if the end time has not been clicked
+    public void allowCompleteTask(final String taskID, final Context context){
+        rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean allowComplete = true;
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    long endTime = ds.child("endTime").getValue(long.class);
+                    if(endTime == 0){
+                        allowComplete = false;
+                        Toast.makeText(context, "Cannot complete task", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        allowComplete = true;
+                        Toast.makeText(context, "Complete task successful", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").removeEventListener(this);
+                if (allowComplete == true){
+                    completeTask(taskID);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
+    }
+
     /*
     --------------------------------------WORK BLOCKS NOTIFICATIONS / FOREGROUND SERVICE ---------------------------------------------
      */
@@ -2892,7 +3001,11 @@ public class FirebaseHelper {
                                 int i = 0;
                                 long totalTime = 0;
                                 for (String taskID:taskIDs) {
-                                    long taskTimeLong = dataSnapshot.child(taskID).child("totalTime").getValue(long.class);
+                                    long taskTimeLong;
+                                    if (dataSnapshot.child(taskID).child("totalTime").exists())
+                                        taskTimeLong = dataSnapshot.child(taskID).child("totalTime").getValue(long.class);
+                                    else
+                                        taskTimeLong = 0;
                                     totalTime += taskTimeLong;
                                     float taskTime = (float) TimeUnit.MILLISECONDS.toHours(taskTimeLong);
                                     String taskType = dataSnapshot.child(taskID).child("taskType").getValue(String.class);

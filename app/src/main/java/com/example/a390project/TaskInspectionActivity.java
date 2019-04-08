@@ -150,7 +150,7 @@ public class TaskInspectionActivity extends AppCompatActivity {
             mCompleteTime.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    firebaseHelper.completeTask(inspectionTaskID);
+                    firebaseHelper.allowCompleteTask(inspectionTaskID, TaskInspectionActivity.this);
                 }
             });
         }

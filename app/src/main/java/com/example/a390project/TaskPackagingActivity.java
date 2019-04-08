@@ -144,7 +144,7 @@ public class TaskPackagingActivity extends AppCompatActivity {
     View.OnClickListener completeOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            firebaseHelper.completeTask(packagingTaskID);
+            firebaseHelper.allowCompleteTask(packagingTaskID, TaskPackagingActivity.this);
         }
     };
 

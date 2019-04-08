@@ -88,7 +88,7 @@ public class TaskPrePaintingActivity extends AppCompatActivity {
             mComplete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    firebaseHelper.completeTask(taskId);
+                    firebaseHelper.allowCompleteTask(taskId, TaskPrePaintingActivity.this);
                 }
             });
         }

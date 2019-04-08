@@ -89,7 +89,7 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
         mMapView = v.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
 
-        getLocationPermission();
+        //getLocationPermission();
         return v;
     }
 
@@ -180,8 +180,10 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
                                                     Log.d(TAG, "run: FIRST MARKER");
                                                 }
                                                 float[] distance = new float[2];
-                                                Location.distanceBetween(location.getLatitude(), location.getLongitude(),
-                                                        markerLocation.getLatitude(), markerLocation.getLongitude(), distance);
+                                                //if(location != null) {
+                                                    Location.distanceBetween(location.getLatitude(), location.getLongitude(),
+                                                            markerLocation.getLatitude(), markerLocation.getLongitude(), distance);
+                                                //}
                                                 if (distance[0] > 5.0) { //<- 5 meters between old and new location
                                                     markerLocation = location;
                                                     insertMarker(markerLocation, circle);
@@ -277,7 +279,12 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void insertMarker(Location currentLocation, CircleOptions circle) {
+        //LatLng currentUserLatLng = new LatLng(-1, -1);
+        //if(currentLocation != null){
         LatLng currentUserLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+        //}
+
+
 
         CameraUpdate zoom= CameraUpdateFactory.zoomTo(DEFAULT_ZOOM);
         CameraUpdate center= CameraUpdateFactory.newLatLng(currentUserLatLng);
