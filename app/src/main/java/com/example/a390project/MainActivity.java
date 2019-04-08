@@ -104,10 +104,12 @@ public class MainActivity extends AppCompatActivity {
                 mAuth.signOut();
                 finish();
                 startActivity(new Intent(MainActivity.this, LogInActivity.class));
+                break;
             }
             case R.id.ProfileBtnn:{
                 Intent profactivity = new Intent(MainActivity.this, ProfileActivity.class);
                 startActivity(profactivity);
+                break;
             }
         }
         return super.onOptionsItemSelected(item);
