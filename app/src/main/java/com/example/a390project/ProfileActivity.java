@@ -1,9 +1,12 @@
 package com.example.a390project;
 
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -61,6 +64,7 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        setActionBar("Edit Profile");
 
         user = mAuth.getInstance().getCurrentUser();
         id = mAuth.getUid();
@@ -141,6 +145,10 @@ public class ProfileActivity extends AppCompatActivity {
 
                                             if (!name.isEmpty()) {
                                                 setname(name);
+                                                Toast.makeText(ProfileActivity.this, "Name updated.", Toast.LENGTH_SHORT).show();
+                                            }
+                                            else {
+                                                Toast.makeText(ProfileActivity.this, "Name not updated.", Toast.LENGTH_SHORT).show();
                                             }
 
                                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -150,8 +158,10 @@ public class ProfileActivity extends AppCompatActivity {
                                                     public void onComplete(@NonNull Task<Void> task) {
                                                         if (task.isSuccessful() && !email.isEmpty()) {
                                                             setemail(email);
+                                                            Toast.makeText(ProfileActivity.this, "User email address updated.", Toast.LENGTH_SHORT).show();
                                                             Log.d(TAG, "User email address updated.");
                                                         } else {
+                                                            Toast.makeText(ProfileActivity.this, "User email address not updated.", Toast.LENGTH_SHORT).show();
                                                             Log.d(TAG, "User email address not updated.");
                                                         }
                                                     }
@@ -161,9 +171,11 @@ public class ProfileActivity extends AppCompatActivity {
                                                 user.updatePassword(password).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<Void> task) {
-                                                        if (task.isSuccessful() && !password.isEmpty()) {
+                                                        if (task.isSuccessful()) {
+                                                            Toast.makeText(ProfileActivity.this, "User password updated.", Toast.LENGTH_SHORT).show();
                                                             Log.d(TAG, "User password updated.");
                                                         } else {
+                                                            Toast.makeText(ProfileActivity.this, "User password not updated.", Toast.LENGTH_SHORT).show();
                                                             Log.d(TAG, "User password not updated.");
                                                         }
                                                     }
@@ -212,6 +224,34 @@ public class ProfileActivity extends AppCompatActivity {
     private void setemail(String n){
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
         rootRef.child("users").child(id).child("email").setValue(n);
+    }
+
+    //custom heading and back button
+    public void setActionBar(String heading) {
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setTitle(heading);
+        actionBar.show();
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                this.finish();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
 
