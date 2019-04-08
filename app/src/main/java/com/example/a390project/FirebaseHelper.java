@@ -2153,6 +2153,36 @@ public class FirebaseHelper {
         return employeeWorkBlocks;
     }
 
+    //Denies a task to be complete if the end time has not been clicked
+    public void allowCompleteTask(final String taskID, final Context context){
+        rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean allowComplete = true;
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    long endTime = ds.child("endTime").getValue(long.class);
+                    if(endTime == 0){
+                        allowComplete = false;
+                        Toast.makeText(context, "Cannot complete task", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        allowComplete = true;
+                        Toast.makeText(context, "Complete task successful", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                rootRef.child("workHistory").child("workingTasks").child(taskID).child("workBlocks").removeEventListener(this);
+                if (allowComplete == true){
+                    completeTask(taskID);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
+    }
+
     /*
     --------------------------------------WORK BLOCKS NOTIFICATIONS / FOREGROUND SERVICE ---------------------------------------------
      */

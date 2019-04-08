@@ -116,7 +116,7 @@ public class TaskPaintingActivity extends AppCompatActivity {
             mCompletedTime.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    firebaseHelper.completeTask(paintingTaskID);
+                    firebaseHelper.allowCompleteTask(paintingTaskID, TaskPaintingActivity.this);
                     employeeComment = mComment.getText().toString().trim();
                 }
             });
