@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +40,8 @@ public class ProfileActivity extends AppCompatActivity {
     private String name;
     private String id;
 
+    private ProgressBar mProgressBar;
+
     //edit fields
     private TextView NAME;
     private TextView EMAIL;
@@ -65,6 +68,9 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         setActionBar("Edit Profile");
+
+        mProgressBar = findViewById(R.id.progress_bar_profile);
+        mProgressBar.setVisibility(View.GONE);
 
         user = mAuth.getInstance().getCurrentUser();
         id = mAuth.getUid();
@@ -97,6 +103,7 @@ public class ProfileActivity extends AppCompatActivity {
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mProgressBar.setVisibility(View.VISIBLE);
                 final String [] emailLogin = new String [1];
                 emailLogin[0] = mEmail.getText().toString().trim();
                 final String [] passwordLogin = new String [1];
@@ -112,6 +119,8 @@ public class ProfileActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
                                 Log.d(TAG, "User re-authenticated.");
+
+                                mProgressBar.setVisibility(View.GONE);
 
                                 logInLabel.setVisibility(View.GONE);
                                 mEmail.setVisibility(View.GONE);
@@ -130,7 +139,6 @@ public class ProfileActivity extends AppCompatActivity {
                                 EMAIL.setText(emailLogin[0]);
                                 PASSWORD.setText(passwordLogin[0]);
 
-                                switch1.setChecked(true);
                                 switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                     @Override
                                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -190,6 +198,7 @@ public class ProfileActivity extends AppCompatActivity {
                             }
                             else {
                                 Toast.makeText(ProfileActivity.this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
+                                mProgressBar.setVisibility(View.GONE);
                             }
 
 
