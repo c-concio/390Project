@@ -42,6 +42,7 @@ import com.example.a390project.ListViewAdapters.GraphableProjectsListViewAdapter
 import com.example.a390project.ListViewAdapters.GraphsListViewAdapter;
 import com.example.a390project.ListViewAdapters.InventoryMaterialListViewAdapter;
 import com.example.a390project.ListViewAdapters.MachineListViewAdapter;
+import com.example.a390project.ListViewAdapters.MaterialRecyclerAdapter;
 import com.example.a390project.ListViewAdapters.PaintRecyclerAdapter;
 import com.example.a390project.ListViewAdapters.PrepaintTaskListViewAdapter;
 import com.example.a390project.ListViewAdapters.ProjectListViewAdapter;
@@ -1562,14 +1563,16 @@ public class FirebaseHelper {
                 for (DataSnapshot currentSnapshot : dataSnapshot.getChildren()){
                     Material newMaterial = currentSnapshot.getValue(Material.class);
                     newMaterial.setMaterialName(currentSnapshot.getKey());
+                    Log.d(TAG, "Material Key " + currentSnapshot.getKey());
                     materials.add(newMaterial);
                 }
 
                 // set adapter
                 materials = sortMaterialsByFirstLetter(materials);
-                InventoryMaterialListViewAdapter adapter = new InventoryMaterialListViewAdapter(activity, materials);
-                ListView materialListView = activity.findViewById(R.id.materialListView);
-                materialListView.setAdapter(adapter);
+                MaterialRecyclerAdapter adapter = new MaterialRecyclerAdapter(activity, materials);
+                RecyclerView materialRecyclerView = activity.findViewById(R.id.materialRecyclerView);
+                materialRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
+                materialRecyclerView.setAdapter(adapter);
             }
 
             @Override
@@ -1600,7 +1603,7 @@ public class FirebaseHelper {
     }
 
     public void liquidPaintSearch(final Activity activity, String searchText){
-        rootRef.child("inventory").child("liquid").orderByChild("paintDescription").startAt(searchText.toUpperCase()).endAt(searchText.toUpperCase() + "\uf0ff").addValueEventListener(new ValueEventListener() {
+        rootRef.child("inventory").child("liquid").orderByChild("paintDescription").startAt(searchText).endAt(searchText + "\uf0ff").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<PaintBucket> paintBuckets = new ArrayList<>();
@@ -1627,7 +1630,7 @@ public class FirebaseHelper {
     }
 
     public void powderPaintSearch(final Activity activity, String searchText){
-        rootRef.child("inventory").child("powder").orderByChild("paintDescription").startAt(searchText.toUpperCase()).endAt(searchText.toUpperCase() + "\uf0ff").addValueEventListener(new ValueEventListener() {
+        rootRef.child("inventory").child("powder").orderByChild("paintDescription").startAt(searchText).endAt(searchText + "\uf0ff").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<PaintBucket> paintBuckets = new ArrayList<>();
@@ -1657,6 +1660,34 @@ public class FirebaseHelper {
 
 
     }
+
+    public void materialSearch(final Activity activity, String searchText){
+        rootRef.child("inventory").child("material").orderByKey().startAt(searchText).endAt(searchText + "\uf0ff").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Material> materials = new ArrayList<>();
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    Material newMaterial = ds.getValue(Material.class);
+                    newMaterial.setMaterialName(ds.getKey());
+                    materials.add(newMaterial);
+
+                    MaterialRecyclerAdapter adapter = new MaterialRecyclerAdapter(activity, materials);
+                    RecyclerView materialRecyclerView = activity.findViewById(R.id.materialRecyclerView);
+                    materialRecyclerView.setLayoutManager(new LinearLayoutManager(activity));
+                    materialRecyclerView.setAdapter(adapter);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+        });
+
+
+    }
+
 
 
     // ------------------------------------------------ Firebase Employee Comments ------------------------------------------------
