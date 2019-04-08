@@ -89,7 +89,7 @@ public class ControlDeviceFragment extends Fragment implements OnMapReadyCallbac
         mMapView = v.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
 
-        //getLocationPermission();
+        getLocationPermission();
         return v;
     }
 
