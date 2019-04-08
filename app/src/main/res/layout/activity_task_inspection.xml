@@ -71,7 +71,7 @@
             app:layout_constraintTop_toTopOf="@+id/partRejectedTextView" />
 
         <LinearLayout
-            android:id="@+id/linearLayout4"
+            android:id="@+id/timeLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -104,9 +104,9 @@
             android:textColor="@color/colorPrimary"
             android:textStyle="bold"
             android:layout_marginTop="10dp"
-            app:layout_constraintEnd_toEndOf="@+id/linearLayout4"
-            app:layout_constraintStart_toStartOf="@+id/linearLayout4"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
+            app:layout_constraintEnd_toEndOf="@+id/timeLinearLayout"
+            app:layout_constraintStart_toStartOf="@+id/timeLinearLayout"
+            app:layout_constraintTop_toBottomOf="@+id/timeLinearLayout" />
 
         <TextView
             android:id="@+id/partAcceptedTextView"
@@ -141,7 +141,7 @@
             app:layout_constraintTop_toBottomOf="@+id/completeButton" />
 
         <LinearLayout
-            android:id="@+id/linearLayout6"
+            android:id="@+id/newCommentLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="65dp"
             android:layout_marginTop="8dp"
@@ -184,7 +184,7 @@
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout6" />
+            app:layout_constraintTop_toBottomOf="@+id/newCommentLinearLayout" />
 
         <ListView
             android:id="@+id/employeeCommentsListView"
