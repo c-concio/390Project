@@ -2961,7 +2961,11 @@ public class FirebaseHelper {
                                 int i = 0;
                                 long totalTime = 0;
                                 for (String taskID:taskIDs) {
-                                    long taskTimeLong = dataSnapshot.child(taskID).child("totalTime").getValue(long.class);
+                                    long taskTimeLong;
+                                    if (dataSnapshot.child(taskID).child("totalTime").exists())
+                                        taskTimeLong = dataSnapshot.child(taskID).child("totalTime").getValue(long.class);
+                                    else
+                                        taskTimeLong = 0;
                                     totalTime += taskTimeLong;
                                     float taskTime = (float) TimeUnit.MILLISECONDS.toHours(taskTimeLong);
                                     String taskType = dataSnapshot.child(taskID).child("taskType").getValue(String.class);
