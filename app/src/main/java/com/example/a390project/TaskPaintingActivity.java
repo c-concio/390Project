@@ -248,4 +248,10 @@ public class TaskPaintingActivity extends AppCompatActivity {
         mTimeElapsed.setVisibility(View.GONE);
         backPressed[0] = true;
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
 }
