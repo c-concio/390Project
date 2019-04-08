@@ -48,8 +48,8 @@ public class LogInActivity extends AppCompatActivity {
     }
 
     private void prepareActivity() {
-        mEmail = findViewById(R.id.email_edit_text_register);
-        mPassword = findViewById(R.id.password_edit_text_register);
+        mEmail = findViewById(R.id.email_edit_text_profile);
+        mPassword = findViewById(R.id.password_edit_text_profile);
         mButton = findViewById(R.id.LogInButton);
         mLink = findViewById(R.id.link_signup_text_view);
         mProgressBar = findViewById(R.id.progress_bar_log_in);

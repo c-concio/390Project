@@ -11,7 +11,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -50,9 +49,9 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        mEmail = findViewById(R.id.email_edit_text_register);
+        mEmail = findViewById(R.id.email_edit_text_profile);
         mFullName = findViewById(R.id.name_edit_text_register);
-        mPassword = findViewById(R.id.password_edit_text_register);
+        mPassword = findViewById(R.id.password_edit_text_profile);
 
         mProgressBar = findViewById(R.id.progress_bar_register);
         mSwitch = findViewById(R.id.manager_switch);

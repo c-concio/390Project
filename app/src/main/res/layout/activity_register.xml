@@ -13,7 +13,7 @@
 
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/title_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -39,10 +39,10 @@
             android:layout_marginTop="30dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/title" />
+            app:layout_constraintTop_toBottomOf="@+id/title_profile" />
 
         <EditText
-            android:id="@+id/email_edit_text_register"
+            android:id="@+id/email_edit_text_profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -54,16 +54,16 @@
             app:layout_constraintTop_toBottomOf="@+id/name_edit_text_register" />
 
         <EditText
-            android:id="@+id/password_edit_text_register"
+            android:id="@+id/password_edit_text_profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:ems="10"
             android:hint="Password"
             android:inputType="textPassword"
-            app:layout_constraintEnd_toEndOf="@+id/email_edit_text_register"
-            app:layout_constraintStart_toStartOf="@+id/email_edit_text_register"
-            app:layout_constraintTop_toBottomOf="@+id/email_edit_text_register" />
+            app:layout_constraintEnd_toEndOf="@+id/email_edit_text_profile"
+            app:layout_constraintStart_toStartOf="@+id/email_edit_text_profile"
+            app:layout_constraintTop_toBottomOf="@+id/email_edit_text_profile" />
 
         <Switch
             android:id="@+id/manager_switch"
@@ -71,9 +71,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Manager"
-            app:layout_constraintEnd_toEndOf="@+id/password_edit_text_register"
-            app:layout_constraintStart_toStartOf="@+id/password_edit_text_register"
-            app:layout_constraintTop_toBottomOf="@+id/password_edit_text_register" />
+            app:layout_constraintEnd_toEndOf="@+id/password_edit_text_profile"
+            app:layout_constraintStart_toStartOf="@+id/password_edit_text_profile"
+            app:layout_constraintTop_toBottomOf="@+id/password_edit_text_profile" />
 
         <Button
             android:id="@+id/register_button"
@@ -81,10 +81,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="45dp"
             android:text="Register"
-            app:layout_constraintEnd_toEndOf="@+id/password_edit_text_register"
+            app:layout_constraintEnd_toEndOf="@+id/password_edit_text_profile"
             app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="@+id/password_edit_text_register"
-            app:layout_constraintTop_toBottomOf="@+id/password_edit_text_register" />
+            app:layout_constraintStart_toStartOf="@+id/password_edit_text_profile"
+            app:layout_constraintTop_toBottomOf="@+id/password_edit_text_profile" />
 
         <Button
             android:id="@+id/manager_secret_button"
