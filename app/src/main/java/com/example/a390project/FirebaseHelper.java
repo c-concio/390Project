@@ -2822,7 +2822,7 @@ public class FirebaseHelper {
                                 long sec = (totalTime/1000) % 60;
                                 long min = ((totalTime/1000) / 60) % 60;
                                 long hour = ((totalTime/1000) / 60) / 60;
-                                mTotalTime.setText(hour+"h"+min+"m"+sec+"s");
+                                mTotalTime.setText("Total Time: " + hour+"h"+min+"m"+sec+"s");
 
                                 BarDataSet dataSet = new BarDataSet(entries,"Task Time in hours");
 
@@ -2831,7 +2831,15 @@ public class FirebaseHelper {
                                 statisticsGraph.getLegend().setEnabled(true);
                                 statisticsGraph.getDescription().setEnabled(false);
                                 statisticsGraph.animateXY(2000, 2000);
-
+                                statisticsGraph.setNoDataText("");
+//                                if (statisticsGraph) {
+//                                    mTotalTime.setVisibility(View.GONE);
+//                                    Log.d(TAG, "onDataChange: EMPTYYY GRAPH!");
+//                                }
+//                                else {
+//                                    mTotalTime.setVisibility(View.VISIBLE);
+//                                    mTotalTime.setText("Total Time: " + hour+"h"+min+"m"+sec+"s");
+//                                }
                                 XAxis xAxis = statisticsGraph.getXAxis();
                                 xAxis.setGranularity(1f);
                                 xAxis.setValueFormatter(new IndexAxisValueFormatter(xLabels));
