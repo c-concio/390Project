@@ -1840,7 +1840,6 @@ public class FirebaseHelper {
                                             createUpdateTimeElapsedThread(mTimeElapsed1, activity, timeNow, backPressed);
                                         }
                                         else {
-                                            Log.d(TAG, "CONVERT VIEW IS NULLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
                                             createUpdateTimeElapsedThread(mTimeElapsed, activity, timeNow, backPressed);
                                         }
 
@@ -1963,7 +1962,6 @@ public class FirebaseHelper {
                             mTimeElapsed1.setVisibility(View.GONE);
                         }
                         else {
-                            Log.d(TAG, "CONVERT VIEW IS NULLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
                             mTimeElapsed.setVisibility(View.GONE);
                         }
                         //manage workBlockLimitCount
@@ -2755,6 +2753,12 @@ public class FirebaseHelper {
                                 mTimeElapsed.setText(elapsedTime);
 
                                 Log.d(TAG, "run: UPDATING ELAPSED TIME: " + elapsedTime + " " + mTimeElapsed.getVisibility() + " " + backPressed[0]);
+
+                                if (mTimeElapsed.getVisibility() == View.GONE || backPressed[0]) {
+                                    mTimeElapsed.setText("");
+                                    mTimeElapsed.setVisibility(View.GONE);
+                                    Thread.currentThread().interrupt();
+                                }
                             }
                         });
                         Thread.sleep(1000);
@@ -2767,6 +2771,7 @@ public class FirebaseHelper {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            mTimeElapsed.setText("");
                             mTimeElapsed.setVisibility(View.GONE);
                             Thread.currentThread().interrupt();
                         }
@@ -2782,7 +2787,7 @@ public class FirebaseHelper {
     -------------------------------------------------------------------STATISTICS GRAPH--------------------------------------------------------------------------
      */
 
-    public void populateStatisticsGraph(final String projectPO, final BarChart statisticsGraph) {
+    public void populateStatisticsGraph(final String projectPO, final BarChart statisticsGraph, final TextView mTotalTime) {
         rootRef.child("projects").child(projectPO).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -2802,14 +2807,22 @@ public class FirebaseHelper {
                                 final ArrayList<BarEntry> entries = new ArrayList<>();
                                 final ArrayList<String> xLabels = new ArrayList<>();
                                 int i = 0;
+                                long totalTime = 0;
                                 for (String taskID:taskIDs) {
-                                    float taskTime = (float) TimeUnit.MILLISECONDS.toHours(dataSnapshot.child(taskID).child("totalTime").getValue(long.class));
+                                    long taskTimeLong = dataSnapshot.child(taskID).child("totalTime").getValue(long.class);
+                                    totalTime += taskTimeLong;
+                                    float taskTime = (float) TimeUnit.MILLISECONDS.toHours(taskTimeLong);
                                     String taskType = dataSnapshot.child(taskID).child("taskType").getValue(String.class);
                                     Log.d(TAG, "fetching: " + taskID + " " + taskType + " " + taskTime);
                                     entries.add(new BarEntry(i, taskTime));
                                     xLabels.add(taskType);
                                     i++;
                                 }
+                                
+                                long sec = (totalTime/1000) % 60;
+                                long min = ((totalTime/1000) / 60) % 60;
+                                long hour = ((totalTime/1000) / 60) / 60;
+                                mTotalTime.setText(hour+"h"+min+"m"+sec+"s");
 
                                 BarDataSet dataSet = new BarDataSet(entries,"Task Time in hours");
 

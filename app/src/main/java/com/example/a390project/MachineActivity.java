@@ -25,12 +25,14 @@ public class MachineActivity extends AppCompatActivity {
     //views
     private TextView mMachineTitle;
     private TextView mMachineStatus;
+    private TextView mTemperature;
     private Button mStartTemperatureGraph;
     private Button mEndTemperatureGraph;
 
     //variables
     private String machineTitle;
     private boolean machineStatus;
+    private float temperature;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,9 +80,11 @@ public class MachineActivity extends AppCompatActivity {
         mMachineStatus = findViewById(R.id.machine_status_activity);
         mStartTemperatureGraph = findViewById(R.id.open_graphable_projects);
         mEndTemperatureGraph = findViewById(R.id.end_graph_graphable);
+        mTemperature = findViewById(R.id.temperature_machine_activity);
 
         machineTitle = getIntent().getStringExtra("machine_title");
         machineStatus = getIntent().getBooleanExtra("machine_status", false);
+        temperature =  getIntent().getFloatExtra("machine_temperature", 0);
         Log.d(TAG, "Machine Fetched: " + machineTitle + " " + machineStatus);
 
         Machine machine = new Machine(machineTitle, machineStatus);
@@ -92,6 +96,8 @@ public class MachineActivity extends AppCompatActivity {
             mStartTemperatureGraph.setVisibility(View.GONE);
             mEndTemperatureGraph.setVisibility(View.GONE);
         }
+
+        mTemperature.setText(Float.toString(temperature) + "°F");
     }
 
     //custom heading and back button

@@ -25,7 +25,7 @@ public class MachineListViewAdapter extends BaseAdapter {
 
     //views
     TextView mMachineName;
-    TextView mMachineLastEmployee;
+    TextView mTemperature;
     TextView mStatus;
     ConstraintLayout mRowItem;
 
@@ -63,17 +63,17 @@ public class MachineListViewAdapter extends BaseAdapter {
 
         //set views of row item
         mMachineName = convertView.findViewById(R.id.machine_title_text_view_row);
-        mMachineLastEmployee = convertView.findViewById(R.id.employee_name_text_view);
+        mTemperature = convertView.findViewById(R.id.temperature_machine_text_view);
         mStatus = convertView.findViewById(R.id.status_text_view);
         mRowItem = convertView.findViewById(R.id.machine_row_item);
 
         mMachineName.setText(currentItem.getMachineTitle());
-        mMachineLastEmployee.setText(currentItem.getMachineLastEmployee());
+        mTemperature.setText(Float.toString(currentItem.getTemperature()) + "°F");
         String status = currentItem.isMachineStatus() ? "On":"Off";
         mStatus.setText("Status: " + status);
 
         //change background color if On/Off
-        if (currentItem.isMachineStatus())
+        if (!currentItem.isMachineStatus())
             mRowItem.setBackgroundColor(Color.parseColor("#FFE5E5"));
         else
             mRowItem.setBackgroundColor(Color.parseColor("#DBFFDC"));
@@ -84,7 +84,8 @@ public class MachineListViewAdapter extends BaseAdapter {
             public void onClick(View v) {
                 String machineTitle = currentItem.getMachineTitle();
                 Boolean machineStatus = currentItem.isMachineStatus();
-                startMachineActivity(machineTitle, machineStatus);
+                float machineTemperature = currentItem.getTemperature();
+                startMachineActivity(machineTitle, machineStatus, machineTemperature);
             }
         });
 
@@ -92,10 +93,11 @@ public class MachineListViewAdapter extends BaseAdapter {
     }
     //Controller will only need to send machineID from MachineListViewAdapter to machineActivity,
     // which will get the entire Machine Object from Firebase
-    private void startMachineActivity(String machineTitle, boolean machineStatus) {
+    private void startMachineActivity(String machineTitle, boolean machineStatus, float machineTemperature) {
         Intent intent = new Intent(context, MachineActivity.class);
         intent.putExtra("machine_title", machineTitle);
         intent.putExtra("machine_status", machineStatus);
+        intent.putExtra("machine_temperature", machineTemperature);
         context.startActivity(intent);
     }
 }

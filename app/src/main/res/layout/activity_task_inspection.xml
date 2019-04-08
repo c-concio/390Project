@@ -100,7 +100,7 @@
             android:id="@+id/elapsed_time_since_pressed_start_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="-"
+            android:text=""
             android:textColor="@color/colorPrimary"
             android:textStyle="bold"
             android:layout_marginTop="10dp"

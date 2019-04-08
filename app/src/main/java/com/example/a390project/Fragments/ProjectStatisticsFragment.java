@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.a390project.FirebaseHelper;
 import com.example.a390project.R;
@@ -22,6 +23,7 @@ public class ProjectStatisticsFragment extends Fragment {
     private String projectPO;
     //views
     private BarChart statisticsGraph;
+    private TextView mTotalTime;
 
     public ProjectStatisticsFragment(String projectPO) {
         this.projectPO = projectPO;
@@ -35,9 +37,10 @@ public class ProjectStatisticsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         statisticsGraph = view.findViewById(R.id.graph_v_statistics);
+        mTotalTime = view.findViewById(R.id.total_time_statistics);
 
         FirebaseHelper firebaseHelper = new FirebaseHelper();
-        firebaseHelper.populateStatisticsGraph(projectPO, statisticsGraph);
+        firebaseHelper.populateStatisticsGraph(projectPO, statisticsGraph, mTotalTime);
 
     }
 }
