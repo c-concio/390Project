@@ -6,6 +6,7 @@ public class Project {
     String client;
     long startDate;
     long dueDate;
+    Boolean hasCompleted = false;
 
     //constructor used by FirebaseHelper method 'createProject(String PO, String title, String client, long startDate, long dueDate)'
     public Project(String po, String title, String client, long startDate, long dueDate){
@@ -14,6 +15,15 @@ public class Project {
         this.client = client;
         this.startDate = startDate;
         this.dueDate = dueDate;
+    }
+
+    public Project(String po, String title, String client, long startDate, long dueDate, Boolean hasCompleted){
+        this.po = po;
+        this.title = title;
+        this.client = client;
+        this.startDate = startDate;
+        this.dueDate = dueDate;
+        this.hasCompleted = hasCompleted;
     }
 
     public String getPo() {
@@ -56,5 +66,11 @@ public class Project {
         this.dueDate = dueDate;
     }
 
+    public Boolean getHasCompleted() {
+        return hasCompleted;
+    }
 
+    public void setHasCompleted(Boolean hasCompleted) {
+        this.hasCompleted = hasCompleted;
+    }
 }
